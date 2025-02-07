@@ -33,4 +33,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_07_155143) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  create_table "repository_links", force: :cascade do |t|
+    t.bigint "publication_id"
+    t.string "repository"
+    t.string "value"
+    t.index ["publication_id"], name: "index_repository_links_on_publication_id"
+  end
 end

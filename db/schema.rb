@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_07_155143) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_07_171119) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -21,17 +21,26 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_07_155143) do
     t.index ["publication_id"], name: "index_identifiers_on_publication_id"
   end
 
+  create_table "journal_issues", force: :cascade do |t|
+    t.string "title", null: false
+    t.string "journal_num"
+    t.string "publisher"
+    t.integer "volume"
+    t.float "impact_factor"
+  end
+
   create_table "publications", force: :cascade do |t|
     t.string "title", null: false
     t.integer "type", null: false
     t.integer "status", null: false
     t.string "author_list", null: false
-    t.integer "journal_issue_id"
     t.integer "conference_id"
     t.date "publication_date"
     t.string "link", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "journal_issues_id"
+    t.index ["journal_issues_id"], name: "index_publications_on_journal_issues_id"
   end
 
   create_table "repository_links", force: :cascade do |t|
@@ -47,4 +56,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_07_155143) do
     t.boolean "is_primary"
     t.index ["publication_id"], name: "index_research_group_publications_on_publication_id"
   end
+
+  add_foreign_key "publications", "journal_issues", column: "journal_issues_id"
 end

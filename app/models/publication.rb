@@ -1,5 +1,5 @@
 class Publication < ApplicationRecord
-    # belongs_to :journal_issue, optional: true
+    belongs_to :journal_issue, optional: true
     # belongs_to :conference, optional: true
     has_many :identifiers, dependent: :destroy
     has_many :repository_links, dependent: :destroy

@@ -10,9 +10,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_06_140002) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_07_155143) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
+
+  create_table "identifiers", force: :cascade do |t|
+    t.bigint "publication_id"
+    t.string "type"
+    t.string "value"
+    t.index ["publication_id"], name: "index_identifiers_on_publication_id"
+  end
 
   create_table "publications", force: :cascade do |t|
     t.string "title", null: false

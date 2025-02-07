@@ -40,4 +40,11 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_07_155143) do
     t.string "value"
     t.index ["publication_id"], name: "index_repository_links_on_publication_id"
   end
+
+  create_table "research_group_publications", force: :cascade do |t|
+    t.bigint "publication_id"
+    t.string "research_group"
+    t.boolean "is_primary"
+    t.index ["publication_id"], name: "index_research_group_publications_on_publication_id"
+  end
 end

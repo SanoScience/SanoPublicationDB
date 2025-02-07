@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_07_182515) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_07_184654) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -19,7 +19,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_07_182515) do
     t.string "core"
     t.date "start_date", null: false
     t.date "end_date", null: false
-    t.integer "subsidy_points"
   end
 
   create_table "identifiers", force: :cascade do |t|
@@ -35,6 +34,23 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_07_182515) do
     t.string "publisher"
     t.integer "volume"
     t.float "impact_factor"
+  end
+
+  create_table "kpi_reporting_extensions", force: :cascade do |t|
+    t.bigint "publication_id", null: false
+    t.integer "teaming_reporting_period"
+    t.integer "invoice_number"
+    t.boolean "pbn"
+    t.boolean "jcr"
+    t.boolean "is_added_ft_portal"
+    t.boolean "is_checked"
+    t.boolean "is_new_method_technique"
+    t.boolean "is_methodology_application"
+    t.boolean "is_polish_med_researcher_involved"
+    t.integer "subsidy_points"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["publication_id"], name: "index_kpi_reporting_extensions_on_publication_id"
   end
 
   create_table "publications", force: :cascade do |t|
@@ -66,6 +82,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_07_182515) do
     t.index ["publication_id"], name: "index_research_group_publications_on_publication_id"
   end
 
+  add_foreign_key "kpi_reporting_extensions", "publications"
   add_foreign_key "publications", "conferences", column: "conferences_id"
   add_foreign_key "publications", "journal_issues", column: "journal_issues_id"
 end

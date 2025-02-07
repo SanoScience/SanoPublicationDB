@@ -5,6 +5,7 @@ class Publication < ApplicationRecord
     has_many :repository_links, dependent: :destroy
     has_many :research_group_publications, dependent: :destroy
     has_one :kpi_reporting_extension, dependent: :destroy
+    has_one :open_access_extension, dependent: :destroy
   
     enum :type, {
       journal_article: 0,

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_07_184654) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_07_192154) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -53,6 +53,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_07_184654) do
     t.index ["publication_id"], name: "index_kpi_reporting_extensions_on_publication_id"
   end
 
+  create_table "open_access_extensions", force: :cascade do |t|
+    t.bigint "publication_id", null: false
+    t.decimal "gold_oa_charges"
+    t.string "gold_oa_funding_source"
+    t.integer "type", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["publication_id"], name: "index_open_access_extensions_on_publication_id"
+  end
+
   create_table "publications", force: :cascade do |t|
     t.string "title", null: false
     t.integer "type", null: false
@@ -83,6 +93,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_07_184654) do
   end
 
   add_foreign_key "kpi_reporting_extensions", "publications"
+  add_foreign_key "open_access_extensions", "publications"
   add_foreign_key "publications", "conferences", column: "conferences_id"
   add_foreign_key "publications", "journal_issues", column: "journal_issues_id"
 end

@@ -7,7 +7,7 @@ class Publication < ApplicationRecord
     has_one :kpi_reporting_extension, dependent: :destroy
     has_one :open_access_extension, dependent: :destroy
   
-    enum :type, {
+    enum :category, {
       journal_article: 0,
       conference_manuscript: 1,
       book: 2,
@@ -22,7 +22,7 @@ class Publication < ApplicationRecord
     }
   
     validates :title, presence: true
-    validates :type, presence: true, inclusion: { in: types.keys }
+    validates :category, presence: true, inclusion: { in: categories.keys }
     validates :status, presence: true, inclusion: { in: statuses.keys }
     validates :author_list, presence: true
     validates :link, presence: true, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" }

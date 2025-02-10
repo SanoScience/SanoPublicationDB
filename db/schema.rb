@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_07_192154) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_10_170347) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -23,7 +23,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_07_192154) do
 
   create_table "identifiers", force: :cascade do |t|
     t.bigint "publication_id"
-    t.string "type"
+    t.string "category"
     t.string "value"
     t.index ["publication_id"], name: "index_identifiers_on_publication_id"
   end
@@ -57,7 +57,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_07_192154) do
     t.bigint "publication_id", null: false
     t.decimal "gold_oa_charges"
     t.string "gold_oa_funding_source"
-    t.integer "type", null: false
+    t.integer "category", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["publication_id"], name: "index_open_access_extensions_on_publication_id"
@@ -65,7 +65,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_07_192154) do
 
   create_table "publications", force: :cascade do |t|
     t.string "title", null: false
-    t.integer "type", null: false
+    t.integer "category", null: false
     t.integer "status", null: false
     t.string "author_list", null: false
     t.date "publication_date"

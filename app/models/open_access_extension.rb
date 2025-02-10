@@ -1,12 +1,12 @@
 class OpenAccessExtension < ApplicationRecord
     belongs_to :publication, optional: false
 
-    enum :type, {
+    enum :category, {
         green: 0,
         gold: 1
     }
 
-    validates :type, presence: true, inclusion: { in: types.keys }
+    validates :category, presence: true, inclusion: { in: categories.keys }
     validate :validate_gold_fields
 
     private

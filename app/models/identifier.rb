@@ -1,7 +1,7 @@
 class Identifier < ApplicationRecord
     belongs_to :publication
 
-    enum :type, { 
+    enum :category, { 
         doi: "DOI",
         issn: "ISSN",
         essn: "eSSN",
@@ -9,6 +9,6 @@ class Identifier < ApplicationRecord
         other: "other"
     }
 
-    validates :type, presence: true
+    validates :category, presence: true
     validates :value, presence: true
 end

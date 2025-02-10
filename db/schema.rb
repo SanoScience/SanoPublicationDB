@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_10_170347) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_10_182816) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -72,10 +72,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_170347) do
     t.string "link", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.bigint "journal_issues_id"
-    t.bigint "conferences_id"
-    t.index ["conferences_id"], name: "index_publications_on_conferences_id"
-    t.index ["journal_issues_id"], name: "index_publications_on_journal_issues_id"
+    t.bigint "journal_issue_id"
+    t.bigint "conference_id"
+    t.index ["conference_id"], name: "index_publications_on_conference_id"
+    t.index ["journal_issue_id"], name: "index_publications_on_journal_issue_id"
   end
 
   create_table "repository_links", force: :cascade do |t|
@@ -94,6 +94,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_170347) do
 
   add_foreign_key "kpi_reporting_extensions", "publications"
   add_foreign_key "open_access_extensions", "publications"
-  add_foreign_key "publications", "conferences", column: "conferences_id"
-  add_foreign_key "publications", "journal_issues", column: "journal_issues_id"
+  add_foreign_key "publications", "conferences"
+  add_foreign_key "publications", "journal_issues"
 end

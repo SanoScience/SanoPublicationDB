@@ -1,11 +1,12 @@
 class OpenAccessExtension < ApplicationRecord
-    belongs_to :publication, optional: false
+    belongs_to :publication, dependent: :destroy
 
     enum :category, {
         green: 0,
         gold: 1
     }
 
+    validates :publication, presence: true
     validates :category, presence: true, inclusion: { in: categories.keys }
     validate :validate_gold_fields
 

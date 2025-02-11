@@ -1,5 +1,5 @@
 class Identifier < ApplicationRecord
-    belongs_to :publication
+    belongs_to :publication, dependent: :destroy
 
     enum :category, { 
         doi: "DOI",
@@ -9,6 +9,7 @@ class Identifier < ApplicationRecord
         other: "other"
     }
 
+    validates :publication, presence: true
     validates :category, presence: true
     validates :value, presence: true
 end

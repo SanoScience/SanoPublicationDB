@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_10_182816) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_11_122606) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -22,9 +22,9 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_182816) do
   end
 
   create_table "identifiers", force: :cascade do |t|
-    t.bigint "publication_id"
-    t.string "category"
-    t.string "value"
+    t.bigint "publication_id", null: false
+    t.string "category", null: false
+    t.string "value", null: false
     t.index ["publication_id"], name: "index_identifiers_on_publication_id"
   end
 
@@ -79,21 +79,24 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_10_182816) do
   end
 
   create_table "repository_links", force: :cascade do |t|
-    t.bigint "publication_id"
-    t.string "repository"
-    t.string "value"
+    t.bigint "publication_id", null: false
+    t.string "repository", null: false
+    t.string "value", null: false
     t.index ["publication_id"], name: "index_repository_links_on_publication_id"
   end
 
   create_table "research_group_publications", force: :cascade do |t|
-    t.bigint "publication_id"
-    t.string "research_group"
-    t.boolean "is_primary"
+    t.bigint "publication_id", null: false
+    t.string "research_group", null: false
+    t.boolean "is_primary", null: false
     t.index ["publication_id"], name: "index_research_group_publications_on_publication_id"
   end
 
-  add_foreign_key "kpi_reporting_extensions", "publications"
-  add_foreign_key "open_access_extensions", "publications"
-  add_foreign_key "publications", "conferences"
-  add_foreign_key "publications", "journal_issues"
+  add_foreign_key "identifiers", "publications", on_delete: :cascade
+  add_foreign_key "kpi_reporting_extensions", "publications", on_delete: :cascade
+  add_foreign_key "open_access_extensions", "publications", on_delete: :cascade
+  add_foreign_key "publications", "conferences", on_delete: :nullify
+  add_foreign_key "publications", "journal_issues", on_delete: :nullify
+  add_foreign_key "repository_links", "publications", on_delete: :cascade
+  add_foreign_key "research_group_publications", "publications", on_delete: :cascade
 end

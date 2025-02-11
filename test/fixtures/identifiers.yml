@@ -1,11 +1,6 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-one:
-  publication_id: 1
-  identifier_type_id: 1
-  identifier_value: MyString
-
-two:
-  publication_id: 1
-  identifier_type_id: 1
-  identifier_value: MyString
+doi: 
+  publication: pub1
+  category: doi
+  value: "doi:example"

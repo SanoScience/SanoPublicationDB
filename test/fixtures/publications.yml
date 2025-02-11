@@ -7,3 +7,5 @@ pub1:
   author_list: "John Doe, Jane Smith"
   publication_date: "2014-05-02"
   link: "https://example.com"
+  journal_issue: jour1
+  conference: conf1

@@ -1,0 +1,6 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+sp_pub1:
+  publication: pub1
+  research_group: scientific_programmers
+  is_primary: true

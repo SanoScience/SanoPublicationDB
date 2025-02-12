@@ -31,7 +31,7 @@ class ResearchGroupPublicationTest < ActiveSupport::TestCase
   test "should be destroyed when associated publication is destroyed" do
     publication = publications("pub1")
     publication.destroy
-    
+
     assert_nil ResearchGroupPublication.find_by(id: @research_group_publication.id)
   end
 end

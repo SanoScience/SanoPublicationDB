@@ -1,7 +1,7 @@
 class Identifier < ApplicationRecord
     belongs_to :publication, dependent: :destroy
 
-    enum :category, { 
+    enum :category, {
         doi: "DOI",
         issn: "ISSN",
         essn: "eSSN",

@@ -34,7 +34,7 @@ class OpenAccessExtensionTest < ActiveSupport::TestCase
     @open_access_extension.gold_oa_charges = 1.0
     @open_access_extension.gold_oa_funding_source = "Some source"
 
-    assert_not @open_access_extension.valid? 
+    assert_not @open_access_extension.valid?
     assert_includes @open_access_extension.errors[:gold_oa_charges], "should be empty for green OA"
     assert_includes @open_access_extension.errors[:gold_oa_funding_source], "should be empty for green OA"
   end
@@ -50,7 +50,7 @@ class OpenAccessExtensionTest < ActiveSupport::TestCase
   test "should be destroyed when associated publication is destroyed" do
     publication = publications("pub1")
     publication.destroy
-    
+
     assert_nil OpenAccessExtension.find_by(id: @open_access_extension.id)
   end
 end

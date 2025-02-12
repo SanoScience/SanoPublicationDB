@@ -27,14 +27,14 @@ class PublicationTest < ActiveSupport::TestCase
       @publication.category = Publication.categories.values.last + 1
     end
     assert_match /is not a valid category/, error.message
-  end  
+  end
 
   test "should require a status from the list" do
     error = assert_raises(ArgumentError) do
       @publication.status = Publication.statuses.values.last + 1
     end
     assert_match /is not a valid status/, error.message
-  end  
+  end
 
   test "should be referenced in associated identifier" do
     identifier = @publication.identifiers.create(category: Identifier.categories.first.first, value: "test")
@@ -49,9 +49,9 @@ class PublicationTest < ActiveSupport::TestCase
   end
 
   test "should be referenced in associated research group publication" do
-    research_group_publication = 
+    research_group_publication =
       @publication.research_group_publications.create(
-        research_group: ResearchGroupPublication.research_groups.first.first, 
+        research_group: ResearchGroupPublication.research_groups.first.first,
         is_primary: true
       )
 

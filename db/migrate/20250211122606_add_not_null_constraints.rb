@@ -3,11 +3,11 @@ class AddNotNullConstraints < ActiveRecord::Migration[8.0]
     change_column_null :identifiers, :publication_id, false
     change_column_null :identifiers, :category, false
     change_column_null :identifiers, :value, false
-    
+
     change_column_null :repository_links, :publication_id, false
     change_column_null :repository_links, :repository, false
     change_column_null :repository_links, :value, false
-    
+
     change_column_null :research_group_publications, :publication_id, false
     change_column_null :research_group_publications, :research_group, false
     change_column_null :research_group_publications, :is_primary, false

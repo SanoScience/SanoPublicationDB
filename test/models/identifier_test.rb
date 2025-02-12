@@ -32,7 +32,7 @@ class IdentifierTest < ActiveSupport::TestCase
     publication = publications("pub1")
     assert_equal publication.id, @identifier.publication_id do
       publication.destroy
-      
+
       assert_nil Identifier.find_by(id: @identifier.id)
     end
   end

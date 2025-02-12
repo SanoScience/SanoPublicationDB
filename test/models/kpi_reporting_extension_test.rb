@@ -19,7 +19,7 @@ class KpiReportingExtensionTest < ActiveSupport::TestCase
   test "should be destroyed when associated publication is destroyed" do
     publication = publications("pub1")
     publication.destroy
-    
+
     assert_nil KpiReportingExtension.find_by(id: @kpi_reporting_extension.id)
   end
 end

@@ -1,7 +1,7 @@
 class RepositoryLink < ApplicationRecord
     belongs_to :publication, dependent: :destroy
 
-    enum :repository, { 
+    enum :repository, {
         dataverse: "Dataverse",
         zenodo: "Zenodo",
         osf: "OSF",

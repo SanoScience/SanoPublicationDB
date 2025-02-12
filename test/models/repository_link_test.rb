@@ -31,7 +31,7 @@ class RepositoryLinkTest < ActiveSupport::TestCase
   test "should be destroyed when associated publication is destroyed" do
     publication = publications("pub1")
     publication.destroy
-    
+
     assert_nil RepositoryLink.find_by(id: @repository_link.id)
   end
 end

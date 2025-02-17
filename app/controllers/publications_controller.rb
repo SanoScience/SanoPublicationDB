@@ -10,6 +10,7 @@ class PublicationsController < ApplicationController
   end
 
   def show
+    @publication = Publication.find(params[:id])
   end
 
   def edit

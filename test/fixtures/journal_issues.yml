@@ -1,0 +1,8 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+jour1: 
+  title: "Example Journal"
+  journal_num: "Number 1"
+  publisher: "Example Publisher"
+  volume: 1
+  impact_factor: 1

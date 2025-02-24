@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_11_122606) do
+ActiveRecord::Schema[8.0].define(version: 2025_02_21_190731) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -50,6 +50,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_11_122606) do
     t.integer "subsidy_points"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.boolean "is_peer_reviewed"
     t.index ["publication_id"], name: "index_kpi_reporting_extensions_on_publication_id"
   end
 
@@ -67,7 +68,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_11_122606) do
     t.string "title", null: false
     t.integer "category", null: false
     t.integer "status", null: false
-    t.string "author_list", null: false
+    t.text "author_list", null: false
     t.date "publication_date"
     t.string "link", null: false
     t.datetime "created_at", null: false

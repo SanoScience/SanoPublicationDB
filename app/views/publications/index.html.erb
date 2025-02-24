@@ -1,13 +1,21 @@
-<h1>Publications</h1>
+<h1 class="mb-4">Publications</h1>
 
-<div class="publication-list">
+<div class="publication-navbar">
+    <%= link_to 'New Publication', new_publication_path, class: "btn btn-primary" %>
+</div>
+
+<div class="publication-list mt-4">
   <% @publications.each do |publication| %>
-    <div class="publication-item">
+    <div class="publication-item mb-4 pb-3">
       <h2>
         <%= link_to publication.title, publication_path(publication), class: "publication-title" %>
       </h2>
-      <p class="publication-authors">
+      <p class="publication-meta">
         <strong>Authors:</strong> <%= publication.author_list %>
+      </p>
+      <p class="publication-meta">
+        <strong>Research groups:</strong> 
+        <%= publication.research_group_publications.map { |rg| rg.research_group.humanize }.join(', ') %>
       </p>
       <p class="publication-meta">
         <strong>Category:</strong> <%= publication.category.humanize %> |

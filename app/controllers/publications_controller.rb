@@ -4,9 +4,17 @@ class PublicationsController < ApplicationController
   end
 
   def new
+    @publication = Publication.new
   end
 
   def create
+    @publication = Publication.new(publication_params)
+    
+    if @publication.save
+      redirect_to @publication, notice: 'Publication was successfully created.'
+    else
+      render :new, status: :unprocessable_entity
+    end
   end
 
   def show
@@ -20,5 +28,13 @@ class PublicationsController < ApplicationController
   end
 
   def destroy
+  end
+
+  private
+
+  def publication_params
+    params.require(:publication).permit(
+      :title, :category, :status, :author_list, :publication_date, :link
+    )
   end
 end

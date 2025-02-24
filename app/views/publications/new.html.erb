@@ -1,2 +1,54 @@
-<h1>Publications#new</h1>
-<p>Find me in app/views/publications/new.html.erb</p>
+<h1>New Publication</h1>
+
+<%= form_with(model: @publication, local: true, html: { class: 'needs-validation', novalidate: true }) do |form| %>
+  <% if @publication.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(@publication.errors.count, "error") %> prohibited this publication from being saved:</h2>
+      <ul>
+        <% @publication.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="mb-3">
+    <%= form.label :title, class: 'form-label' %>
+    <%= form.text_field :title, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :category, class: 'form-label' %>
+    <%= form.select :category, 
+        Publication.categories.keys.map { |key| [key.humanize, key] }, 
+        {}, class: 'form-select' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :status, class: 'form-label' %>
+    <%= form.select :status, 
+        Publication.statuses.keys.map { |key| [key.humanize, key] }, 
+        {}, class: 'form-select' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :author_list, class: 'form-label' %>
+    <%= form.text_area :author_list, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :publication_date, class: 'form-label' %>
+    <%= form.date_field :publication_date, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.label :link, class: 'form-label' %>
+    <%= form.text_field :link, class: 'form-control' %>
+  </div>
+
+  <div class="mb-3">
+    <%= form.submit "Create Publication", class: 'btn btn-success' %>
+  </div>
+<% end %>
+
+<%= link_to 'Back', publications_path, class: 'btn btn-secondary' %>

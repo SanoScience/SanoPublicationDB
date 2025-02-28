@@ -46,6 +46,8 @@
     <%= form.text_field :link, class: 'form-control' %>
   </div>
 
+  <hr>
+
   <!-- Research Groups Section -->
   <div id="research-groups">
     <div class="research-group mb-3">
@@ -73,6 +75,8 @@
     <%= button_tag 'Add Another Research Group', type: 'button', id: 'add-research-group', class: 'btn btn-primary' %>
   </div>
 
+  <hr>
+
   <!-- Identifiers Section -->
   <div id="identifiers">
     <div class="identifier mb-3">
@@ -86,7 +90,7 @@
 
         <div class="mb-3">
           <%= rg_form.label :value, class: 'form-label' %>
-          <%= rg_form.text_field :value, class: 'form-control' %>
+          <%= rg_form.text_field :value, id: 'identifier-value', class: 'form-control' %>
         </div>
       <% end %>
     </div>
@@ -95,6 +99,33 @@
   <div class="mb-3">
     <%= button_tag 'Add Another Identifier', type: 'button', id: 'add-identifier', class: 'btn btn-primary' %>
   </div>
+
+  <hr>
+
+  <!-- Repository Links Section -->
+  <div id="repository-links">
+    <div class="repository-link mb-3">
+      <%= form.fields_for :repository_links, @publication.repository_links.build do |rg_form| %>
+        <div class="mb-3">
+          <%= rg_form.label :repository, class: 'form-label' %>
+          <%= rg_form.select :repository, 
+              RepositoryLink.repositories.keys.map { |key| [key.humanize, key] }, 
+              {}, class: 'form-select' %>
+        </div>
+
+        <div class="mb-3">
+          <%= rg_form.label :value, class: 'form-label' %>
+          <%= rg_form.text_field :value, id: 'repository-link-value', class: 'form-control' %>
+        </div>
+      <% end %>
+    </div>
+  </div>
+
+  <div class="mb-3">
+    <%= button_tag 'Add Another Repository Link', type: 'button', id: 'add-repository-link', class: 'btn btn-primary' %>
+  </div>
+
+  <hr>
 
   <div class="mb-3">
     <%= form.submit "Create Publication", class: 'btn btn-success' %>
@@ -133,17 +164,33 @@
     // Get the current number of research group blocks
     const index = identifiersContainer.querySelectorAll('.identifier').length;
 
-    console.log(index)
-
     // Update the names of the fields to include the index
     const idSelect = newIdentifier.querySelector('select');
-    const idValue = document.querySelector('input[name$="[value]"]');
+    const idValue = document.querySelector('#identifier-value');
     
     // Add the index to the name of each input field
     idSelect.setAttribute('name', `publication[identifiers_attributes][${index}][category]`);
     idValue.setAttribute('name', `publication[identifiers_attributes][${index}][value]`)
 
     identifiersContainer.appendChild(newIdentifier);
+  });
+
+  document.getElementById('add-repository-link').addEventListener('click', function() {
+    const repositoryLinksContainer = document.getElementById('repository-links');
+    const newRepositoryLink = repositoryLinksContainer.querySelector('.repository-link').cloneNode(true);
+    
+    // Get the current number of research group blocks
+    const index = repositoryLinksContainer.querySelectorAll('.repository-link').length;
+
+    // Update the names of the fields to include the index
+    const liSelect = newRepositoryLink.querySelector('select');
+    const liValue = document.querySelector('#repository-link-value');
+    
+    // Add the index to the name of each input field
+    liSelect.setAttribute('name', `publication[repository_links_attributes][${index}][repository]`);
+    liValue.setAttribute('name', `publication[repository_links_attributes][${index}][value]`)
+
+    repositoryLinksContainer.appendChild(newRepositoryLink);
   });
 </script>
 

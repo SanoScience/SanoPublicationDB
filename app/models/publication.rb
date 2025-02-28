@@ -9,6 +9,7 @@ class Publication < ApplicationRecord
 
     accepts_nested_attributes_for :research_group_publications, allow_destroy: true
     accepts_nested_attributes_for :identifiers, allow_destroy: true
+    accepts_nested_attributes_for :repository_links, allow_destroy: true
 
     enum :category, {
       journal_article: 0,

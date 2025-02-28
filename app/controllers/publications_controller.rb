@@ -36,7 +36,8 @@ class PublicationsController < ApplicationController
     params.require(:publication).permit(
       :title, :category, :status, :author_list, :publication_date, :link,
       research_group_publications_attributes: [:research_group, :is_primary],
-      identifiers_attributes: [:category, :value]
+      identifiers_attributes: [:category, :value],
+      repository_links_attributes: [:repository, :value]
     )
   end
 end

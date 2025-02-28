@@ -9,7 +9,7 @@ def import_publications(file_path)
     puts "Error: File not found - #{file_path}"
     return
   end
-  
+
   CSV.foreach(file_path, headers: true, col_sep: ';', encoding: 'UTF-8') do |row|
     row = row.to_h.transform_keys { |key| key&.strip }
 
@@ -20,20 +20,20 @@ def import_publications(file_path)
     file_publication_type = row[row.keys.first]&.strip
 
     category = case file_publication_type
-               when "article in journal" then :journal_article
-               when "conference manuscript" then :conference_manuscript
-               when "book/monograph" then :book
-               when "chapter book" then :book_chapter
-               when "conference abstract" then :conference_abstract
-               else nil
-               end
+    when "article in journal" then :journal_article
+    when "conference manuscript" then :conference_manuscript
+    when "book/monograph" then :book
+    when "chapter book" then :book_chapter
+    when "conference abstract" then :conference_abstract
+    else nil
+    end
 
     publication.assign_attributes(
       category: category,
       status: row['Status (submitted, accepted, printed)']&.strip,
       author_list: row['Authors']&.strip,
       publication_date: (Date.parse(row['Year of publication'].to_s) rescue nil),
-      link: (row['Link']&.strip =~ URI::regexp ? row['Link'].strip : "https://unknown_url.com")
+      link: (row['Link']&.strip =~ URI.regexp ? row['Link'].strip : "https://unknown_url.com")
     )
     publication.save!
 

@@ -7,6 +7,8 @@ class Publication < ApplicationRecord
     has_one :kpi_reporting_extension, dependent: :destroy
     has_one :open_access_extension, dependent: :destroy
 
+    accepts_nested_attributes_for :research_group_publications, allow_destroy: true
+
     enum :category, {
       journal_article: 0,
       conference_manuscript: 1,

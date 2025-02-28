@@ -9,7 +9,7 @@ class PublicationsController < ApplicationController
 
   def create
     @publication = Publication.new(publication_params)
-    
+
     if @publication.save
       redirect_to @publication, notice: 'Publication was successfully created.'
     else
@@ -34,7 +34,8 @@ class PublicationsController < ApplicationController
 
   def publication_params
     params.require(:publication).permit(
-      :title, :category, :status, :author_list, :publication_date, :link
+      :title, :category, :status, :author_list, :publication_date, :link,
+      research_group_publications_attributes: [:research_group, :is_primary]
     )
   end
 end

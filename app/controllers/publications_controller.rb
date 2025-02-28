@@ -28,6 +28,10 @@ class PublicationsController < ApplicationController
   end
 
   def destroy
+    @publication = Publication.find(params[:id])
+    @publication.destroy
+    
+    redirect_to publications_path, notice: "Publication was successfully deleted."
   end
 
   private

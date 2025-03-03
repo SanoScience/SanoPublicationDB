@@ -10,7 +10,19 @@ def import_publications(file_path)
     return
   end
 
-  CSV.foreach(file_path, headers: true, col_sep: ';', encoding: 'UTF-8') do |row|
+  # Remove carriage returns from the file
+  content = File.read(file_path)
+  cleaned_content = content.gsub("\r", "")
+  puts "Removing carriage returns from CSV content"
+
+  cleaned_content = cleaned_content.gsub(/(?:yes|no|checked\?|;)\n|\n/) { |match| match.end_with?("\n") ? (match.length > 1 ? match : " ") : match }
+  puts "Removed redundant newlines"
+
+  cleaned_content = cleaned_content.gsub("Structual", "Structural")
+  cleaned_content = cleaned_content.gsub("\"", " ")
+  puts "Removed \" from CSV content"
+
+  CSV.parse(cleaned_content, headers: true, col_sep: ';', encoding: 'UTF-8').each do |row|
     row = row.to_h.transform_keys { |key| key&.strip }
 
     title = row['Title of the scientific publication']&.strip

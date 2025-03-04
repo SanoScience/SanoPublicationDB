@@ -99,6 +99,70 @@
 
   <hr>
 
+  <h3>KPI Reporting Extension</h3>
+  <div class="mb-3">
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" id="kpi-toggle" name="create_kpi_extension">
+      <label class="form-check-label" for="kpi-toggle">Add KPI Reporting Extension</label>
+    </div>
+  </div>
+
+  <div id="kpi-extension-fields" style="display: none;">
+    <%= form.fields_for :kpi_reporting_extension, @publication.kpi_reporting_extension || @publication.build_kpi_reporting_extension do |kpi_form| %>
+      <div class="mb-3">
+        <%= kpi_form.label :teaming_reporting_period, "Teaming Reporting Period", class: 'form-label' %>
+        <%= kpi_form.number_field :teaming_reporting_period, class: 'form-control' %>
+      </div>
+      
+      <div class="mb-3">
+        <%= kpi_form.label :invoice_number, "Invoice Number", class: 'form-label' %>
+        <%= kpi_form.number_field :invoice_number, class: 'form-control' %>
+      </div>
+      
+      <div class="mb-3 form-check">
+        <%= kpi_form.check_box :pbn, class: 'form-check-input' %>
+        <%= kpi_form.label :pbn, "PBN", class: 'form-check-label' %>
+      </div>
+      
+      <div class="mb-3 form-check">
+        <%= kpi_form.check_box :jcr, class: 'form-check-input' %>
+        <%= kpi_form.label :jcr, "JCR", class: 'form-check-label' %>
+      </div>
+      
+      <div class="mb-3 form-check">
+        <%= kpi_form.check_box :is_added_ft_portal, class: 'form-check-input' %>
+        <%= kpi_form.label :is_added_ft_portal, "Added to FT Portal", class: 'form-check-label' %>
+      </div>
+      
+      <div class="mb-3 form-check">
+        <%= kpi_form.check_box :is_checked, class: 'form-check-input' %>
+        <%= kpi_form.label :is_checked, "Checked", class: 'form-check-label' %>
+      </div>
+      
+      <div class="mb-3 form-check">
+        <%= kpi_form.check_box :is_new_method_technique, class: 'form-check-input' %>
+        <%= kpi_form.label :is_new_method_technique, "New Method/Technique", class: 'form-check-label' %>
+      </div>
+      
+      <div class="mb-3 form-check">
+        <%= kpi_form.check_box :is_methodology_application, class: 'form-check-input' %>
+        <%= kpi_form.label :is_methodology_application, "Methodology Application", class: 'form-check-label' %>
+      </div>
+      
+      <div class="mb-3 form-check">
+        <%= kpi_form.check_box :is_polish_med_researcher_involved, class: 'form-check-input' %>
+        <%= kpi_form.label :is_polish_med_researcher_involved, "Polish Medical Researcher Involved", class: 'form-check-label' %>
+      </div>
+      
+      <div class="mb-3">
+        <%= kpi_form.label :subsidy_points, "Subsidy Points", class: 'form-label' %>
+        <%= kpi_form.number_field :subsidy_points, class: 'form-control' %>
+      </div>
+    <% end %>
+  </div>
+
+  <hr>
+
   <div class="mb-3">
     <%= form.submit "Create Publication", class: 'btn btn-success' %>
   </div>
@@ -273,6 +337,29 @@
         this.closest('.research-group, .identifier, .repository-link').remove();
       });
     });
+
+    // KPI Extension toggle functionality
+    const kpiToggleElement = document.getElementById('kpi-toggle');
+    if (kpiToggleElement) {
+      kpiToggleElement.addEventListener('change', function() {
+        const kpiFields = document.getElementById('kpi-extension-fields');
+        if (kpiFields) {
+          kpiFields.style.display = this.checked ? 'block' : 'none';
+          
+          // Clear fields when toggle is unchecked
+          if (!this.checked) {
+            const kpiInputs = kpiFields.querySelectorAll('input[type="text"], input[type="number"], input[type="checkbox"]');
+            kpiInputs.forEach(input => {
+              if (input.type === 'checkbox') {
+                input.checked = false;
+              } else {
+                input.value = '';
+              }
+            });
+          }
+        }
+      });
+    }
   })();
 </script>
 

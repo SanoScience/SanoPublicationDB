@@ -9,6 +9,11 @@ class PublicationsController < ApplicationController
 
   def create
     @publication = Publication.new(publication_params)
+    
+    # Only build and save KPI extension if the toggle is checked
+    if params[:create_kpi_extension].present?
+      @publication.build_kpi_reporting_extension(kpi_reporting_extension_params)
+    end
 
     if @publication.save
       redirect_to @publication, notice: 'Publication was successfully created.'
@@ -42,6 +47,21 @@ class PublicationsController < ApplicationController
       research_group_publications_attributes: [:research_group, :is_primary],
       identifiers_attributes: [:category, :value],
       repository_links_attributes: [:repository, :value]
+    )
+  end
+
+  def kpi_reporting_extension_params
+    params.require(:publication).require(:kpi_reporting_extension).permit(
+      :teaming_reporting_period,
+      :invoice_number,
+      :pbn,
+      :jcr,
+      :is_added_ft_portal,
+      :is_checked,
+      :is_new_method_technique,
+      :is_methodology_application,
+      :is_polish_med_researcher_involved,
+      :subsidy_points
     )
   end
 end

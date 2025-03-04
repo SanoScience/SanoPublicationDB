@@ -48,7 +48,7 @@
 
   <hr>
 
-  <!-- Research Groups Section -->
+  <h3> Research Groups Section </h3>
   <div id="research-groups">
     <div class="research-group mb-3">
       <%= form.fields_for :research_group_publications, @publication.research_group_publications.build do |rg_form| %>
@@ -67,6 +67,8 @@
           <%= rg_form.check_box :is_primary, {}, 1, 0 %>
           <%= rg_form.label :is_primary, 'Primary?' %>
         </div>
+        
+        <button type="button" class="btn btn-danger btn-sm delete-research-group" style="display: none;">Delete</button>
       <% end %>
     </div>
   </div>
@@ -77,52 +79,22 @@
 
   <hr>
 
-  <!-- Identifiers Section -->
+  <h3> Identifiers Section </h3>
   <div id="identifiers">
-    <div class="identifier mb-3">
-      <%= form.fields_for :identifiers, @publication.identifiers.build do |rg_form| %>
-        <div class="mb-3">
-          <%= rg_form.label :category, class: 'form-label' %>
-          <%= rg_form.select :category, 
-              Identifier.categories.keys.map { |key| [key.humanize, key] }, 
-              {}, class: 'form-select' %>
-        </div>
-
-        <div class="mb-3">
-          <%= rg_form.label :value, class: 'form-label' %>
-          <%= rg_form.text_field :value, id: 'identifier-value', class: 'form-control' %>
-        </div>
-      <% end %>
-    </div>
   </div>
 
   <div class="mb-3">
-    <%= button_tag 'Add Another Identifier', type: 'button', id: 'add-identifier', class: 'btn btn-primary' %>
+    <%= button_tag 'Add Identifier', type: 'button', id: 'add-identifier', class: 'btn btn-primary' %>
   </div>
 
   <hr>
 
-  <!-- Repository Links Section -->
+  <h3> Repository Links Section </h3>
   <div id="repository-links">
-    <div class="repository-link mb-3">
-      <%= form.fields_for :repository_links, @publication.repository_links.build do |rg_form| %>
-        <div class="mb-3">
-          <%= rg_form.label :repository, class: 'form-label' %>
-          <%= rg_form.select :repository, 
-              RepositoryLink.repositories.keys.map { |key| [key.humanize, key] }, 
-              {}, class: 'form-select' %>
-        </div>
-
-        <div class="mb-3">
-          <%= rg_form.label :value, class: 'form-label' %>
-          <%= rg_form.text_field :value, id: 'repository-link-value', class: 'form-control' %>
-        </div>
-      <% end %>
-    </div>
   </div>
 
   <div class="mb-3">
-    <%= button_tag 'Add Another Repository Link', type: 'button', id: 'add-repository-link', class: 'btn btn-primary' %>
+    <%= button_tag 'Add Repository Link', type: 'button', id: 'add-repository-link', class: 'btn btn-primary' %>
   </div>
 
   <hr>
@@ -135,62 +107,172 @@
 <%= link_to 'Back', publications_path, class: 'btn btn-secondary' %>
 
 <script>
-  document.getElementById('add-research-group').addEventListener('click', function() {
-    const researchGroupsContainer = document.getElementById('research-groups');
-    const newResearchGroup = researchGroupsContainer.querySelector('.research-group').cloneNode(true);
+  // Wrap everything in an IIFE (Immediately Invoked Function Expression)
+  // to avoid variable redeclaration issues with Turbo
+  (function() {
+    // Only initialize if not already initialized
+    if (window.publicationFormInitialized) return;
+    window.publicationFormInitialized = true;
     
-    // Get the current number of research group blocks
-    const index = researchGroupsContainer.querySelectorAll('.research-group').length;
+    // Generic function to handle adding new nested items
+    function addNestedItem(containerId, itemClass, deleteButtonClass, getOptionsFunc) {
+      const container = document.getElementById(containerId);
+      
+      // If container is empty, create the first item
+      if (container.children.length === 0) {
+        recreateTemplate(container, itemClass, deleteButtonClass, getOptionsFunc);
+        return;
+      }
+      
+      const template = container.querySelector(`.${itemClass}`);
+      const newItem = template.cloneNode(true);
+      
+      // Get the current number of items
+      const index = container.querySelectorAll(`.${itemClass}`).length;
 
-    // Update the names of the fields to include the index
-    const rgSelect = newResearchGroup.querySelector('select');
-    const rgCheckBoxContainer = newResearchGroup.querySelector('#is-primary-container');
-    
-    // Add the index to the name of each input field
-    rgSelect.setAttribute('name', `publication[research_group_publications_attributes][${index}][research_group]`);
-    rgCheckBoxContainer.innerHTML = `
-      <input type="hidden" name="publication[research_group_publications_attributes][${index}][is_primary]" value="0">
-      <input type="checkbox" name="publication[research_group_publications_attributes][${index}][is_primary]" value="1">
-      <label class="form-label">Primary?</label>
-    `;
+      // Update all form elements with the new index
+      const inputs = newItem.querySelectorAll('input, select');
+      inputs.forEach(input => {
+        const name = input.getAttribute('name');
+        if (name) {
+          input.setAttribute('name', name.replace(/\[\d*\]/, `[${index}]`));
+        }
+        
+        // Update ID if it exists
+        if (input.id && input.id.includes(`${itemClass}-value`)) {
+          input.id = `${itemClass}-value-${index}`;
+        }
+      });
+      
+      // Show delete button for the new item
+      const deleteButton = newItem.querySelector(`.${deleteButtonClass}`);
+      if (deleteButton) {
+        deleteButton.style.display = 'block';
+        
+        // Add event listener to the delete button
+        deleteButton.addEventListener('click', function() {
+          newItem.remove();
+        });
+      }
+      
+      container.appendChild(newItem);
+    }
 
-    researchGroupsContainer.appendChild(newResearchGroup);
-  });
+    // Generic function to recreate templates
+    function recreateTemplate(container, itemClass, deleteButtonClass, getOptionsFunc) {
+      const newTemplate = document.createElement('div');
+      newTemplate.className = `${itemClass} mb-3`;
+      
+      let templateHTML = '';
+      
+      if (itemClass === 'research-group') {
+        templateHTML = `
+          <div class="mb-3">
+            <label class="form-label">Research group</label>
+            <select class="form-select" name="publication[research_group_publications_attributes][0][research_group]">
+              ${getOptionsFunc()}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Is primary</label>
+            <input type="hidden" name="publication[research_group_publications_attributes][0][is_primary]" value="0">
+            <input type="checkbox" name="publication[research_group_publications_attributes][0][is_primary]" value="1">
+            <label>Primary?</label>
+          </div>`;
+      } else if (itemClass === 'identifier') {
+        templateHTML = `
+          <div class="mb-3">
+            <label class="form-label">Category</label>
+            <select class="form-select" name="publication[identifiers_attributes][0][category]">
+              ${getOptionsFunc()}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Value</label>
+            <input type="text" id="${itemClass}-value-0" class="form-control" name="publication[identifiers_attributes][0][value]">
+          </div>`;
+      } else if (itemClass === 'repository-link') {
+        templateHTML = `
+          <div class="mb-3">
+            <label class="form-label">Repository</label>
+            <select class="form-select" name="publication[repository_links_attributes][0][repository]">
+              ${getOptionsFunc()}
+            </select>
+          </div>
+          <div class="mb-3">
+            <label class="form-label">Value</label>
+            <input type="text" id="${itemClass}-value-0" class="form-control" name="publication[repository_links_attributes][0][value]">
+          </div>`;
+      }
+      
+      templateHTML += `<button type="button" class="btn btn-danger btn-sm ${deleteButtonClass}" style="display: block;">Delete</button>`;
+      newTemplate.innerHTML = templateHTML;
+      
+      container.appendChild(newTemplate);
+      
+      // Add event listener to the delete button
+      const deleteButton = newTemplate.querySelector(`.${deleteButtonClass}`);
+      deleteButton.addEventListener('click', function() {
+        newTemplate.remove();
+      });
+    }
 
-  document.getElementById('add-identifier').addEventListener('click', function() {
-    const identifiersContainer = document.getElementById('identifiers');
-    const newIdentifier = identifiersContainer.querySelector('.identifier').cloneNode(true);
-    
-    // Get the current number of research group blocks
-    const index = identifiersContainer.querySelectorAll('.identifier').length;
+    // Helper functions to get options for select elements
+    function getResearchGroupOptions() {
+      const select = document.querySelector('#research-groups select');
+      if (select) {
+        return select.innerHTML;
+      } else {
+        return `<%= raw ResearchGroupPublication.research_groups.map { |k, v| "<option value=\"#{k}\">#{v}</option>" }.join %>`;
+      }
+    }
 
-    // Update the names of the fields to include the index
-    const idSelect = newIdentifier.querySelector('select');
-    const idValue = document.querySelector('#identifier-value');
-    
-    // Add the index to the name of each input field
-    idSelect.setAttribute('name', `publication[identifiers_attributes][${index}][category]`);
-    idValue.setAttribute('name', `publication[identifiers_attributes][${index}][value]`)
+    function getIdentifierCategoryOptions() {
+      const select = document.querySelector('#identifiers select');
+      if (select) {
+        return select.innerHTML;
+      } else {
+        return `<%= raw Identifier.categories.map { |k, v| "<option value=\"#{k}\">#{k.humanize}</option>" }.join %>`;
+      }
+    }
 
-    identifiersContainer.appendChild(newIdentifier);
-  });
+    function getRepositoryOptions() {
+      const select = document.querySelector('#repository-links select');
+      if (select) {
+        return select.innerHTML;
+      } else {
+        return `<%= raw RepositoryLink.repositories.map { |k, v| "<option value=\"#{k}\">#{k.humanize}</option>" }.join %>`;
+      }
+    }
 
-  document.getElementById('add-repository-link').addEventListener('click', function() {
-    const repositoryLinksContainer = document.getElementById('repository-links');
-    const newRepositoryLink = repositoryLinksContainer.querySelector('.repository-link').cloneNode(true);
-    
-    // Get the current number of research group blocks
-    const index = repositoryLinksContainer.querySelectorAll('.repository-link').length;
+    // Add event listeners to buttons
+    const addResearchGroupBtn = document.getElementById('add-research-group');
+    if (addResearchGroupBtn) {
+      addResearchGroupBtn.addEventListener('click', function() {
+        addNestedItem('research-groups', 'research-group', 'delete-research-group', getResearchGroupOptions);
+      });
+    }
 
-    // Update the names of the fields to include the index
-    const liSelect = newRepositoryLink.querySelector('select');
-    const liValue = document.querySelector('#repository-link-value');
-    
-    // Add the index to the name of each input field
-    liSelect.setAttribute('name', `publication[repository_links_attributes][${index}][repository]`);
-    liValue.setAttribute('name', `publication[repository_links_attributes][${index}][value]`)
+    const addIdentifierBtn = document.getElementById('add-identifier');
+    if (addIdentifierBtn) {
+      addIdentifierBtn.addEventListener('click', function() {
+        addNestedItem('identifiers', 'identifier', 'delete-identifier', getIdentifierCategoryOptions);
+      });
+    }
 
-    repositoryLinksContainer.appendChild(newRepositoryLink);
-  });
+    const addRepositoryLinkBtn = document.getElementById('add-repository-link');
+    if (addRepositoryLinkBtn) {
+      addRepositoryLinkBtn.addEventListener('click', function() {
+        addNestedItem('repository-links', 'repository-link', 'delete-repository-link', getRepositoryOptions);
+      });
+    }
+
+    // Add event listeners to all initial delete buttons
+    document.querySelectorAll('.delete-research-group, .delete-identifier, .delete-repository-link').forEach(button => {
+      button.addEventListener('click', function() {
+        this.closest('.research-group, .identifier, .repository-link').remove();
+      });
+    });
+  })();
 </script>
 

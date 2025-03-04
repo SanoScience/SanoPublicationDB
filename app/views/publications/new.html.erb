@@ -17,7 +17,7 @@
     <%= form.text_field :title, class: 'form-control' %>
   </div>
 
-  <div class="mb-3">
+    <div class="mb-3">
     <%= form.label :category, class: 'form-label' %>
     <%= form.select :category, 
         Publication.categories.keys.map { |key| [key.humanize, key] }, 
@@ -95,6 +95,52 @@
 
   <div class="mb-3">
     <%= button_tag 'Add Repository Link', type: 'button', id: 'add-repository-link', class: 'btn btn-primary' %>
+  </div>
+
+  <hr>
+
+  <h3> Conference Section </h3>
+  <div class="mb-3">
+    <label class="form-label">Conference</label>
+    <div class="d-flex">
+      <div class="flex-grow-1 me-2">
+        <%= form.select :conference_id, 
+            Conference.all.map { |c| [c.name, c.id] }, 
+            { include_blank: "Select a conference" }, 
+            class: 'form-select', id: 'conference-select' %>
+      </div>
+      <button type="button" class="btn btn-primary" id="new-conference-btn">Add New Conference</button>
+    </div>
+  </div>
+
+  <div id="new-conference-fields" style="display: none;">
+    <div class="card mb-3 p-3">
+      <h4>New Conference Details</h4>
+      
+      <%= form.fields_for :conference, Conference.new do |conf_form| %>
+        <div class="mb-3">
+          <%= conf_form.label :name, "Conference Name", class: 'form-label' %>
+          <%= conf_form.text_field :name, class: 'form-control', id: 'new-conference-name', required: true %>
+        </div>
+        
+        <div class="mb-3">
+          <%= conf_form.label :core, "CORE Ranking", class: 'form-label' %>
+          <%= conf_form.text_field :core, class: 'form-control' %>
+        </div>
+        
+        <div class="mb-3">
+          <%= conf_form.label :start_date, "Start Date", class: 'form-label' %>
+          <%= conf_form.date_field :start_date, class: 'form-control', required: true %>
+        </div>
+        
+        <div class="mb-3">
+          <%= conf_form.label :end_date, "End Date", class: 'form-label' %>
+          <%= conf_form.date_field :end_date, class: 'form-control', required: true %>
+        </div>
+      <% end %>
+      
+      <button type="button" class="btn btn-secondary" id="cancel-new-conference-btn">Cancel</button>
+    </div>
   </div>
 
   <hr>
@@ -202,7 +248,6 @@
 <%= link_to 'Back', publications_path, class: 'btn btn-secondary' %>
 
 <script>
-  // Function to initialize all the form functionality
   function initializePublicationForm() {
     // Skip if already initialized
     if (window.publicationFormInitialized) return;
@@ -443,6 +488,63 @@
       
       // Trigger change event on page load to set initial state
       oaCategorySelect.dispatchEvent(new Event('change'));
+    }
+
+    // Conference functionality
+    const newConferenceBtn = document.getElementById('new-conference-btn');
+    const conferenceSelect = document.getElementById('conference-select');
+    const newConferenceFields = document.getElementById('new-conference-fields');
+    const cancelNewConferenceBtn = document.getElementById('cancel-new-conference-btn');
+    const newConferenceName = document.getElementById('new-conference-name');
+
+    if (newConferenceBtn) {
+      newConferenceBtn.addEventListener('click', function() {
+        console.log('New conference button clicked');
+        if (newConferenceFields) {
+          newConferenceFields.style.display = 'block';
+        }
+        if (conferenceSelect) {
+          conferenceSelect.disabled = true;
+        }
+        newConferenceBtn.disabled = true;
+        
+        // Add a hidden field to indicate we're creating a new conference
+        const hiddenField = document.createElement('input');
+        hiddenField.type = 'hidden';
+        hiddenField.name = 'create_new_conference';
+        hiddenField.value = 'true';
+        hiddenField.id = 'create-new-conference-flag';
+        document.querySelector('form').appendChild(hiddenField);
+      });
+    }
+    
+    if (cancelNewConferenceBtn) {
+      cancelNewConferenceBtn.addEventListener('click', function() {
+        console.log('Cancel new conference button clicked');
+        if (newConferenceFields) {
+          newConferenceFields.style.display = 'none';
+        }
+        if (conferenceSelect) {
+          conferenceSelect.disabled = false;
+        }
+        if (newConferenceBtn) {
+          newConferenceBtn.disabled = false;
+        }
+        
+        // Remove the hidden field
+        const hiddenField = document.getElementById('create-new-conference-flag');
+        if (hiddenField) {
+          hiddenField.remove();
+        }
+        
+        // Clear the new conference fields
+        if (newConferenceFields) {
+          const inputs = newConferenceFields.querySelectorAll('input[type="text"], input[type="date"]');
+          inputs.forEach(input => {
+            input.value = '';
+          });
+        }
+      });
     }
   }
 

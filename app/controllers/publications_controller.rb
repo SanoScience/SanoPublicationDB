@@ -10,6 +10,11 @@ class PublicationsController < ApplicationController
   def create
     @publication = Publication.new(publication_params)
     
+    if params[:create_new_conference].present?
+      conference = Conference.create(conference_params)
+      @publication.conference = conference
+    end
+    
     if params[:create_kpi_extension].present?
       @publication.build_kpi_reporting_extension(kpi_reporting_extension_params)
     end
@@ -46,10 +51,16 @@ class PublicationsController < ApplicationController
 
   def publication_params
     params.require(:publication).permit(
-      :title, :category, :status, :author_list, :publication_date, :link,
-      research_group_publications_attributes: [:research_group, :is_primary],
-      identifiers_attributes: [:category, :value],
-      repository_links_attributes: [:repository, :value]
+      :title, :category, :status, :author_list, :publication_date, :link, :conference_id,
+      research_group_publications_attributes: [:id, :research_group, :is_primary, :_destroy],
+      identifiers_attributes: [:id, :category, :value, :_destroy],
+      repository_links_attributes: [:id, :repository, :value, :_destroy]
+    )
+  end
+
+  def conference_params
+    params.require(:publication).require(:conference).permit(
+      :name, :core, :start_date, :end_date
     )
   end
 

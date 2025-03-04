@@ -145,6 +145,57 @@
 
   <hr>
 
+  <h3> Journal Issue Section </h3>
+  <div class="mb-3">
+    <label class="form-label">Journal Issue</label>
+    <div class="d-flex">
+      <div class="flex-grow-1 me-2">
+        <%= form.select :journal_issue_id, 
+            JournalIssue.all.map { |j| [j.title, j.id] }, 
+            { include_blank: "Select a journal issue" }, 
+            class: 'form-select', id: 'journal-issue-select' %>
+      </div>
+      <button type="button" class="btn btn-primary" id="new-journal-issue-btn">Add New Journal Issue</button>
+    </div>
+  </div>
+
+  <div id="new-journal-issue-fields" style="display: none;">
+    <div class="card mb-3 p-3">
+      <h4>New Journal Issue Details</h4>
+      
+      <%= form.fields_for :journal_issue, JournalIssue.new do |ji_form| %>
+        <div class="mb-3">
+          <%= ji_form.label :title, "Journal Issue Title", class: 'form-label' %>
+          <%= ji_form.text_field :title, class: 'form-control', id: 'new-journal-issue-title', required: true %>
+        </div>
+        
+        <div class="mb-3">
+          <%= ji_form.label :journal_num, "Journal Number", class: 'form-label' %>
+          <%= ji_form.text_field :journal_num, class: 'form-control' %>
+        </div>
+        
+        <div class="mb-3">
+          <%= ji_form.label :publisher, "Publisher", class: 'form-label' %>
+          <%= ji_form.text_field :publisher, class: 'form-control' %>
+        </div>
+        
+        <div class="mb-3">
+          <%= ji_form.label :volume, "Volume", class: 'form-label' %>
+          <%= ji_form.number_field :volume, class: 'form-control' %>
+        </div>
+        
+        <div class="mb-3">
+          <%= ji_form.label :impact_factor, "Impact Factor", class: 'form-label' %>
+          <%= ji_form.number_field :impact_factor, class: 'form-control' %>
+        </div>
+      <% end %>
+      
+      <button type="button" class="btn btn-secondary" id="cancel-new-journal-issue-btn">Cancel</button>
+    </div>
+  </div>
+
+  <hr>
+
   <h3>KPI Reporting Extension</h3>
   <div class="mb-3">
     <div class="form-check form-switch">
@@ -540,6 +591,62 @@
         // Clear the new conference fields
         if (newConferenceFields) {
           const inputs = newConferenceFields.querySelectorAll('input[type="text"], input[type="date"]');
+          inputs.forEach(input => {
+            input.value = '';
+          });
+        }
+      });
+    }
+    
+    // Journal Issue functionality
+    const journalIssueSelect = document.getElementById('journal-issue-select');
+    const newJournalIssueBtn = document.getElementById('new-journal-issue-btn');
+    const newJournalIssueFields = document.getElementById('new-journal-issue-fields');
+    const cancelNewJournalIssueBtn = document.getElementById('cancel-new-journal-issue-btn');
+    
+    if (newJournalIssueBtn) {
+      newJournalIssueBtn.addEventListener('click', function() {
+        console.log('New journal issue button clicked');
+        if (newJournalIssueFields) {
+          newJournalIssueFields.style.display = 'block';
+        }
+        if (journalIssueSelect) {
+          journalIssueSelect.disabled = true;
+        }
+        newJournalIssueBtn.disabled = true;
+        
+        // Add a hidden field to indicate we're creating a new journal issue
+        const hiddenField = document.createElement('input');
+        hiddenField.type = 'hidden';
+        hiddenField.name = 'create_new_journal_issue';
+        hiddenField.value = 'true';
+        hiddenField.id = 'create-new-journal-issue-flag';
+        document.querySelector('form').appendChild(hiddenField);
+      });
+    }
+    
+    if (cancelNewJournalIssueBtn) {
+      cancelNewJournalIssueBtn.addEventListener('click', function() {
+        console.log('Cancel new journal issue button clicked');
+        if (newJournalIssueFields) {
+          newJournalIssueFields.style.display = 'none';
+        }
+        if (journalIssueSelect) {
+          journalIssueSelect.disabled = false;
+        }
+        if (newJournalIssueBtn) {
+          newJournalIssueBtn.disabled = false;
+        }
+        
+        // Remove the hidden field
+        const hiddenField = document.getElementById('create-new-journal-issue-flag');
+        if (hiddenField) {
+          hiddenField.remove();
+        }
+        
+        // Clear the new journal issue fields
+        if (newJournalIssueFields) {
+          const inputs = newJournalIssueFields.querySelectorAll('input[type="text"], input[type="number"]');
           inputs.forEach(input => {
             input.value = '';
           });

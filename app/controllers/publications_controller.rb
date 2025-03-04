@@ -14,6 +14,11 @@ class PublicationsController < ApplicationController
       conference = Conference.create(conference_params)
       @publication.conference = conference
     end
+
+    if params[:create_new_journal_issue].present?
+      journal_issue = JournalIssue.create(journal_issue_params)
+      @publication.journal_issue = journal_issue
+    end
     
     if params[:create_kpi_extension].present?
       @publication.build_kpi_reporting_extension(kpi_reporting_extension_params)
@@ -51,7 +56,7 @@ class PublicationsController < ApplicationController
 
   def publication_params
     params.require(:publication).permit(
-      :title, :category, :status, :author_list, :publication_date, :link, :conference_id,
+      :title, :category, :status, :author_list, :publication_date, :link, :conference_id, :journal_issue_id,
       research_group_publications_attributes: [:id, :research_group, :is_primary, :_destroy],
       identifiers_attributes: [:id, :category, :value, :_destroy],
       repository_links_attributes: [:id, :repository, :value, :_destroy]
@@ -61,6 +66,12 @@ class PublicationsController < ApplicationController
   def conference_params
     params.require(:publication).require(:conference).permit(
       :name, :core, :start_date, :end_date
+    )
+  end
+
+  def journal_issue_params
+    params.require(:publication).require(:journal_issue).permit(
+      :title, :journal_num, :publisher, :volume, :impact_factor
     )
   end
 

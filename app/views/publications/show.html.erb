@@ -65,16 +65,16 @@
     <h2>Journal Issue</h2>
     <ul>
         <p><strong>Title:</strong> <%= @publication.journal_issue.title %></p>
-        <% if @publication.conference.publisher %>
+        <% if @publication.journal_issue.publisher %>
             <p><strong>Published by:</strong> <%= @publication.journal_issue.publisher %></p>
         <% end %>
-        <% if @publication.conference.journal_num %>
+        <% if @publication.journal_issue.journal_num %>
             <p><strong>Number:</strong> <%= @publication.journal_issue.journal_num %></p>
         <% end %>
-        <% if @publication.conference.volume %>
+        <% if @publication.journal_issue.volume %>
             <p><strong>Volume:</strong> <%= @publication.journal_issue.volume %></p>
         <% end %>
-        <% if @publication.conference.impact_factor %>
+        <% if @publication.journal_issue.impact_factor %>
             <p><strong>Impact factor:</strong> <%= @publication.journal_issue.impact_factor %></p>
         <% end %>
     </ul>

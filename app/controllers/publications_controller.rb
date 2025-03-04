@@ -10,9 +10,12 @@ class PublicationsController < ApplicationController
   def create
     @publication = Publication.new(publication_params)
     
-    # Only build and save KPI extension if the toggle is checked
     if params[:create_kpi_extension].present?
       @publication.build_kpi_reporting_extension(kpi_reporting_extension_params)
+    end
+    
+    if params[:create_open_access_extension].present?
+      @publication.build_open_access_extension(open_access_extension_params)
     end
 
     if @publication.save
@@ -62,6 +65,14 @@ class PublicationsController < ApplicationController
       :is_methodology_application,
       :is_polish_med_researcher_involved,
       :subsidy_points
+    )
+  end
+
+  def open_access_extension_params
+    params.require(:publication).require(:open_access_extension).permit(
+      :category,
+      :gold_oa_charges,
+      :gold_oa_funding_source
     )
   end
 end

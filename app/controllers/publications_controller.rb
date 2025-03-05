@@ -56,9 +56,51 @@ class PublicationsController < ApplicationController
   end
 
   def edit
+    @publication = Publication.find(params[:id])
   end
 
   def update
+    @publication = Publication.find(params[:id])
+    
+    if publication_params[:conference_id].present? && publication_params[:conference_id] != "0"
+      conference = Conference.find(publication_params[:conference_id])
+      @publication.conference = conference
+    else
+      conference = Conference.new(publication_params[:conference_attributes])
+      if conference.attributes.present? && conference.attributes != @publication.conference.attributes
+        @publication.conference.update(conference.attributes)
+        if !conference.save
+          conference.errors.full_messages.each do |message|
+            @publication.errors.add(:base, "Conference error: #{message}")
+          end
+          render :edit, status: :unprocessable_entity
+          return
+        end
+      end
+    end
+
+    if publication_params[:journal_issue_id].present? && publication_params[:journal_issue_id] != "0"
+      journal_issue = JournalIssue.find(publication_params[:journal_issue_id])
+      @publication.journal_issue = journal_issue
+    else
+      journal_issue = JournalIssue.new(publication_params[:journal_issue_attributes])
+      if journal_issue.attributes.present? && journal_issue.attributes != @publication.journal_issue.attributes
+        @publication.journal_issue.update(journal_issue.attributes)
+        if !journal_issue.save
+          journal_issue.errors.full_messages.each do |message|
+            @publication.errors.add(:base, "Journal issue error: #{message}")
+          end
+          render :edit, status: :unprocessable_entity
+          return
+        end
+      end
+    end
+
+    if @publication.update(publication_params)
+      redirect_to @publication, notice: 'Publication was successfully updated.'
+    else
+      render :edit, status: :unprocessable_entity
+    end
   end
 
   def destroy

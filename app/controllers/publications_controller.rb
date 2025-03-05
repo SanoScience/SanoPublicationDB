@@ -9,23 +9,39 @@ class PublicationsController < ApplicationController
 
   def create
     @publication = Publication.new(publication_params)
-    
-    if params[:create_new_conference].present?
-      conference = Conference.create(conference_params)
+
+    if publication_params[:conference_attributes][:name]&.present?
+      conference = Conference.new(publication_params[:conference_attributes])
+      
+      if conference.save
+        @publication.conference = conference
+      else
+        conference.errors.full_messages.each do |message|
+          @publication.errors.add(:base, "Conference error: #{message}")
+        end
+        render :new, status: :unprocessable_entity
+        return
+      end
+    elsif publication_params[:conference_id].present? && publication_params[:conference_id] != "0"
+      conference = Conference.find(publication_params[:conference_id])
       @publication.conference = conference
     end
 
-    if params[:create_new_journal_issue].present?
-      journal_issue = JournalIssue.create(journal_issue_params)
+    if publication_params[:journal_issue_attributes][:title]&.present?
+      journal_issue = JournalIssue.new(publication_params[:journal_issue_attributes])
+      
+      if journal_issue.save
+        @publication.journal_issue = journal_issue
+      else
+        journal_issue.errors.full_messages.each do |message|
+          @publication.errors.add(:base, "Journal issue error: #{message}")
+        end
+        render :new, status: :unprocessable_entity
+        return
+      end
+    elsif publication_params[:journal_issue_id].present? && publication_params[:journal_issue_id] != "0"
+      journal_issue = JournalIssue.find(publication_params[:journal_issue_id])
       @publication.journal_issue = journal_issue
-    end
-    
-    if params[:create_kpi_extension].present?
-      @publication.build_kpi_reporting_extension(kpi_reporting_extension_params)
-    end
-    
-    if params[:create_open_access_extension].present?
-      @publication.build_open_access_extension(open_access_extension_params)
     end
 
     if @publication.save
@@ -56,45 +72,15 @@ class PublicationsController < ApplicationController
 
   def publication_params
     params.require(:publication).permit(
-      :title, :category, :status, :author_list, :publication_date, :link, :conference_id, :journal_issue_id,
+      :title, :category, :status, :author_list, :publication_date, :link,
+      :conference_id, :journal_issue_id,
       research_group_publications_attributes: [:id, :research_group, :is_primary, :_destroy],
       identifiers_attributes: [:id, :category, :value, :_destroy],
-      repository_links_attributes: [:id, :repository, :value, :_destroy]
-    )
-  end
-
-  def conference_params
-    params.require(:publication).require(:conference).permit(
-      :name, :core, :start_date, :end_date
-    )
-  end
-
-  def journal_issue_params
-    params.require(:publication).require(:journal_issue).permit(
-      :title, :journal_num, :publisher, :volume, :impact_factor
-    )
-  end
-
-  def kpi_reporting_extension_params
-    params.require(:publication).require(:kpi_reporting_extension).permit(
-      :teaming_reporting_period,
-      :invoice_number,
-      :pbn,
-      :jcr,
-      :is_added_ft_portal,
-      :is_checked,
-      :is_new_method_technique,
-      :is_methodology_application,
-      :is_polish_med_researcher_involved,
-      :subsidy_points
-    )
-  end
-
-  def open_access_extension_params
-    params.require(:publication).require(:open_access_extension).permit(
-      :category,
-      :gold_oa_charges,
-      :gold_oa_funding_source
+      repository_links_attributes: [:id, :repository, :value, :_destroy],
+      kpi_reporting_extension_attributes: [:id, :teaming_reporting_period, :invoice_number, :pbn, :jcr, :is_added_ft_portal, :is_checked, :is_new_method_technique, :is_methodology_application, :is_polish_med_researcher_involved, :subsidy_points, :_destroy],
+      open_access_extension_attributes: [:id, :category, :gold_oa_charges, :gold_oa_funding_source, :_destroy],
+      conference_attributes: [:id, :name, :core, :start_date, :end_date, :_destroy],
+      journal_issue_attributes: [:id, :title, :journal_num, :publisher, :volume, :impact_factor, :_destroy]
     )
   end
 end

@@ -7,9 +7,13 @@ class Publication < ApplicationRecord
     has_one :kpi_reporting_extension, dependent: :destroy
     has_one :open_access_extension, dependent: :destroy
 
-    accepts_nested_attributes_for :research_group_publications, allow_destroy: true
-    accepts_nested_attributes_for :identifiers, allow_destroy: true
-    accepts_nested_attributes_for :repository_links, allow_destroy: true
+    accepts_nested_attributes_for :research_group_publications, allow_destroy: true, reject_if: :all_blank
+    accepts_nested_attributes_for :identifiers, allow_destroy: true, reject_if: :all_blank
+    accepts_nested_attributes_for :repository_links, allow_destroy: true, reject_if: :all_blank
+    accepts_nested_attributes_for :kpi_reporting_extension, allow_destroy: true, reject_if: :all_blank
+    accepts_nested_attributes_for :open_access_extension, allow_destroy: true, reject_if: :all_blank
+    accepts_nested_attributes_for :conference, allow_destroy: true, reject_if: :all_blank
+    accepts_nested_attributes_for :journal_issue, allow_destroy: true, reject_if: :all_blank
 
     enum :category, {
       journal_article: 0,

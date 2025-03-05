@@ -135,7 +135,7 @@
         
         <div class="mb-3">
           <%= conf_form.label :end_date, "End Date", class: 'form-label' %>
-          <%= conf_form.date_field :end_date, class: 'form-control', required: true %>
+          <%= conf_form.date_field :end_date, class: 'form-control', required: 'true' %>
         </div>
       <% end %>
       
@@ -208,52 +208,52 @@
     <%= form.fields_for :kpi_reporting_extension, @publication.kpi_reporting_extension || @publication.build_kpi_reporting_extension do |kpi_form| %>
       <div class="mb-3">
         <%= kpi_form.label :teaming_reporting_period, "Teaming Reporting Period", class: 'form-label' %>
-        <%= kpi_form.number_field :teaming_reporting_period, class: 'form-control' %>
+        <%= kpi_form.number_field :teaming_reporting_period, class: 'form-control', name: 'publication[kpi_reporting_extension_attributes][teaming_reporting_period]' %>
       </div>
       
       <div class="mb-3">
         <%= kpi_form.label :invoice_number, "Invoice Number", class: 'form-label' %>
-        <%= kpi_form.number_field :invoice_number, class: 'form-control' %>
+        <%= kpi_form.number_field :invoice_number, class: 'form-control', name: 'publication[kpi_reporting_extension_attributes][invoice_number]' %>
       </div>
       
       <div class="mb-3 form-check">
-        <%= kpi_form.check_box :pbn, class: 'form-check-input' %>
+        <%= kpi_form.check_box :pbn, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][pbn]' %>
         <%= kpi_form.label :pbn, "PBN", class: 'form-check-label' %>
       </div>
       
       <div class="mb-3 form-check">
-        <%= kpi_form.check_box :jcr, class: 'form-check-input' %>
+        <%= kpi_form.check_box :jcr, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][jcr]' %>
         <%= kpi_form.label :jcr, "JCR", class: 'form-check-label' %>
       </div>
       
       <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_added_ft_portal, class: 'form-check-input' %>
+        <%= kpi_form.check_box :is_added_ft_portal, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_added_ft_portal]' %>
         <%= kpi_form.label :is_added_ft_portal, "Added to FT Portal", class: 'form-check-label' %>
       </div>
       
       <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_checked, class: 'form-check-input' %>
+        <%= kpi_form.check_box :is_checked, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_checked]' %>
         <%= kpi_form.label :is_checked, "Checked", class: 'form-check-label' %>
       </div>
       
       <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_new_method_technique, class: 'form-check-input' %>
+        <%= kpi_form.check_box :is_new_method_technique, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_new_method_technique]' %>
         <%= kpi_form.label :is_new_method_technique, "New Method/Technique", class: 'form-check-label' %>
       </div>
       
       <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_methodology_application, class: 'form-check-input' %>
+        <%= kpi_form.check_box :is_methodology_application, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_methodology_application]' %>
         <%= kpi_form.label :is_methodology_application, "Methodology Application", class: 'form-check-label' %>
       </div>
       
       <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_polish_med_researcher_involved, class: 'form-check-input' %>
+        <%= kpi_form.check_box :is_polish_med_researcher_involved, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_polish_med_researcher_involved]' %>
         <%= kpi_form.label :is_polish_med_researcher_involved, "Polish Medical Researcher Involved", class: 'form-check-label' %>
       </div>
       
       <div class="mb-3">
         <%= kpi_form.label :subsidy_points, "Subsidy Points", class: 'form-label' %>
-        <%= kpi_form.number_field :subsidy_points, class: 'form-control' %>
+        <%= kpi_form.number_field :subsidy_points, class: 'form-control', name: 'publication[kpi_reporting_extension_attributes][subsidy_points]' %>
       </div>
     <% end %>
   </div>
@@ -269,22 +269,22 @@
   </div>
 
   <div id="open-access-extension-fields" style="display: none;">
-    <%= form.fields_for :open_access_extension, @publication.open_access_extension || @publication.build_open_access_extension do |oa_form| %>
+    <%= form.fields_for :open_access_extension do |oa_form| %>
       <div class="mb-3">
         <%= oa_form.label :category, "Category", class: 'form-label' %>
         <%= oa_form.select :category, 
             OpenAccessExtension.categories.keys.map { |key| [key.humanize, key] }, 
-            {}, class: 'form-select', id: 'oa-category-select' %>
+            {}, class: 'form-select', id: 'oa-category-select', name: 'publication[open_access_extension_attributes][category]' %>
       </div>
       
       <div class="mb-3 gold-oa-field" style="display: none;">
         <%= oa_form.label :gold_oa_charges, "Gold OA Charges (PLN)", class: 'form-label' %>
-        <%= oa_form.number_field :gold_oa_charges, class: 'form-control' %>
+        <%= oa_form.number_field :gold_oa_charges, class: 'form-control', name: 'publication[open_access_extension_attributes][gold_oa_charges]' %>
       </div>
       
       <div class="mb-3 gold-oa-field" style="display: none;">
         <%= oa_form.label :gold_oa_funding_source, "Gold OA Funding Source", class: 'form-label' %>
-        <%= oa_form.text_field :gold_oa_funding_source, class: 'form-control' %>
+        <%= oa_form.text_field :gold_oa_funding_source, class: 'form-control', name: 'publication[open_access_extension_attributes][gold_oa_funding_source]' %>
       </div>
     <% end %>
   </div>
@@ -303,6 +303,10 @@
     // Skip if already initialized
     if (window.publicationFormInitialized) return;
     window.publicationFormInitialized = true;
+
+    document.querySelectorAll('[id*="fields"]').forEach(element => {
+      clearInputFields(element);
+    });
     
     // Generic function to handle adding new nested items
     function addNestedItem(containerId, itemClass, deleteButtonClass, getOptionsFunc) {
@@ -355,21 +359,7 @@
       
       let templateHTML = '';
       
-      if (itemClass === 'research-group') {
-        templateHTML = `
-          <div class="mb-3">
-            <label class="form-label">Research group</label>
-            <select class="form-select" name="publication[research_group_publications_attributes][0][research_group]">
-              ${getOptionsFunc()}
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Is primary</label>
-            <input type="hidden" name="publication[research_group_publications_attributes][0][is_primary]" value="0">
-            <input type="checkbox" name="publication[research_group_publications_attributes][0][is_primary]" value="1">
-            <label>Primary?</label>
-          </div>`;
-      } else if (itemClass === 'identifier') {
+      if (itemClass === 'identifier') {
         templateHTML = `
           <div class="mb-3">
             <label class="form-label">Category</label>
@@ -435,6 +425,18 @@
       }
     }
 
+    // Helper function to clear input fields
+    function clearInputFields(fields) {
+      inputs = fields.querySelectorAll('input, select');
+      inputs.forEach(input => {
+        if (input.type === 'checkbox') {
+          input.checked = false;
+        } else {
+          input.value = '';
+        }
+      });
+    }
+
     // Add event listeners to buttons
     const addResearchGroupBtn = document.getElementById('add-research-group');
     if (addResearchGroupBtn) {
@@ -474,14 +476,7 @@
           
           // Clear fields when toggle is unchecked
           if (!this.checked) {
-            const kpiInputs = kpiFields.querySelectorAll('input[type="text"], input[type="number"], input[type="checkbox"]');
-            kpiInputs.forEach(input => {
-              if (input.type === 'checkbox') {
-                input.checked = false;
-              } else {
-                input.value = '';
-              }
-            });
+            clearInputFields(kpiFields);
           }
         }
       });
@@ -497,10 +492,7 @@
           
           // Clear fields when toggle is unchecked
           if (!this.checked) {
-            const oaInputs = oaFields.querySelectorAll('input[type="text"], input[type="number"], select');
-            oaInputs.forEach(input => {
-              input.value = '';
-            });
+            clearInputFields(oaFields);
             
             // Hide gold OA fields
             const goldOaFields = document.querySelectorAll('.gold-oa-field');
@@ -529,10 +521,7 @@
             field.style.display = 'none';
             
             // Clear inputs within the field
-            const inputs = field.querySelectorAll('input');
-            inputs.forEach(input => {
-              input.value = '';
-            });
+            clearInputFields(field);
           });
         }
       });
@@ -558,14 +547,6 @@
           conferenceSelect.disabled = true;
         }
         newConferenceBtn.disabled = true;
-        
-        // Add a hidden field to indicate we're creating a new conference
-        const hiddenField = document.createElement('input');
-        hiddenField.type = 'hidden';
-        hiddenField.name = 'create_new_conference';
-        hiddenField.value = 'true';
-        hiddenField.id = 'create-new-conference-flag';
-        document.querySelector('form').appendChild(hiddenField);
       });
     }
     
@@ -582,18 +563,9 @@
           newConferenceBtn.disabled = false;
         }
         
-        // Remove the hidden field
-        const hiddenField = document.getElementById('create-new-conference-flag');
-        if (hiddenField) {
-          hiddenField.remove();
-        }
-        
         // Clear the new conference fields
         if (newConferenceFields) {
-          const inputs = newConferenceFields.querySelectorAll('input[type="text"], input[type="date"]');
-          inputs.forEach(input => {
-            input.value = '';
-          });
+          clearInputFields(newConferenceFields);
         }
       });
     }
@@ -614,14 +586,6 @@
           journalIssueSelect.disabled = true;
         }
         newJournalIssueBtn.disabled = true;
-        
-        // Add a hidden field to indicate we're creating a new journal issue
-        const hiddenField = document.createElement('input');
-        hiddenField.type = 'hidden';
-        hiddenField.name = 'create_new_journal_issue';
-        hiddenField.value = 'true';
-        hiddenField.id = 'create-new-journal-issue-flag';
-        document.querySelector('form').appendChild(hiddenField);
       });
     }
     
@@ -637,19 +601,10 @@
         if (newJournalIssueBtn) {
           newJournalIssueBtn.disabled = false;
         }
-        
-        // Remove the hidden field
-        const hiddenField = document.getElementById('create-new-journal-issue-flag');
-        if (hiddenField) {
-          hiddenField.remove();
-        }
-        
+
         // Clear the new journal issue fields
         if (newJournalIssueFields) {
-          const inputs = newJournalIssueFields.querySelectorAll('input[type="text"], input[type="number"]');
-          inputs.forEach(input => {
-            input.value = '';
-          });
+          clearInputFields(newJournalIssueFields);
         }
       });
     }

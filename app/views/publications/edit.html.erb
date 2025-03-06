@@ -152,33 +152,37 @@
     </div>
   </div>
 
-  <div id="new-conference-fields" style="display: none;">
-    <div class="card mb-3 p-3">
-      <h4>New Conference Details</h4>
+  <div id="conference-fields">
+    <div class="card mb-3 p-3" style="<%= @publication.conference || params[:new_conference] ? '' : 'display: none;' %>">
+      <h4>Conference Details</h4>
       
-      <%= form.fields_for :conference, Conference.new do |conf_form| %>
-        <div class="mb-3">
-          <%= conf_form.label :name, "Conference Name", class: 'form-label' %>
-          <%= conf_form.text_field :name, class: 'form-control', id: 'new-conference-name', required: true %>
-        </div>
-        
-        <div class="mb-3">
-          <%= conf_form.label :core, "CORE Ranking", class: 'form-label' %>
-          <%= conf_form.text_field :core, class: 'form-control' %>
-        </div>
-        
-        <div class="mb-3">
-          <%= conf_form.label :start_date, "Start Date", class: 'form-label' %>
-          <%= conf_form.date_field :start_date, class: 'form-control', required: true %>
-        </div>
-        
-        <div class="mb-3">
-          <%= conf_form.label :end_date, "End Date", class: 'form-label' %>
-          <%= conf_form.date_field :end_date, class: 'form-control', required: 'true' %>
-        </div>
-      <% end %>
+      <div id="conference-form-fields" style="<%= @publication.conference || params[:new_conference] ? '' : 'display: none;' %>">
+        <%= form.fields_for :conference, @publication.conference || Conference.new do |conf_form| %>
+          <div class="mb-3">
+            <%= conf_form.label :name, "Conference Name", class: 'form-label' %>
+            <%= conf_form.text_field :name, class: 'form-control', id: 'new-conference-name', required: true %>
+          </div>
+          
+          <div class="mb-3">
+            <%= conf_form.label :core, "CORE Ranking", class: 'form-label' %>
+            <%= conf_form.text_field :core, class: 'form-control', id: 'conference-core' %>
+          </div>
+          
+          <div class="mb-3">
+            <%= conf_form.label :start_date, "Start Date", class: 'form-label' %>
+            <%= conf_form.date_field :start_date, class: 'form-control', id: 'conference-start-date', required: true %>
+          </div>
+          
+          <div class="mb-3">
+            <%= conf_form.label :end_date, "End Date", class: 'form-label' %>
+            <%= conf_form.date_field :end_date, class: 'form-control', id: 'conference-end-date', required: true %>
+          </div>
+          
+          <%= conf_form.hidden_field :id, id: 'conference-id-field' %>
+        <% end %>
+      </div>
       
-      <button type="button" class="btn btn-secondary" id="cancel-new-conference-btn">Cancel</button>
+      <button type="button" class="btn btn-secondary" id="cancel-new-conference-btn" style="<%= params[:new_conference] ? '' : 'display: none;' %>">Cancel</button>
     </div>
   </div>
 
@@ -190,7 +194,7 @@
     <div class="d-flex">
       <div class="flex-grow-1 me-2">
         <%= form.select :journal_issue_id, 
-            JournalIssue.all.map { |j| [j.title, j.id] }, 
+            JournalIssue.all.map { |ji| [ji.title, ji.id] }, 
             { include_blank: "Select a journal issue" }, 
             class: 'form-select', id: 'journal-issue-select' %>
       </div>
@@ -198,38 +202,42 @@
     </div>
   </div>
 
-  <div id="new-journal-issue-fields" style="display: none;">
-    <div class="card mb-3 p-3">
-      <h4>New Journal Issue Details</h4>
+  <div id="journal-issue-fields">
+    <div class="card mb-3 p-3" style="<%= @publication.journal_issue || params[:new_journal_issue] ? '' : 'display: none;' %>">
+      <h4>Journal Issue Details</h4>
       
-      <%= form.fields_for :journal_issue, JournalIssue.new do |ji_form| %>
-        <div class="mb-3">
-          <%= ji_form.label :title, "Journal Issue Title", class: 'form-label' %>
-          <%= ji_form.text_field :title, class: 'form-control', id: 'new-journal-issue-title', required: true %>
-        </div>
-        
-        <div class="mb-3">
-          <%= ji_form.label :journal_num, "Journal Number", class: 'form-label' %>
-          <%= ji_form.text_field :journal_num, class: 'form-control' %>
-        </div>
-        
-        <div class="mb-3">
-          <%= ji_form.label :publisher, "Publisher", class: 'form-label' %>
-          <%= ji_form.text_field :publisher, class: 'form-control' %>
-        </div>
-        
-        <div class="mb-3">
-          <%= ji_form.label :volume, "Volume", class: 'form-label' %>
-          <%= ji_form.number_field :volume, class: 'form-control' %>
-        </div>
-        
-        <div class="mb-3">
-          <%= ji_form.label :impact_factor, "Impact Factor", class: 'form-label' %>
-          <%= ji_form.number_field :impact_factor, class: 'form-control' %>
-        </div>
-      <% end %>
+      <div id="journal-issue-form-fields" style="<%= @publication.journal_issue || params[:new_journal_issue] ? '' : 'display: none;' %>">
+        <%= form.fields_for :journal_issue, @publication.journal_issue || JournalIssue.new do |ji_form| %>
+          <div class="mb-3">
+            <%= ji_form.label :title, "Journal Issue Title", class: 'form-label' %>
+            <%= ji_form.text_field :title, class: 'form-control', id: 'new-journal-issue-title', required: true %>
+          </div>
+          
+          <div class="mb-3">
+            <%= ji_form.label :journal_num, "Journal Number", class: 'form-label' %>
+            <%= ji_form.text_field :journal_num, class: 'form-control', id: 'journal-issue-num' %>
+          </div>
+          
+          <div class="mb-3">
+            <%= ji_form.label :publisher, "Publisher", class: 'form-label' %>
+            <%= ji_form.text_field :publisher, class: 'form-control', id: 'journal-issue-publisher' %>
+          </div>
+          
+          <div class="mb-3">
+            <%= ji_form.label :volume, "Volume", class: 'form-label' %>
+            <%= ji_form.text_field :volume, class: 'form-control', id: 'journal-issue-volume' %>
+          </div>
+          
+          <div class="mb-3">
+            <%= ji_form.label :impact_factor, "Impact Factor", class: 'form-label' %>
+            <%= ji_form.text_field :impact_factor, class: 'form-control', id: 'journal-issue-impact-factor' %>
+          </div>
+          
+          <%= ji_form.hidden_field :id, id: 'journal-issue-id-field' %>
+        <% end %>
+      </div>
       
-      <button type="button" class="btn btn-secondary" id="cancel-new-journal-issue-btn">Cancel</button>
+      <button type="button" class="btn btn-secondary" id="cancel-new-journal-issue-btn" style="<%= params[:new_journal_issue] ? '' : 'display: none;' %>">Cancel</button>
     </div>
   </div>
 
@@ -331,15 +339,240 @@
   <hr>
 
   <div class="mb-3">
-    <%= form.submit "Create Publication", class: 'btn btn-success' %>
+    <%= form.submit "Update Publication", class: 'btn btn-success' %>
   </div>
 <% end %>
 
 <%= link_to 'Back', publications_path, class: 'btn btn-secondary' %>
 
 <script>
+  // Wait for the DOM to be fully loaded
+  document.addEventListener('DOMContentLoaded', function() {
+    initConferenceSection();
+    initJournalIssueSection();
+  });
+
+  document.addEventListener('turbo:load', function() {
+    initConferenceSection();
+    initJournalIssueSection();
+  });
+
+  if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initConferenceSection();
+    initJournalIssueSection();
+  }
+  
+  function initConferenceSection() {
+    if (window.conferenceInitialized) return;
+    window.conferenceInitialized = true;
+    
+    const conferenceSelect = document.getElementById('conference-select');
+    const newConferenceBtn = document.getElementById('new-conference-btn');
+    const cancelNewConferenceBtn = document.getElementById('cancel-new-conference-btn');
+    const conferenceCard = document.querySelector('#conference-fields .card');
+    const conferenceFormFields = document.getElementById('conference-form-fields');
+    const conferenceNameField = document.getElementById('new-conference-name');
+    const conferenceIdField = document.getElementById('conference-id-field');
+    const conferenceCoreField = document.getElementById('conference-core');
+    const conferenceStartDateField = document.getElementById('conference-start-date');
+    const conferenceEndDateField = document.getElementById('conference-end-date');
+    
+    const conferences = {};
+    
+    <% Conference.all.each do |conf| %>
+      conferences[<%= conf.id %>] = {
+        id: <%= conf.id %>,
+        name: <%= raw conf.name.to_json %>,
+        core: <%= raw (conf.core || '').to_json %>,
+        start_date: "<%= conf.start_date&.strftime('%Y-%m-%d') %>",
+        end_date: "<%= conf.end_date&.strftime('%Y-%m-%d') %>"
+      };
+    <% end %>
+    
+    // Function to populate conference fields
+    function populateConferenceFields(conferenceId) {
+      if (!conferenceId || conferenceId === '') {
+        conferenceCard.style.display = 'none';
+        conferenceFormFields.style.display = 'none';
+        clearConferenceFields();
+        return;
+      }
+      
+      const conference = conferences[conferenceId];
+      if (!conference) return;
+      
+      conferenceCard.style.display = '';
+      conferenceFormFields.style.display = '';
+      
+      conferenceIdField.value = conference.id;
+      conferenceNameField.value = conference.name;
+      conferenceCoreField.value = conference.core || '';
+      conferenceStartDateField.value = conference.start_date || '';
+      conferenceEndDateField.value = conference.end_date || '';
+      
+      cancelNewConferenceBtn.style.display = 'none';
+    }
+    
+    // Function to clear conference fields
+    function clearConferenceFields() {
+      conferenceIdField.value = '';
+      conferenceNameField.value = '';
+      conferenceCoreField.value = '';
+      conferenceStartDateField.value = '';
+      conferenceEndDateField.value = '';
+    }
+    
+    // Add event listener to conference select
+    if (conferenceSelect) {
+      conferenceSelect.addEventListener('change', function() {
+        populateConferenceFields(this.value);
+      });
+    }
+    
+    // Add event listener to new conference button
+    if (newConferenceBtn) {
+      newConferenceBtn.addEventListener('click', function() {
+        if (conferenceSelect) {
+          conferenceSelect.value = '';
+        }
+        
+        clearConferenceFields();
+        conferenceCard.style.display = '';
+        conferenceFormFields.style.display = '';
+        conferenceSelect.disabled = true;
+        
+        cancelNewConferenceBtn.style.display = '';
+        
+        conferenceNameField.focus();
+      });
+    }
+    
+    // Add event listener to cancel button
+    if (cancelNewConferenceBtn) {
+      cancelNewConferenceBtn.addEventListener('click', function() {
+        clearConferenceFields();
+        conferenceCard.style.display = 'none';
+        conferenceFormFields.style.display = 'none';
+        conferenceSelect.disabled = false;
+        this.style.display = 'none';
+      });
+    }
+    
+    // Initialize the fields based on the current selection
+    if (conferenceSelect && conferenceSelect.value) {
+      populateConferenceFields(conferenceSelect.value);
+    }
+  }
+
+  function initJournalIssueSection() {
+    if (window.journalIssueInitialized) return;
+    window.journalIssueInitialized = true;
+    
+    const journalIssueSelect = document.getElementById('journal-issue-select');
+    const newJournalIssueBtn = document.getElementById('new-journal-issue-btn');
+    const cancelNewJournalIssueBtn = document.getElementById('cancel-new-journal-issue-btn');
+    const journalIssueCard = document.querySelector('#journal-issue-fields .card');
+    const journalIssueFormFields = document.getElementById('journal-issue-form-fields');
+    const journalIssueTitleField = document.getElementById('new-journal-issue-title');
+    const journalIssueIdField = document.getElementById('journal-issue-id-field');
+    const journalIssueNumField = document.getElementById('journal-issue-num');
+    const journalIssuePublisherField = document.getElementById('journal-issue-publisher');
+    const journalIssueVolumeField = document.getElementById('journal-issue-volume');
+    const journalIssueImpactFactorField = document.getElementById('journal-issue-impact-factor');
+    
+    const journalIssues = {};
+    
+    <% JournalIssue.all.each do |ji| %>
+      journalIssues[<%= ji.id %>] = {
+        id: <%= ji.id %>,
+        title: <%= raw ji.title.to_json %>,
+        journal_num: <%= raw (ji.journal_num || '').to_json %>,
+        publisher: <%= raw (ji.publisher || '').to_json %>,
+        volume: <%= raw (ji.volume || '').to_json %>,
+        impact_factor: <%= raw (ji.impact_factor || '').to_json %>
+      };
+    <% end %>
+    
+    // Function to populate journal issue fields
+    function populateJournalIssueFields(journalIssueId) {
+      if (!journalIssueId || journalIssueId === '') {
+        journalIssueCard.style.display = 'none';
+        journalIssueFormFields.style.display = 'none';
+        clearJournalIssueFields();
+        return;
+      }
+      
+      const journalIssue = journalIssues[journalIssueId];
+      if (!journalIssue) return;
+      
+      journalIssueCard.style.display = '';
+      journalIssueFormFields.style.display = '';
+      
+      journalIssueIdField.value = journalIssue.id;
+      journalIssueTitleField.value = journalIssue.title;
+      journalIssueNumField.value = journalIssue.journal_num || '';
+      journalIssuePublisherField.value = journalIssue.publisher || '';
+      journalIssueVolumeField.value = journalIssue.volume || '';
+      journalIssueImpactFactorField.value = journalIssue.impact_factor || '';
+      
+      // Hide the cancel button
+      cancelNewJournalIssueBtn.style.display = 'none';
+    }
+    
+    // Function to clear journal issue fields
+    function clearJournalIssueFields() {
+      journalIssueIdField.value = '';
+      journalIssueTitleField.value = '';
+      journalIssueNumField.value = '';
+      journalIssuePublisherField.value = '';
+      journalIssueVolumeField.value = '';
+      journalIssueImpactFactorField.value = '';
+    }
+    
+    // Add event listener to journal issue select
+    if (journalIssueSelect) {
+      journalIssueSelect.addEventListener('change', function() {
+        populateJournalIssueFields(this.value);
+      });
+    }
+    
+    // Add event listener to new journal issue button
+    if (newJournalIssueBtn) {
+      newJournalIssueBtn.addEventListener('click', function() {
+        if (journalIssueSelect) {
+          journalIssueSelect.value = '';
+        }
+        
+        clearJournalIssueFields();
+        journalIssueCard.style.display = '';
+        journalIssueFormFields.style.display = '';
+        journalIssueSelect.disabled = true;
+        
+        cancelNewJournalIssueBtn.style.display = '';
+        
+        journalIssueTitleField.focus();
+      });
+    }
+    
+    // Add event listener to cancel button
+    if (cancelNewJournalIssueBtn) {
+      cancelNewJournalIssueBtn.addEventListener('click', function() {
+        clearJournalIssueFields();
+        journalIssueCard.style.display = 'none';
+        journalIssueFormFields.style.display = 'none';
+        journalIssueSelect.disabled = false;
+        
+        this.style.display = 'none';
+      });
+    }
+    
+    // Initialize the fields based on the current selection
+    if (journalIssueSelect && journalIssueSelect.value) {
+      populateJournalIssueFields(journalIssueSelect.value);
+    }
+  }
+
   function initializePublicationForm() {
-    // Skip if already initialized
     if (window.publicationFormInitialized) return;
     window.publicationFormInitialized = true;
 
@@ -360,7 +593,6 @@
       const template = container.querySelector(`.${itemClass}`);
       const newItem = template.cloneNode(true);
       
-      // Get the current number of items
       const index = container.querySelectorAll(`.${itemClass}`).length;
 
       // Update all form elements with the new index
@@ -371,18 +603,15 @@
           input.setAttribute('name', name.replace(/\[\d*\]/, `[${index}]`));
         }
         
-        // Update ID if it exists
         if (input.id && input.id.includes(`${itemClass}-value`)) {
           input.id = `${itemClass}-value-${index}`;
         }
       });
       
-      // Show delete button for the new item
       const deleteButton = newItem.querySelector(`.${deleteButtonClass}`);
       if (deleteButton) {
         deleteButton.style.display = 'block';
         
-        // Add event listener to the delete button
         deleteButton.addEventListener('click', function() {
           newItem.remove();
         });
@@ -561,96 +790,6 @@
       // Trigger change event on page load to set initial state
       oaCategorySelect.dispatchEvent(new Event('change'));
     }
-
-    // Conference functionality
-    const newConferenceBtn = document.getElementById('new-conference-btn');
-    const conferenceSelect = document.getElementById('conference-select');
-    const newConferenceFields = document.getElementById('new-conference-fields');
-    const cancelNewConferenceBtn = document.getElementById('cancel-new-conference-btn');
-    const newConferenceName = document.getElementById('new-conference-name');
-
-    if (newConferenceBtn) {
-      newConferenceBtn.addEventListener('click', function() {
-        console.log('New conference button clicked');
-        if (newConferenceFields) {
-          newConferenceFields.style.display = 'block';
-        }
-        if (conferenceSelect) {
-          conferenceSelect.disabled = true;
-        }
-        newConferenceBtn.disabled = true;
-      });
-    }
-    
-    if (cancelNewConferenceBtn) {
-      cancelNewConferenceBtn.addEventListener('click', function() {
-        console.log('Cancel new conference button clicked');
-        if (newConferenceFields) {
-          newConferenceFields.style.display = 'none';
-        }
-        if (conferenceSelect) {
-          conferenceSelect.disabled = false;
-        }
-        if (newConferenceBtn) {
-          newConferenceBtn.disabled = false;
-        }
-        
-        // Clear the new conference fields
-        if (newConferenceFields) {
-          clearInputFields(newConferenceFields);
-        }
-      });
-    }
-    
-    // Journal Issue functionality
-    const journalIssueSelect = document.getElementById('journal-issue-select');
-    const newJournalIssueBtn = document.getElementById('new-journal-issue-btn');
-    const newJournalIssueFields = document.getElementById('new-journal-issue-fields');
-    const cancelNewJournalIssueBtn = document.getElementById('cancel-new-journal-issue-btn');
-    
-    if (newJournalIssueBtn) {
-      newJournalIssueBtn.addEventListener('click', function() {
-        console.log('New journal issue button clicked');
-        if (newJournalIssueFields) {
-          newJournalIssueFields.style.display = 'block';
-        }
-        if (journalIssueSelect) {
-          journalIssueSelect.disabled = true;
-        }
-        newJournalIssueBtn.disabled = true;
-      });
-    }
-    
-    if (cancelNewJournalIssueBtn) {
-      cancelNewJournalIssueBtn.addEventListener('click', function() {
-        console.log('Cancel new journal issue button clicked');
-        if (newJournalIssueFields) {
-          newJournalIssueFields.style.display = 'none';
-        }
-        if (journalIssueSelect) {
-          journalIssueSelect.disabled = false;
-        }
-        if (newJournalIssueBtn) {
-          newJournalIssueBtn.disabled = false;
-        }
-
-        // Clear the new journal issue fields
-        if (newJournalIssueFields) {
-          clearInputFields(newJournalIssueFields);
-        }
-      });
-    }
-  }
-
-  // Initialize on DOMContentLoaded
-  document.addEventListener('DOMContentLoaded', initializePublicationForm);
-  
-  // Initialize on Turbo navigation
-  document.addEventListener('turbo:load', initializePublicationForm);
-  
-  // Initialize immediately if document is already loaded
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    initializePublicationForm();
   }
 
   // Function to set up delete buttons

@@ -246,61 +246,62 @@
   <h3>KPI Reporting Extension</h3>
   <div class="mb-3">
     <div class="form-check form-switch">
-      <input class="form-check-input" type="checkbox" id="kpi-toggle" name="create_kpi_extension">
+      <input class="form-check-input" type="checkbox" id="kpi-toggle",
+             <%= @publication.kpi_reporting_extension.present? ? 'checked' : '' %>
       <label class="form-check-label" for="kpi-toggle">Add KPI Reporting Extension</label>
     </div>
   </div>
 
-  <div id="kpi-extension-fields" style="display: none;">
-    <%= form.fields_for :kpi_reporting_extension, @publication.kpi_reporting_extension || @publication.build_kpi_reporting_extension do |kpi_form| %>
+  <div id="kpi-extension-fields" style="<%= @publication.kpi_reporting_extension.present? ? '' : 'display: none;' %>">
+    <%= form.fields_for :kpi_reporting_extension, @publication.kpi_reporting_extension || KpiReportingExtension.new do |kpi_form| %>
       <div class="mb-3">
         <%= kpi_form.label :teaming_reporting_period, "Teaming Reporting Period", class: 'form-label' %>
-        <%= kpi_form.number_field :teaming_reporting_period, class: 'form-control', name: 'publication[kpi_reporting_extension_attributes][teaming_reporting_period]' %>
+        <%= kpi_form.number_field :teaming_reporting_period, class: 'form-control' %>
       </div>
       
       <div class="mb-3">
         <%= kpi_form.label :invoice_number, "Invoice Number", class: 'form-label' %>
-        <%= kpi_form.number_field :invoice_number, class: 'form-control', name: 'publication[kpi_reporting_extension_attributes][invoice_number]' %>
+        <%= kpi_form.number_field :invoice_number, class: 'form-control' %>
       </div>
       
       <div class="mb-3 form-check">
-        <%= kpi_form.check_box :pbn, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][pbn]' %>
+        <%= kpi_form.check_box :pbn, class: 'form-check-input' %>
         <%= kpi_form.label :pbn, "PBN", class: 'form-check-label' %>
       </div>
       
       <div class="mb-3 form-check">
-        <%= kpi_form.check_box :jcr, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][jcr]' %>
+        <%= kpi_form.check_box :jcr, class: 'form-check-input' %>
         <%= kpi_form.label :jcr, "JCR", class: 'form-check-label' %>
       </div>
       
       <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_added_ft_portal, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_added_ft_portal]' %>
+        <%= kpi_form.check_box :is_added_ft_portal, class: 'form-check-input' %>
         <%= kpi_form.label :is_added_ft_portal, "Added to FT Portal", class: 'form-check-label' %>
       </div>
       
       <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_checked, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_checked]' %>
+        <%= kpi_form.check_box :is_checked, class: 'form-check-input' %>
         <%= kpi_form.label :is_checked, "Checked", class: 'form-check-label' %>
       </div>
       
       <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_new_method_technique, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_new_method_technique]' %>
+        <%= kpi_form.check_box :is_new_method_technique, class: 'form-check-input' %>
         <%= kpi_form.label :is_new_method_technique, "New Method/Technique", class: 'form-check-label' %>
       </div>
       
       <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_methodology_application, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_methodology_application]' %>
+        <%= kpi_form.check_box :is_methodology_application, class: 'form-check-input' %>
         <%= kpi_form.label :is_methodology_application, "Methodology Application", class: 'form-check-label' %>
       </div>
       
       <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_polish_med_researcher_involved, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_polish_med_researcher_involved]' %>
+        <%= kpi_form.check_box :is_polish_med_researcher_involved, class: 'form-check-input' %>
         <%= kpi_form.label :is_polish_med_researcher_involved, "Polish Medical Researcher Involved", class: 'form-check-label' %>
       </div>
       
       <div class="mb-3">
         <%= kpi_form.label :subsidy_points, "Subsidy Points", class: 'form-label' %>
-        <%= kpi_form.number_field :subsidy_points, class: 'form-control', name: 'publication[kpi_reporting_extension_attributes][subsidy_points]' %>
+          <%= kpi_form.number_field :subsidy_points, class: 'form-control' %>
       </div>
     <% end %>
   </div>
@@ -310,28 +311,31 @@
   <h3>Open Access Extension</h3>
   <div class="mb-3">
     <div class="form-check form-switch">
-      <input class="form-check-input" type="checkbox" id="oa-toggle" name="create_open_access_extension">
+      <input class="form-check-input" type="checkbox" id="oa-toggle",
+             <%= @publication.open_access_extension.present? ? 'checked' : '' %>
       <label class="form-check-label" for="oa-toggle">Add Open Access Extension</label>
     </div>
   </div>
 
-  <div id="open-access-extension-fields" style="display: none;">
-    <%= form.fields_for :open_access_extension do |oa_form| %>
+  <div id="open-access-extension-fields" style="<%= @publication.open_access_extension.present? ? '' : 'display: none;' %>">
+    <%= form.fields_for :open_access_extension, @publication.open_access_extension || OpenAccessExtension.new do |oa_form| %>
       <div class="mb-3">
         <%= oa_form.label :category, "Category", class: 'form-label' %>
         <%= oa_form.select :category, 
             OpenAccessExtension.categories.keys.map { |key| [key.humanize, key] }, 
-            {}, class: 'form-select', id: 'oa-category-select', name: 'publication[open_access_extension_attributes][category]' %>
+            {}, class: 'form-select', id: 'oa-category-select' %>
       </div>
       
-      <div class="mb-3 gold-oa-field" style="display: none;">
-        <%= oa_form.label :gold_oa_charges, "Gold OA Charges (PLN)", class: 'form-label' %>
-        <%= oa_form.number_field :gold_oa_charges, class: 'form-control', name: 'publication[open_access_extension_attributes][gold_oa_charges]' %>
-      </div>
-      
-      <div class="mb-3 gold-oa-field" style="display: none;">
-        <%= oa_form.label :gold_oa_funding_source, "Gold OA Funding Source", class: 'form-label' %>
-        <%= oa_form.text_field :gold_oa_funding_source, class: 'form-control', name: 'publication[open_access_extension_attributes][gold_oa_funding_source]' %>
+      <div id="gold-oa-fields" style="<%= @publication.open_access_extension&.gold? ? '' : 'display: none;' %>">
+        <div class="mb-3">
+          <%= oa_form.label :gold_oa_charges, "Gold OA Charges (PLN)", class: 'form-label' %>
+          <%= oa_form.number_field :gold_oa_charges, class: 'form-control' %>
+        </div>
+
+        <div class="mb-3">
+          <%= oa_form.label :gold_oa_funding_source, "Gold OA Funding Source", class: 'form-label' %>
+          <%= oa_form.text_field :gold_oa_funding_source, class: 'form-control' %>
+        </div>
       </div>
     <% end %>
   </div>
@@ -343,7 +347,7 @@
   </div>
 <% end %>
 
-<%= link_to 'Back', publications_path, class: 'btn btn-secondary' %>
+<%= link_to 'Back', publication_path(@publication), class: 'btn btn-secondary' %>
 
 <script>
   // Wait for the DOM to be fully loaded
@@ -361,6 +365,18 @@
     initConferenceSection();
     initJournalIssueSection();
   }
+
+  // Helper function to clear input fields
+  function clearInputFields(fields) {
+    inputs = fields.querySelectorAll('input, select');
+    inputs.forEach(input => {
+      if (input.type === 'checkbox') {
+        input.checked = false;
+      } else {
+        input.value = '';
+      }
+    });
+  }
   
   function initConferenceSection() {
     if (window.conferenceInitialized) return;
@@ -376,6 +392,7 @@
     const conferenceCoreField = document.getElementById('conference-core');
     const conferenceStartDateField = document.getElementById('conference-start-date');
     const conferenceEndDateField = document.getElementById('conference-end-date');
+    const conferenceFields = document.getElementById('conference-fields');
     
     const conferences = {};
     
@@ -394,7 +411,7 @@
       if (!conferenceId || conferenceId === '') {
         conferenceCard.style.display = 'none';
         conferenceFormFields.style.display = 'none';
-        clearConferenceFields();
+        clearInputFields(conferenceFields);
         return;
       }
       
@@ -413,15 +430,6 @@
       cancelNewConferenceBtn.style.display = 'none';
     }
     
-    // Function to clear conference fields
-    function clearConferenceFields() {
-      conferenceIdField.value = '';
-      conferenceNameField.value = '';
-      conferenceCoreField.value = '';
-      conferenceStartDateField.value = '';
-      conferenceEndDateField.value = '';
-    }
-    
     // Add event listener to conference select
     if (conferenceSelect) {
       conferenceSelect.addEventListener('change', function() {
@@ -436,7 +444,7 @@
           conferenceSelect.value = '';
         }
         
-        clearConferenceFields();
+        clearInputFields(conferenceFields);
         conferenceCard.style.display = '';
         conferenceFormFields.style.display = '';
         conferenceSelect.disabled = true;
@@ -450,7 +458,7 @@
     // Add event listener to cancel button
     if (cancelNewConferenceBtn) {
       cancelNewConferenceBtn.addEventListener('click', function() {
-        clearConferenceFields();
+        clearInputFields(conferenceFields);
         conferenceCard.style.display = 'none';
         conferenceFormFields.style.display = 'none';
         conferenceSelect.disabled = false;
@@ -479,6 +487,7 @@
     const journalIssuePublisherField = document.getElementById('journal-issue-publisher');
     const journalIssueVolumeField = document.getElementById('journal-issue-volume');
     const journalIssueImpactFactorField = document.getElementById('journal-issue-impact-factor');
+    const journalIssueFields = document.getElementById('journal-issue-fields');
     
     const journalIssues = {};
     
@@ -498,7 +507,7 @@
       if (!journalIssueId || journalIssueId === '') {
         journalIssueCard.style.display = 'none';
         journalIssueFormFields.style.display = 'none';
-        clearJournalIssueFields();
+        clearInputFields(journalIssueFields);
         return;
       }
       
@@ -519,16 +528,6 @@
       cancelNewJournalIssueBtn.style.display = 'none';
     }
     
-    // Function to clear journal issue fields
-    function clearJournalIssueFields() {
-      journalIssueIdField.value = '';
-      journalIssueTitleField.value = '';
-      journalIssueNumField.value = '';
-      journalIssuePublisherField.value = '';
-      journalIssueVolumeField.value = '';
-      journalIssueImpactFactorField.value = '';
-    }
-    
     // Add event listener to journal issue select
     if (journalIssueSelect) {
       journalIssueSelect.addEventListener('change', function() {
@@ -543,7 +542,7 @@
           journalIssueSelect.value = '';
         }
         
-        clearJournalIssueFields();
+        clearInputFields(journalIssueFields);
         journalIssueCard.style.display = '';
         journalIssueFormFields.style.display = '';
         journalIssueSelect.disabled = true;
@@ -557,7 +556,7 @@
     // Add event listener to cancel button
     if (cancelNewJournalIssueBtn) {
       cancelNewJournalIssueBtn.addEventListener('click', function() {
-        clearJournalIssueFields();
+        clearInputFields(journalIssueFields);
         journalIssueCard.style.display = 'none';
         journalIssueFormFields.style.display = 'none';
         journalIssueSelect.disabled = false;
@@ -571,6 +570,54 @@
       populateJournalIssueFields(journalIssueSelect.value);
     }
   }
+
+    // KPI Extension toggle functionality
+    const kpiToggleElement = document.getElementById('kpi-toggle');
+    if (kpiToggleElement) {
+      kpiToggleElement.addEventListener('change', function() {
+        const kpiFields = document.getElementById('kpi-extension-fields');
+        console.log(kpiFields);
+        if (kpiFields) {
+          kpiFields.style.display = this.checked ? 'block' : 'none';
+          
+          // Clear fields when toggle is unchecked
+          if (!this.checked) {
+            clearInputFields(kpiFields);
+          }
+        }
+      });
+    }
+    
+    // Open Access Extension toggle functionality
+    const oaToggle = document.getElementById('oa-toggle');
+    const oaCategorySelect = document.getElementById('oa-category-select');
+    const goldOaFields = document.getElementById('gold-oa-fields');
+
+    if (oaToggle) {
+      oaToggle.addEventListener('change', function() {
+        const oaFields = document.getElementById('open-access-extension-fields');
+        if (oaFields) {
+          oaFields.style.display = this.checked ? 'block' : 'none';
+          
+          // Clear fields when toggle is unchecked
+          if (!this.checked) {
+            clearInputFields(oaFields);
+          }
+        }
+      });
+    }
+      
+    // Add event listener for category select
+    if (oaCategorySelect) {
+      oaCategorySelect.addEventListener('change', function() {
+        if (this.value === 'gold') {
+          goldOaFields.style.display = 'block';
+        } else {
+          goldOaFields.style.display = 'none';
+          clearInputFields(goldOaFields);
+        }
+      });
+    }
 
   function initializePublicationForm() {
     if (window.publicationFormInitialized) return;
@@ -693,18 +740,6 @@
       }
     }
 
-    // Helper function to clear input fields
-    function clearInputFields(fields) {
-      inputs = fields.querySelectorAll('input, select');
-      inputs.forEach(input => {
-        if (input.type === 'checkbox') {
-          input.checked = false;
-        } else {
-          input.value = '';
-        }
-      });
-    }
-
     // Add event listeners to buttons
     const addResearchGroupBtn = document.getElementById('add-research-group');
     if (addResearchGroupBtn) {
@@ -725,70 +760,6 @@
       addRepositoryLinkBtn.addEventListener('click', function() {
         addNestedItem('repository-links', 'repository-link', 'delete-repository-link', getRepositoryOptions);
       });
-    }
-
-    // KPI Extension toggle functionality
-    const kpiToggleElement = document.getElementById('kpi-toggle');
-    if (kpiToggleElement) {
-      kpiToggleElement.addEventListener('change', function() {
-        const kpiFields = document.getElementById('kpi-extension-fields');
-        if (kpiFields) {
-          kpiFields.style.display = this.checked ? 'block' : 'none';
-          
-          // Clear fields when toggle is unchecked
-          if (!this.checked) {
-            clearInputFields(kpiFields);
-          }
-        }
-      });
-    }
-
-    // Open Access Extension toggle functionality
-    const oaToggleElement = document.getElementById('oa-toggle');
-    if (oaToggleElement) {
-      oaToggleElement.addEventListener('change', function() {
-        const oaFields = document.getElementById('open-access-extension-fields');
-        if (oaFields) {
-          oaFields.style.display = this.checked ? 'block' : 'none';
-          
-          // Clear fields when toggle is unchecked
-          if (!this.checked) {
-            clearInputFields(oaFields);
-            
-            // Hide gold OA fields
-            const goldOaFields = document.querySelectorAll('.gold-oa-field');
-            goldOaFields.forEach(field => {
-              field.style.display = 'none';
-            });
-          }
-        }
-      });
-    }
-    
-    // OA Category select functionality
-    const oaCategorySelect = document.getElementById('oa-category-select');
-    if (oaCategorySelect) {
-      oaCategorySelect.addEventListener('change', function() {
-        const goldOaFields = document.querySelectorAll('.gold-oa-field');
-        
-        if (this.value === 'gold') {
-          // Show Gold OA fields
-          goldOaFields.forEach(field => {
-            field.style.display = 'block';
-          });
-        } else {
-          // Hide and clear Gold OA fields
-          goldOaFields.forEach(field => {
-            field.style.display = 'none';
-            
-            // Clear inputs within the field
-            clearInputFields(field);
-          });
-        }
-      });
-      
-      // Trigger change event on page load to set initial state
-      oaCategorySelect.dispatchEvent(new Event('change'));
     }
   }
 

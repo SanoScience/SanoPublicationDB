@@ -25,7 +25,7 @@ class ResearchGroupPublicationTest < ActiveSupport::TestCase
   test "should require is_primary" do
     @research_group_publication.is_primary = nil
     assert_not @research_group_publication.valid?
-    assert_includes @research_group_publication.errors[:is_primary], "can't be blank"
+    assert_includes @research_group_publication.errors[:is_primary], "is not included in the list"
   end
 
   test "should be destroyed when associated publication is destroyed" do

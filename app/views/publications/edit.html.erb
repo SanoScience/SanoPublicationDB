@@ -352,16 +352,24 @@
 <script>
   // Wait for the DOM to be fully loaded
   document.addEventListener('DOMContentLoaded', function() {
-    initConferenceSection();
-    initJournalIssueSection();
+    initializeHandlers();
   });
 
   document.addEventListener('turbo:load', function() {
-    initConferenceSection();
-    initJournalIssueSection();
+    initializeHandlers();
   });
 
   if (document.readyState === 'complete' || document.readyState === 'interactive') {
+    initializeHandlers();
+  }
+
+  function initializeHandlers() {
+    if (window.handlersInitialized) return;
+    window.handlersInitialized = true;
+    
+    initializePublicationForm();
+    setupDeleteButtons();
+
     initConferenceSection();
     initJournalIssueSection();
   }
@@ -576,7 +584,6 @@
     if (kpiToggleElement) {
       kpiToggleElement.addEventListener('change', function() {
         const kpiFields = document.getElementById('kpi-extension-fields');
-        console.log(kpiFields);
         if (kpiFields) {
           kpiFields.style.display = this.checked ? 'block' : 'none';
           
@@ -654,6 +661,10 @@
           input.id = `${itemClass}-value-${index}`;
         }
       });
+
+      if (deleteButtonClass === 'delete-research-group') {
+        newItem.innerHTML += `<button type="button" class="btn btn-danger btn-sm ${deleteButtonClass}" style="display: block;">Delete</button>`
+      }
       
       const deleteButton = newItem.querySelector(`.${deleteButtonClass}`);
       if (deleteButton) {
@@ -782,17 +793,6 @@
     setupDeleteButton('delete-research-group', 'research-group');
     setupDeleteButton('delete-identifier', 'identifier');
     setupDeleteButton('delete-repository-link', 'repository-link');
-  }
-
-  // Set up delete buttons when the page loads
-  document.addEventListener('DOMContentLoaded', setupDeleteButtons);
-
-  // Set up delete buttons when Turbo navigates to the page
-  document.addEventListener('turbo:load', setupDeleteButtons);
-
-  // Set up delete buttons immediately if the document is already loaded
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    setupDeleteButtons();
   }
 </script>
 

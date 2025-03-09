@@ -2,37 +2,37 @@ require "test_helper"
 
 class PublicationsControllerTest < ActionDispatch::IntegrationTest
   test "should get index" do
-    get publications_index_url
+    get publications_path
     assert_response :success
   end
 
   test "should get new" do
-    get publications_new_url
+    get new_publication_path
     assert_response :success
   end
 
   test "should get create" do
-    get publications_create_url
+    get new_publication_path, xhr: true
     assert_response :success
   end
 
   test "should get show" do
-    get publications_show_url
+    get publication_path(publications("pub1"))
     assert_response :success
   end
 
   test "should get edit" do
-    get publications_edit_url
+    get edit_publication_path(publications("pub1"))
     assert_response :success
   end
 
   test "should get update" do
-    get publications_update_url
+    get edit_publication_path(publications("pub1")), xhr: true
     assert_response :success
   end
 
   test "should get destroy" do
-    get publications_destroy_url
+    get publication_path(publications("pub1")), xhr: true
     assert_response :success
   end
 end

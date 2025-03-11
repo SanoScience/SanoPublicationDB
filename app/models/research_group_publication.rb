@@ -1,5 +1,5 @@
 class ResearchGroupPublication < ApplicationRecord
-    belongs_to :publication, dependent: :destroy
+    belongs_to :publication
 
     enum :research_group, {
         clinical_data_science: "Clinical Data Science",

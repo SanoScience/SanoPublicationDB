@@ -62,6 +62,48 @@ class PublicationsController < ApplicationController
   def update
     @publication = Publication.find(params[:id])
 
+    if publication_params[:research_group_publications_attributes].present?
+      if @publication.research_group_publications.size > publication_params[:research_group_publications_attributes].values.size
+        @publication.research_group_publications.each do |research_group_publication|
+          if !publication_params[:research_group_publications_attributes].values.map { |v| v[:id] }.include?(research_group_publication.id)
+            research_group_publication.mark_for_destruction
+          end
+        end
+      end
+    end
+
+    if @publication.identifiers.present?
+      if publication_params[:identifiers_attributes].present?
+        if @publication.identifiers.size > publication_params[:identifiers_attributes].values.size
+          @publication.identifiers.each do |identifier|
+            if !publication_params[:identifiers_attributes].values.map { |v| v[:id] }.include?(identifier.id.to_s)
+              identifier.mark_for_destruction
+            end
+          end
+        end
+      else
+        @publication.identifiers.each do |identifier|
+          identifier.mark_for_destruction
+        end
+      end
+    end
+
+    if @publication.repository_links.present?
+      if publication_params[:repository_links_attributes].present?
+        if @publication.repository_links.size > publication_params[:repository_links_attributes].values.size
+          @publication.repository_links.each do |repository_link|
+            if !publication_params[:repository_links_attributes].values.map { |v| v[:id] }.include?(repository_link.id.to_s)
+              repository_link.mark_for_destruction
+            end
+          end
+        end
+      else
+        @publication.repository_links.each do |repository_link|
+          repository_link.mark_for_destruction
+        end
+      end
+    end
+    
     if @publication.kpi_reporting_extension.present?
       if publication_params[:kpi_reporting_extension_attributes].values.all?(&:blank?)
         @publication.kpi_reporting_extension.mark_for_destruction
@@ -97,7 +139,7 @@ class PublicationsController < ApplicationController
       research_group_publications_attributes: [ :id, :research_group, :is_primary, :_destroy ],
       identifiers_attributes: [ :id, :category, :value, :_destroy ],
       repository_links_attributes: [ :id, :repository, :value, :_destroy ],
-      kpi_reporting_extension_attributes: [ :id, :teaming_reporting_period, :invoice_number, :pbn, :jcr, :is_added_ft_portal, :is_checked, :is_new_method_technique, :is_methodology_application, :is_polish_med_researcher_involved, :subsidy_points, :_destroy ],
+      kpi_reporting_extension_attributes: [ :id, :teaming_reporting_period, :invoice_number, :pbn, :jcr, :is_added_ft_portal, :is_checked, :is_new_method_technique, :is_methodology_application, :is_polish_med_researcher_involved, :is_peer_reviewed, :subsidy_points, :_destroy ],
       open_access_extension_attributes: [ :id, :category, :gold_oa_charges, :gold_oa_funding_source, :_destroy ],
       conference_attributes: [ :id, :name, :core, :start_date, :end_date, :_destroy ],
       journal_issue_attributes: [ :id, :title, :journal_num, :publisher, :volume, :impact_factor, :_destroy ]

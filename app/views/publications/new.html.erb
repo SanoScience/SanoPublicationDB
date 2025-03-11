@@ -250,6 +250,11 @@
         <%= kpi_form.check_box :is_polish_med_researcher_involved, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_polish_med_researcher_involved]' %>
         <%= kpi_form.label :is_polish_med_researcher_involved, "Polish Medical Researcher Involved", class: 'form-check-label' %>
       </div>
+
+      <div class="mb-3 form-check">
+        <%= kpi_form.check_box :is_peer_reviewed, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_peer_reviewed]' %>
+        <%= kpi_form.label :is_peer_reviewed, "Peer Reviewed", class: 'form-check-label' %>
+      </div>
       
       <div class="mb-3">
         <%= kpi_form.label :subsidy_points, "Subsidy Points", class: 'form-label' %>

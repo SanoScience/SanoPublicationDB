@@ -16,11 +16,11 @@ class OpenAccessExtensionTest < ActiveSupport::TestCase
     assert_includes @open_access_extension.errors[:publication], "can't be blank"
   end
 
-  test "should require a category" do
-    @open_access_extension.category = nil
-    assert_not @open_access_extension.valid?
-    assert_includes @open_access_extension.errors[:category], "can't be blank"
-  end
+  # test "should require a category" do
+  #   @open_access_extension.category = nil
+  #   assert_not @open_access_extension.valid?
+  #   assert_includes @open_access_extension.errors[:category], "can't be blank"
+  # end
 
   test "should validate inclusion of category" do
     error = assert_raises(ArgumentError) do

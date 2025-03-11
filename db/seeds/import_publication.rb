@@ -24,6 +24,8 @@ def import_publications(file_path)
 
   CSV.parse(cleaned_content, headers: true, col_sep: ';', encoding: 'UTF-8').each do |row|
     row = row.to_h.transform_keys { |key| key&.strip }
+    puts "\n"
+    puts row
 
     title = row['Title of the scientific publication']&.strip
     next if title.blank?
@@ -45,7 +47,7 @@ def import_publications(file_path)
       status: row['Status (submitted, accepted, printed)']&.strip,
       author_list: row['Authors']&.strip,
       publication_date: (Date.parse(row['Year of publication'].to_s) rescue nil),
-      link: (row['Link']&.strip =~ URI.regexp ? row['Link'].strip : "https://unknown_url.com")
+      link: (row['Link']&.strip =~ URI.regexp ? row['Link'].strip : nil)
     )
     publication.save!
 
@@ -68,7 +70,7 @@ def import_publications(file_path)
     ) if primary_group.present?
 
     secondary_groups&.each do |group|
-      publication.research_group_publications.create!(
+      publication.research_group_publications.find_or_create_by!(
         research_group: group,
         is_primary: false
       )

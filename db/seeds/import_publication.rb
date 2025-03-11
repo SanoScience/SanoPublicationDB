@@ -24,6 +24,8 @@ def import_publications(file_path)
 
   CSV.parse(cleaned_content, headers: true, col_sep: ';', encoding: 'UTF-8').each do |row|
     row = row.to_h.transform_keys { |key| key&.strip }
+    puts "\n"
+    puts row
 
     title = row['Title of the scientific publication']&.strip
     next if title.blank?
@@ -45,7 +47,7 @@ def import_publications(file_path)
       status: row['Status (submitted, accepted, printed)']&.strip,
       author_list: row['Authors']&.strip,
       publication_date: (Date.parse(row['Year of publication'].to_s) rescue nil),
-      link: (row['Link']&.strip =~ URI.regexp ? row['Link'].strip : "https://unknown_url.com")
+      link: (row['Link']&.strip =~ URI.regexp ? row['Link'].strip : nil)
     )
     publication.save!
 
@@ -68,7 +70,7 @@ def import_publications(file_path)
     ) if primary_group.present?
 
     secondary_groups&.each do |group|
-      publication.research_group_publications.create!(
+      publication.research_group_publications.find_or_create_by!(
         research_group: group,
         is_primary: false
       )
@@ -114,6 +116,30 @@ def import_publications(file_path)
       subsidy_points: row['Subsidy points'].to_s.match?(/\A\d+\z/) ? row['Subsidy points'].to_i : nil,
       is_peer_reviewed: row['Peer-review']&.to_s&.downcase == 'yes'
     )
+
+    # Handle Conference
+    if row['Title of the journal or equivalent'].present?
+      if publication.category == "conference_manuscript" || publication.category == "conference_abstract"
+        conference = Conference.find_or_create_by!(name: row['Title of the journal or equivalent'].strip)
+        publication.conference = conference
+        if row['Impact Factor  or CORE  (in case of conference manuscripts)'].present? && row['Impact Factor  or CORE  (in case of conference manuscripts)'] != "nd"
+          conference.core = row['Impact Factor  or CORE  (in case of conference manuscripts)']
+        end
+        conference.save!
+        publication.save!
+      elsif publication.category == "journal_article"
+        journal = JournalIssue.find_or_create_by!(title: row['Title of the journal or equivalent'].strip)
+        publication.journal_issue = journal
+        if row['Impact Factor  or CORE  (in case of conference manuscripts)'].present?
+          journal.impact_factor = row['Impact Factor  or CORE  (in case of conference manuscripts)'].to_f
+        end
+        if row['Publisher'].present?
+          journal.publisher = row['Publisher']
+        end
+        journal.save!
+        publication.save!
+      end
+    end
   end
 end
 

@@ -10,15 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_03_10_171030) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_11_122631) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "conferences", force: :cascade do |t|
     t.string "name", null: false
     t.string "core"
-    t.date "start_date", null: false
-    t.date "end_date", null: false
+    t.date "start_date"
+    t.date "end_date"
   end
 
   create_table "identifiers", force: :cascade do |t|

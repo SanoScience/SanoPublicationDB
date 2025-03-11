@@ -116,6 +116,30 @@ def import_publications(file_path)
       subsidy_points: row['Subsidy points'].to_s.match?(/\A\d+\z/) ? row['Subsidy points'].to_i : nil,
       is_peer_reviewed: row['Peer-review']&.to_s&.downcase == 'yes'
     )
+
+    # Handle Conference
+    if row['Title of the journal or equivalent'].present?
+      if publication.category == "conference_manuscript" || publication.category == "conference_abstract"
+        conference = Conference.find_or_create_by!(name: row['Title of the journal or equivalent'].strip)
+        publication.conference = conference
+        if row['Impact Factor  or CORE  (in case of conference manuscripts)'].present? && row['Impact Factor  or CORE  (in case of conference manuscripts)'] != "nd"
+          conference.core = row['Impact Factor  or CORE  (in case of conference manuscripts)']
+        end
+        conference.save!
+        publication.save!
+      elsif publication.category == "journal_article"
+        journal = JournalIssue.find_or_create_by!(title: row['Title of the journal or equivalent'].strip)
+        publication.journal_issue = journal
+        if row['Impact Factor  or CORE  (in case of conference manuscripts)'].present?
+          journal.impact_factor = row['Impact Factor  or CORE  (in case of conference manuscripts)'].to_f
+        end
+        if row['Publisher'].present?
+          journal.publisher = row['Publisher']
+        end
+        journal.save!
+        publication.save!
+      end
+    end
   end
 end
 

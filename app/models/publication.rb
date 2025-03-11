@@ -25,5 +25,5 @@ class Publication < ApplicationRecord
     validates :category, presence: true, inclusion: { in: categories.keys }
     validates :status, presence: true, inclusion: { in: statuses.keys }
     validates :author_list, presence: true
-    validates :link, presence: true, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" }
+    validates :link, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" }, allow_nil: true
 end

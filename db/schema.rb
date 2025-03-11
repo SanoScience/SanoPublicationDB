@@ -10,15 +10,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_02_21_190731) do
+ActiveRecord::Schema[8.0].define(version: 2025_03_11_122631) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
   create_table "conferences", force: :cascade do |t|
     t.string "name", null: false
     t.string "core"
-    t.date "start_date", null: false
-    t.date "end_date", null: false
+    t.date "start_date"
+    t.date "end_date"
   end
 
   create_table "identifiers", force: :cascade do |t|
@@ -70,7 +70,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_02_21_190731) do
     t.integer "status", null: false
     t.text "author_list", null: false
     t.date "publication_date"
-    t.string "link", null: false
+    t.string "link"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "journal_issue_id"

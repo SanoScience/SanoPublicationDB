@@ -1,5 +1,5 @@
 class Identifier < ApplicationRecord
-    belongs_to :publication, dependent: :destroy
+    belongs_to :publication
 
     enum :category, {
         doi: "DOI",

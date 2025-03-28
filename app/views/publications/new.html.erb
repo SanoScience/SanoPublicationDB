@@ -205,7 +205,7 @@
   </div>
 
   <div id="kpi-extension-fields" style="display: none;">
-    <%= form.fields_for :kpi_reporting_extension, @publication.kpi_reporting_extension || @publication.build_kpi_reporting_extension do |kpi_form| %>
+    <%= form.fields_for :kpi_reporting_extension, @publication.kpi_reporting_extension || KpiReportingExtension.new do |kpi_form| %>
       <div class="mb-3">
         <%= kpi_form.label :teaming_reporting_period, "Teaming Reporting Period", class: 'form-label' %>
         <%= kpi_form.number_field :teaming_reporting_period, class: 'form-control', name: 'publication[kpi_reporting_extension_attributes][teaming_reporting_period]' %>
@@ -274,7 +274,7 @@
   </div>
 
   <div id="open-access-extension-fields" style="display: none;">
-    <%= form.fields_for :open_access_extension do |oa_form| %>
+    <%= form.fields_for :open_access_extension, @publication.open_access_extension || OpenAccessExtension.new do |oa_form| %>
       <div class="mb-3">
         <%= oa_form.label :category, "Category", class: 'form-label' %>
         <%= oa_form.select :category, 

@@ -103,7 +103,7 @@ class PublicationsController < ApplicationController
         end
       end
     end
-    
+
     if @publication.kpi_reporting_extension.present?
       if publication_params[:kpi_reporting_extension_attributes].values.all?(&:blank?)
         @publication.kpi_reporting_extension.mark_for_destruction

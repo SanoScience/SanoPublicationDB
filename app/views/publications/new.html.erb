@@ -55,7 +55,7 @@
         <div class="mb-3">
           <%= rg_form.label :research_group, class: 'form-label' %>
           <%= rg_form.select :research_group, 
-              ResearchGroupPublication.research_groups.keys.map { |key| [key.humanize, key] }, 
+              ResearchGroupPublication.research_groups.keys.map { |key| [ResearchGroupPublication.research_groups[key], key] }, 
               {}, class: 'form-select' %>
         </div>
 

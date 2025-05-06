@@ -47,6 +47,7 @@ class Api::StatisticsController < ActionController::API
                                                                    .where.not(publications: { status: "submitted" })
                                                                    .group(:research_group)
                                                                    .count
+                                                                   .transform_keys { |key| ResearchGroupPublication.research_groups[key] }
         render json: publications_by_research_groups_count
     end
 

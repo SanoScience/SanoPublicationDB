@@ -3,11 +3,11 @@ class ResearchGroupPublication < ApplicationRecord
 
     enum :research_group, {
         clinical_data_science: "Clinical Data Science",
-        computer_vision: "Computer Vision",
+        computational_neuroscience: "Computational Neuroscience",
         extreme_scale: "Extreme-Scale Data and Computing",
         modelling_simulation: "Modelling and Simulation",
         scientific_programmers: "Scientific Programmers",
-        health_informatics: "Health Informatics Group",
+        medical_imaging_robotics: "Medical Imaging and Robotics",
         personal_health_ds: "Personal Health Data Science",
         senior_post_doc: "SeniorPostDoc",
         genomics: "Structural and Functional Genomics Group",

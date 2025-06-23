@@ -66,7 +66,7 @@ class Api::StatisticsController < ActionController::API
                                             .where.not(publications: { status: "submitted" })
                                             .where.not(impact_factor: [ nil, 0 ])
                                             .average(:impact_factor)
-        formatted_average = average_impact_factor ? format("%.2f", average_impact_factor) : 0 
+        formatted_average = average_impact_factor ? format("%.2f", average_impact_factor) : 0
         render json: formatted_average
     end
 
@@ -89,7 +89,7 @@ class Api::StatisticsController < ActionController::API
             formatted_percentage = format("%.2f", percentage)
             render json: formatted_percentage
         end
-    end    
+    end
 
     def green_open_access_publications_count
         green_open_access_publications_count = OpenAccessExtension.joins(:publication)

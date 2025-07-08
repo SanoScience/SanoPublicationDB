@@ -49,36 +49,12 @@
   <hr>
 
   <h3> Research Groups Section </h3>
-  <div id="research-groups">
-    <% @publication.research_group_publications.each_with_index do |rg, index| %>
-      <%= form.fields_for :research_group_publications, rg do |rg_form| %>
-        <div class="research-group mb-3">
-          <div class="mb-3">
-            <%= rg_form.label :research_group, class: 'form-label' %>
-            <%= rg_form.select :research_group, 
-                ResearchGroupPublication.research_groups.keys.map { |key| [ResearchGroupPublication.research_groups[key], key] }, 
-                {}, class: 'form-select' %>
-          </div>
-
-          <div id="is-primary-container" class="mb-3">
-            <%= rg_form.label :is_primary, class: 'form-label' %>
-            <%= rg_form.check_box :is_primary, {}, 1, 0 %>
-            <%= rg_form.label :is_primary, 'Primary?' %>
-          </div>
-
-          <%= rg_form.hidden_field :id, id: 'research-group-id-field' %>
-          
-          <% if index > 0 %>
-            <button type="button" class="btn btn-danger btn-sm delete-research-group">Delete</button>
-          <% end %>
-        </div>
-      <% end %>
+  <div class="research-group mb-3">
+    <%= form.fields_for :research_group_publications do |rg_form| %>
+      <%= render 'research_group_publication_fields', f: rg_form %>
     <% end %>
   </div>
-
-  <div class="mb-3">
-    <%= button_tag 'Add Another Research Group', type: 'button', id: 'add-research-group', class: 'btn btn-primary' %>
-  </div>
+  <%= link_to_add_association "Add Research Group", form, :research_group_publications, data: {association_insertion_node: '.research-group', association_insertion_method: :append}, class: "btn btn-secondary btn-sm" %>
 
   <hr>
 
@@ -682,10 +658,6 @@
           input.value = ``;
         }
       });
-
-      if (deleteButtonClass === 'delete-research-group') {
-        newItem.innerHTML += `<button type="button" class="btn btn-danger btn-sm ${deleteButtonClass}" style="display: block;">Delete</button>`
-      }
       
       const deleteButton = newItem.querySelector(`.${deleteButtonClass}`);
       if (deleteButton) {
@@ -745,15 +717,6 @@
     }
 
     // Helper functions to get options for select elements
-    function getResearchGroupOptions() {
-      const select = document.querySelector('#research-groups select');
-      if (select) {
-        return select.innerHTML;
-      } else {
-        return `<%= raw ResearchGroupPublication.research_groups.map { |k, v| "<option value=\"#{k}\">#{v}</option>" }.join %>`;
-      }
-    }
-
     function getIdentifierCategoryOptions() {
       const select = document.querySelector('#identifiers select');
       if (select) {
@@ -773,13 +736,6 @@
     }
 
     // Add event listeners to buttons
-    const addResearchGroupBtn = document.getElementById('add-research-group');
-    if (addResearchGroupBtn) {
-      addResearchGroupBtn.addEventListener('click', function() {
-        addNestedItem('research-groups', 'research-group', 'delete-research-group', getResearchGroupOptions);
-      });
-    }
-
     const addIdentifierBtn = document.getElementById('add-identifier');
     if (addIdentifierBtn) {
       addIdentifierBtn.addEventListener('click', function() {
@@ -811,7 +767,6 @@
       });
     }
 
-    setupDeleteButton('delete-research-group', 'research-group');
     setupDeleteButton('delete-identifier', 'identifier');
     setupDeleteButton('delete-repository-link', 'repository-link');
   }

@@ -59,22 +59,22 @@
   <hr>
 
   <h3> Identifiers Section </h3>
-  <div id="identifiers">
+  <div class="identifier mb-3">
+    <%= form.fields_for :identifiers do |id_form| %>
+      <%= render 'identifier_fields', f: id_form %>
+    <% end %>
   </div>
-
-  <div class="mb-3">
-    <%= button_tag 'Add Identifier', type: 'button', id: 'add-identifier', class: 'btn btn-primary' %>
-  </div>
+  <%= link_to_add_association "Add Identifier", form, :identifiers, data: {association_insertion_node: '.identifier', association_insertion_method: :append}, class: "btn btn-secondary btn-sm" %>
 
   <hr>
 
   <h3> Repository Links Section </h3>
-  <div id="repository-links">
+  <div class="repository-link mb-3">
+    <%= form.fields_for :repository_links do |rl_form| %>
+      <%= render 'repository_link_fields', f: rl_form %>
+    <% end %>
   </div>
-
-  <div class="mb-3">
-    <%= button_tag 'Add Repository Link', type: 'button', id: 'add-repository-link', class: 'btn btn-primary' %>
-  </div>
+  <%= link_to_add_association "Add Repository Link", form, :repository_links, data: {association_insertion_node: '.repository-link', association_insertion_method: :append}, class: "btn btn-secondary btn-sm" %>
 
   <hr>
 
@@ -336,70 +336,6 @@
       container.appendChild(newItem);
     }
 
-    // Generic function to recreate templates
-    function recreateTemplate(container, itemClass, deleteButtonClass, getOptionsFunc) {
-      const newTemplate = document.createElement('div');
-      newTemplate.className = `${itemClass} mb-3`;
-      
-      let templateHTML = '';
-      
-      if (itemClass === 'identifier') {
-        templateHTML = `
-          <div class="mb-3">
-            <label class="form-label">Category</label>
-            <select class="form-select" name="publication[identifiers_attributes][0][category]">
-              ${getOptionsFunc()}
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Value</label>
-            <input type="text" id="${itemClass}-value-0" class="form-control" name="publication[identifiers_attributes][0][value]">
-          </div>`;
-      } else if (itemClass === 'repository-link') {
-        templateHTML = `
-          <div class="mb-3">
-            <label class="form-label">Repository</label>
-            <select class="form-select" name="publication[repository_links_attributes][0][repository]">
-              ${getOptionsFunc()}
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Value</label>
-            <input type="text" id="${itemClass}-value-0" class="form-control" name="publication[repository_links_attributes][0][value]">
-          </div>`;
-      }
-      
-      templateHTML += `<button type="button" class="btn btn-danger btn-sm ${deleteButtonClass}" style="display: block;">Delete</button>`;
-      newTemplate.innerHTML = templateHTML;
-      
-      container.appendChild(newTemplate);
-      
-      // Add event listener to the delete button
-      const deleteButton = newTemplate.querySelector(`.${deleteButtonClass}`);
-      deleteButton.addEventListener('click', function() {
-        newTemplate.remove();
-      });
-    }
-
-    // Helper functions to get options for select elements
-    function getIdentifierCategoryOptions() {
-      const select = document.querySelector('#identifiers select');
-      if (select) {
-        return select.innerHTML;
-      } else {
-        return `<%= raw Identifier.categories.map { |k, v| "<option value=\"#{k}\">#{k.humanize}</option>" }.join %>`;
-      }
-    }
-
-    function getRepositoryOptions() {
-      const select = document.querySelector('#repository-links select');
-      if (select) {
-        return select.innerHTML;
-      } else {
-        return `<%= raw RepositoryLink.repositories.map { |k, v| "<option value=\"#{k}\">#{k.humanize}</option>" }.join %>`;
-      }
-    }
-
     // Helper function to clear input fields
     function clearInputFields(fields) {
       inputs = fields.querySelectorAll('input, select');
@@ -411,28 +347,6 @@
         }
       });
     }
-
-    // Add event listeners to buttons
-    const addIdentifierBtn = document.getElementById('add-identifier');
-    if (addIdentifierBtn) {
-      addIdentifierBtn.addEventListener('click', function() {
-        addNestedItem('identifiers', 'identifier', 'delete-identifier', getIdentifierCategoryOptions);
-      });
-    }
-
-    const addRepositoryLinkBtn = document.getElementById('add-repository-link');
-    if (addRepositoryLinkBtn) {
-      addRepositoryLinkBtn.addEventListener('click', function() {
-        addNestedItem('repository-links', 'repository-link', 'delete-repository-link', getRepositoryOptions);
-      });
-    }
-
-    // Add event listeners to all initial delete buttons
-    document.querySelectorAll('.delete-identifier, .delete-repository-link').forEach(button => {
-      button.addEventListener('click', function() {
-        this.closest('.identifier, .repository-link').remove();
-      });
-    });
 
     // KPI Extension toggle functionality
     const kpiToggleElement = document.getElementById('kpi-toggle');

@@ -62,48 +62,6 @@ class PublicationsController < ApplicationController
   def update
     @publication = Publication.find(params[:id])
 
-    if publication_params[:research_group_publications_attributes].present?
-      if @publication.research_group_publications.size > publication_params[:research_group_publications_attributes].values.size
-        @publication.research_group_publications.each do |research_group_publication|
-          if !publication_params[:research_group_publications_attributes].values.map { |v| v[:id] }.include?(research_group_publication.id)
-            research_group_publication.mark_for_destruction
-          end
-        end
-      end
-    end
-
-    if @publication.identifiers.present?
-      if publication_params[:identifiers_attributes].present?
-        if @publication.identifiers.size > publication_params[:identifiers_attributes].values.size
-          @publication.identifiers.each do |identifier|
-            if !publication_params[:identifiers_attributes].values.map { |v| v[:id] }.include?(identifier.id.to_s)
-              identifier.mark_for_destruction
-            end
-          end
-        end
-      else
-        @publication.identifiers.each do |identifier|
-          identifier.mark_for_destruction
-        end
-      end
-    end
-
-    if @publication.repository_links.present?
-      if publication_params[:repository_links_attributes].present?
-        if @publication.repository_links.size > publication_params[:repository_links_attributes].values.size
-          @publication.repository_links.each do |repository_link|
-            if !publication_params[:repository_links_attributes].values.map { |v| v[:id] }.include?(repository_link.id.to_s)
-              repository_link.mark_for_destruction
-            end
-          end
-        end
-      else
-        @publication.repository_links.each do |repository_link|
-          repository_link.mark_for_destruction
-        end
-      end
-    end
-
     if @publication.kpi_reporting_extension.present?
       if publication_params[:kpi_reporting_extension_attributes].values.all?(&:blank?)
         @publication.kpi_reporting_extension.mark_for_destruction

@@ -59,64 +59,22 @@
   <hr>
 
   <h3> Identifiers Section </h3>
-  <div id="identifiers">
-    <% @publication.identifiers.each_with_index do |identifier, index| %>
-      <%= form.fields_for :identifiers, identifier do |id_form| %>
-        <div class="identifier mb-3">
-          <div class="mb-3">
-            <%= id_form.label :category, class: 'form-label' %>
-            <%= id_form.select :category, 
-                Identifier.categories.keys.map { |key| [key.humanize, key] }, 
-                {}, class: 'form-select' %>
-          </div>
-
-          <div class="mb-3">
-            <%= id_form.label :value, class: 'form-label' %>
-            <%= id_form.text_field :value, class: 'form-control' %>
-          </div>
-
-          <%= id_form.hidden_field :id, id: 'identifier-id-field' %>
-
-          <button type="button" class="btn btn-danger btn-sm delete-identifier">Delete</button>
-        </div>  
-      <% end %>
+  <div class="identifier mb-3">
+    <%= form.fields_for :identifiers do |id_form| %>
+      <%= render 'identifier_fields', f: id_form %>
     <% end %>
   </div>
-
-  <div class="mb-3">
-    <%= button_tag 'Add Identifier', type: 'button', id: 'add-identifier', class: 'btn btn-primary' %>
-  </div>
+  <%= link_to_add_association "Add Identifier", form, :identifiers, data: {association_insertion_node: '.identifier', association_insertion_method: :append}, class: "btn btn-secondary btn-sm" %>
 
   <hr>
 
   <h3> Repository Links Section </h3>
-  <div id="repository-links">
-    <% @publication.repository_links.each_with_index do |repository_link, index| %>
-      <%= form.fields_for :repository_links, repository_link do |rl_form| %>
-        <div class="repository-link mb-3">
-          <div class="mb-3">
-            <%= rl_form.label :repository, class: 'form-label' %>
-            <%= rl_form.select :repository, 
-                RepositoryLink.repositories.keys.map { |key| [key.humanize, key] },
-                {}, class: 'form-select' %>
-          </div>
-
-          <div class="mb-3">
-            <%= rl_form.label :value, class: 'form-label' %>
-            <%= rl_form.text_field :value, class: 'form-control' %>
-          </div>
-
-          <%= rl_form.hidden_field :id, id: 'repository-link-id-field' %>
-
-          <button type="button" class="btn btn-danger btn-sm delete-repository-link">Delete</button>
-        </div>
-      <% end %>
+  <div class="repository-link mb-3">
+    <%= form.fields_for :repository_links do |rl_form| %>
+      <%= render 'repository_link_fields', f: rl_form %>
     <% end %>
   </div>
-
-  <div class="mb-3">
-    <%= button_tag 'Add Repository Link', type: 'button', id: 'add-repository-link', class: 'btn btn-primary' %>
-  </div>
+  <%= link_to_add_association "Add Repository Link", form, :repository_links, data: {association_insertion_node: '.repository-link', association_insertion_method: :append}, class: "btn btn-secondary btn-sm" %>
 
   <hr>
 

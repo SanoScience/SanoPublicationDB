@@ -1,0 +1,13 @@
+<div class="nested-fields">
+  <div class="mb-3">
+    <%= f.label :category, class: "mt-3" %>
+    <%= f.select :category, 
+        Identifier.categories.keys.map { |key| [Identifier.categories[key], key] }, 
+        {}, class: 'form-select' %>
+  </div>
+  <div class="mb-3">
+    <%= f.label :value, class: "mt-3" %>
+    <%= f.text_field :value, class: 'form-control' %>
+  </div>
+  <%= link_to_remove_association "Delete", f, class:"btn btn-danger mb-2" %>
+</div>

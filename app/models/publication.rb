@@ -10,8 +10,12 @@ class Publication < ApplicationRecord
     accepts_nested_attributes_for :research_group_publications, 
                                   allow_destroy: true, 
                                   reject_if: proc { |att| att["research_group"].blank? || att["is_primary"].blank? }
-    accepts_nested_attributes_for :identifiers, allow_destroy: true, reject_if: :all_blank
-    accepts_nested_attributes_for :repository_links, allow_destroy: true, reject_if: :all_blank
+    accepts_nested_attributes_for :identifiers, 
+                                  allow_destroy: true, 
+                                  reject_if: proc { |att| att["category"].blank? || att["value"].blank? }
+    accepts_nested_attributes_for :repository_links, 
+                                  allow_destroy: true, 
+                                  reject_if: proc { |att| att["repository"].blank? || att["value"].blank? }
     accepts_nested_attributes_for :kpi_reporting_extension, allow_destroy: true, reject_if: :all_blank
     accepts_nested_attributes_for :open_access_extension, allow_destroy: true, reject_if: :all_blank
     accepts_nested_attributes_for :conference, allow_destroy: true, reject_if: :all_blank

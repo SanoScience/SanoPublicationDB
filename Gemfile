@@ -65,3 +65,5 @@ end
 gem "jquery-rails", "~> 4.6"
 
 gem "cocoon", "~> 1.2"
+
+gem "simple_form", "~> 5.3"

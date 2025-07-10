@@ -18,8 +18,8 @@ class Publication < ApplicationRecord
                                   reject_if: proc { |att| att["repository"].blank? || att["value"].blank? }
     accepts_nested_attributes_for :kpi_reporting_extension, allow_destroy: true, reject_if: :all_blank
     accepts_nested_attributes_for :open_access_extension, allow_destroy: true, reject_if: :all_blank
-    accepts_nested_attributes_for :conference, allow_destroy: true, reject_if: :all_blank
-    accepts_nested_attributes_for :journal_issue, allow_destroy: true, reject_if: :all_blank
+    accepts_nested_attributes_for :conference, allow_destroy: true, reject_if: proc { |att| att["name"].blank? }
+    accepts_nested_attributes_for :journal_issue, allow_destroy: true, reject_if: proc { |att| att["title"].blank? }
 
     enum :category, {
       journal_article: 0,

@@ -10,23 +10,6 @@ class PublicationsController < ApplicationController
   def create
     @publication = Publication.new(publication_params)
 
-    if publication_params[:conference_attributes][:name]&.present?
-      conference = Conference.new(publication_params[:conference_attributes])
-
-      if conference.save
-        @publication.conference = conference
-      else
-        conference.errors.full_messages.each do |message|
-          @publication.errors.add(:base, "Conference error: #{message}")
-        end
-        render :new, status: :unprocessable_entity
-        return
-      end
-    elsif publication_params[:conference_id].present? && publication_params[:conference_id] != "0"
-      conference = Conference.find(publication_params[:conference_id])
-      @publication.conference = conference
-    end
-
     if publication_params[:journal_issue_attributes][:title]&.present?
       journal_issue = JournalIssue.new(publication_params[:journal_issue_attributes])
 

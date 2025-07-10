@@ -1,6 +1,6 @@
 <h1>New Publication</h1>
 
-<%= form_with(model: @publication, local: true, html: { class: 'needs-validation', novalidate: true }) do |form| %>
+<%= simple_form_for @publication, html: { class: 'needs-validation' } do |form| %>
   <% if @publication.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(@publication.errors.count, "error") %> prohibited this publication from being saved:</h2>
@@ -79,46 +79,18 @@
   <hr>
 
   <h3> Conference Section </h3>
-  <div class="mb-3">
-    <label class="form-label">Conference</label>
-    <div class="d-flex">
-      <div class="flex-grow-1 me-2">
-        <%= form.select :conference_id, 
-            Conference.all.map { |c| [c.name, c.id] }, 
-            { include_blank: "Select a conference" }, 
-            class: 'form-select', id: 'conference-select' %>
-      </div>
-      <button type="button" class="btn btn-primary" id="new-conference-btn">Add New Conference</button>
+  <div class="conference" data-controller="nested-list">
+    <div id="items-list">
+      <%= form.association :conference, collection: Conference.all, label_method: :name, value_method: :id, include_blank: "Select a conference" %>
     </div>
-  </div>
 
-  <div id="new-conference-fields" style="display: none;">
-    <div class="card mb-3 p-3">
-      <h4>New Conference Details</h4>
-      
-      <%= form.fields_for :conference, Conference.new do |conf_form| %>
-        <div class="mb-3">
-          <%= conf_form.label :name, "Conference Name", class: 'form-label' %>
-          <%= conf_form.text_field :name, class: 'form-control', id: 'new-conference-name', required: true %>
-        </div>
-        
-        <div class="mb-3">
-          <%= conf_form.label :core, "CORE Ranking", class: 'form-label' %>
-          <%= conf_form.text_field :core, class: 'form-control' %>
-        </div>
-        
-        <div class="mb-3">
-          <%= conf_form.label :start_date, "Start Date", class: 'form-label' %>
-          <%= conf_form.date_field :start_date, class: 'form-control', required: true %>
-        </div>
-        
-        <div class="mb-3">
-          <%= conf_form.label :end_date, "End Date", class: 'form-label' %>
-          <%= conf_form.date_field :end_date, class: 'form-control', required: 'true' %>
-        </div>
-      <% end %>
-      
-      <button type="button" class="btn btn-secondary" id="cancel-new-conference-btn">Cancel</button>
+    <div id="add-item-link">
+      <%= link_to_add_association "Add New Conference", form, :conference, 
+          data: {
+            association_insertion_node: '.conference', 
+            association_insertion_method: :append
+          }, 
+          class: "btn btn-secondary btn-sm" %>
     </div>
   </div>
 
@@ -283,71 +255,6 @@
 <%= link_to 'Back', publications_path, class: 'btn btn-secondary' %>
 
 <script>
-  function initializePublicationForm() {
-    // Skip if already initialized
-    if (window.publicationFormInitialized) return;
-    window.publicationFormInitialized = true;
-
-    document.querySelectorAll('[id*="fields"]').forEach(element => {
-      clearInputFields(element);
-    });
-    
-    // Generic function to handle adding new nested items
-    function addNestedItem(containerId, itemClass, deleteButtonClass, getOptionsFunc) {
-      const container = document.getElementById(containerId);
-      
-      // If container is empty, create the first item
-      if (container.children.length === 0) {
-        recreateTemplate(container, itemClass, deleteButtonClass, getOptionsFunc);
-        return;
-      }
-      
-      const template = container.querySelector(`.${itemClass}`);
-      const newItem = template.cloneNode(true);
-      
-      // Get the current number of items
-      const index = container.querySelectorAll(`.${itemClass}`).length;
-
-      // Update all form elements with the new index
-      const inputs = newItem.querySelectorAll('input, select');
-      inputs.forEach(input => {
-        const name = input.getAttribute('name');
-        if (name) {
-          input.setAttribute('name', name.replace(/\[\d*\]/, `[${index}]`));
-        }
-        
-        // Update ID if it exists
-        if (input.id && input.id.includes(`${itemClass}-value`)) {
-          input.id = `${itemClass}-value-${index}`;
-        }
-      });
-      
-      // Show delete button for the new item
-      const deleteButton = newItem.querySelector(`.${deleteButtonClass}`);
-      if (deleteButton) {
-        deleteButton.style.display = 'block';
-        
-        // Add event listener to the delete button
-        deleteButton.addEventListener('click', function() {
-          newItem.remove();
-        });
-      }
-      
-      container.appendChild(newItem);
-    }
-
-    // Helper function to clear input fields
-    function clearInputFields(fields) {
-      inputs = fields.querySelectorAll('input, select');
-      inputs.forEach(input => {
-        if (input.type === 'checkbox') {
-          input.checked = false;
-        } else {
-          input.value = '';
-        }
-      });
-    }
-
     // KPI Extension toggle functionality
     const kpiToggleElement = document.getElementById('kpi-toggle');
     if (kpiToggleElement) {
@@ -411,96 +318,5 @@
       // Trigger change event on page load to set initial state
       oaCategorySelect.dispatchEvent(new Event('change'));
     }
-
-    // Conference functionality
-    const newConferenceBtn = document.getElementById('new-conference-btn');
-    const conferenceSelect = document.getElementById('conference-select');
-    const newConferenceFields = document.getElementById('new-conference-fields');
-    const cancelNewConferenceBtn = document.getElementById('cancel-new-conference-btn');
-    const newConferenceName = document.getElementById('new-conference-name');
-
-    if (newConferenceBtn) {
-      newConferenceBtn.addEventListener('click', function() {
-        console.log('New conference button clicked');
-        if (newConferenceFields) {
-          newConferenceFields.style.display = 'block';
-        }
-        if (conferenceSelect) {
-          conferenceSelect.disabled = true;
-        }
-        newConferenceBtn.disabled = true;
-      });
-    }
-    
-    if (cancelNewConferenceBtn) {
-      cancelNewConferenceBtn.addEventListener('click', function() {
-        console.log('Cancel new conference button clicked');
-        if (newConferenceFields) {
-          newConferenceFields.style.display = 'none';
-        }
-        if (conferenceSelect) {
-          conferenceSelect.disabled = false;
-        }
-        if (newConferenceBtn) {
-          newConferenceBtn.disabled = false;
-        }
-        
-        // Clear the new conference fields
-        if (newConferenceFields) {
-          clearInputFields(newConferenceFields);
-        }
-      });
-    }
-    
-    // Journal Issue functionality
-    const journalIssueSelect = document.getElementById('journal-issue-select');
-    const newJournalIssueBtn = document.getElementById('new-journal-issue-btn');
-    const newJournalIssueFields = document.getElementById('new-journal-issue-fields');
-    const cancelNewJournalIssueBtn = document.getElementById('cancel-new-journal-issue-btn');
-    
-    if (newJournalIssueBtn) {
-      newJournalIssueBtn.addEventListener('click', function() {
-        console.log('New journal issue button clicked');
-        if (newJournalIssueFields) {
-          newJournalIssueFields.style.display = 'block';
-        }
-        if (journalIssueSelect) {
-          journalIssueSelect.disabled = true;
-        }
-        newJournalIssueBtn.disabled = true;
-      });
-    }
-    
-    if (cancelNewJournalIssueBtn) {
-      cancelNewJournalIssueBtn.addEventListener('click', function() {
-        console.log('Cancel new journal issue button clicked');
-        if (newJournalIssueFields) {
-          newJournalIssueFields.style.display = 'none';
-        }
-        if (journalIssueSelect) {
-          journalIssueSelect.disabled = false;
-        }
-        if (newJournalIssueBtn) {
-          newJournalIssueBtn.disabled = false;
-        }
-
-        // Clear the new journal issue fields
-        if (newJournalIssueFields) {
-          clearInputFields(newJournalIssueFields);
-        }
-      });
-    }
-  }
-
-  // Initialize on DOMContentLoaded
-  document.addEventListener('DOMContentLoaded', initializePublicationForm);
-  
-  // Initialize on Turbo navigation
-  document.addEventListener('turbo:load', initializePublicationForm);
-  
-  // Initialize immediately if document is already loaded
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    initializePublicationForm();
-  }
 </script>
 

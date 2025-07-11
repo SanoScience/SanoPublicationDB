@@ -77,55 +77,18 @@
   <hr>
 
   <h3> Journal Issue Section </h3>
-  <div class="mb-3">
-    <label class="form-label">Journal Issue</label>
-    <div class="d-flex">
-      <div class="flex-grow-1 me-2">
-        <%= form.select :journal_issue_id, 
-            JournalIssue.all.map { |ji| [ji.title, ji.id] }, 
-            { include_blank: "Select a journal issue" }, 
-            class: 'form-select', id: 'journal-issue-select' %>
-      </div>
-      <button type="button" class="btn btn-primary" id="new-journal-issue-btn">Add New Journal Issue</button>
+  <div class="journal-issue" data-controller="nested-list">
+    <div id="items-list">
+      <%= form.association :journal_issue, collection: JournalIssue.all, label_method: :title, value_method: :id, include_blank: "Select a journal issue" %>
     </div>
-  </div>
 
-  <div id="journal-issue-fields">
-    <div class="card mb-3 p-3" style="<%= @publication.journal_issue || params[:new_journal_issue] ? '' : 'display: none;' %>">
-      <h4>Journal Issue Details</h4>
-      
-      <div id="journal-issue-form-fields" style="<%= @publication.journal_issue || params[:new_journal_issue] ? '' : 'display: none;' %>">
-        <%= form.fields_for :journal_issue, @publication.journal_issue || JournalIssue.new do |ji_form| %>
-          <div class="mb-3">
-            <%= ji_form.label :title, "Journal Issue Title", class: 'form-label' %>
-            <%= ji_form.text_field :title, class: 'form-control', id: 'new-journal-issue-title', required: true %>
-          </div>
-          
-          <div class="mb-3">
-            <%= ji_form.label :journal_num, "Journal Number", class: 'form-label' %>
-            <%= ji_form.text_field :journal_num, class: 'form-control', id: 'journal-issue-num' %>
-          </div>
-          
-          <div class="mb-3">
-            <%= ji_form.label :publisher, "Publisher", class: 'form-label' %>
-            <%= ji_form.text_field :publisher, class: 'form-control', id: 'journal-issue-publisher' %>
-          </div>
-          
-          <div class="mb-3">
-            <%= ji_form.label :volume, "Volume", class: 'form-label' %>
-            <%= ji_form.text_field :volume, class: 'form-control', id: 'journal-issue-volume' %>
-          </div>
-          
-          <div class="mb-3">
-            <%= ji_form.label :impact_factor, "Impact Factor", class: 'form-label' %>
-            <%= ji_form.text_field :impact_factor, class: 'form-control', id: 'journal-issue-impact-factor' %>
-          </div>
-          
-          <%= ji_form.hidden_field :id, id: 'journal-issue-id-field' %>
-        <% end %>
-      </div>
-      
-      <button type="button" class="btn btn-secondary" id="cancel-new-journal-issue-btn" style="<%= params[:new_journal_issue] ? '' : 'display: none;' %>">Cancel</button>
+    <div id="add-item-link">
+      <%= link_to_add_association "Add New Journal Issue", form, :journal_issue, 
+          data: {
+            association_insertion_node: '.journal-issue', 
+            association_insertion_method: :append
+          }, 
+          class: "btn btn-secondary btn-sm" %>
     </div>
   </div>
 

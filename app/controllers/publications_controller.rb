@@ -10,23 +10,6 @@ class PublicationsController < ApplicationController
   def create
     @publication = Publication.new(publication_params)
 
-    if publication_params[:journal_issue_attributes][:title]&.present?
-      journal_issue = JournalIssue.new(publication_params[:journal_issue_attributes])
-
-      if journal_issue.save
-        @publication.journal_issue = journal_issue
-      else
-        journal_issue.errors.full_messages.each do |message|
-          @publication.errors.add(:base, "Journal issue error: #{message}")
-        end
-        render :new, status: :unprocessable_entity
-        return
-      end
-    elsif publication_params[:journal_issue_id].present? && publication_params[:journal_issue_id] != "0"
-      journal_issue = JournalIssue.find(publication_params[:journal_issue_id])
-      @publication.journal_issue = journal_issue
-    end
-
     if @publication.save
       redirect_to @publication, notice: "Publication was successfully created."
     else

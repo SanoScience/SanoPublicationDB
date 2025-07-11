@@ -1,23 +1,11 @@
 <div class="nested-fields">
-    <div class="mb-3">
-        <%= f.label :name, "Conference Name", class: 'form-label' %>
-        <%= f.text_field :name, class: 'form-control', required: true %>
-    </div>
+    <%= f.input :name, label: "Conference Name" %>
 
-    <div class="mb-3">
-        <%= f.label :core, "CORE Ranking", class: 'form-label' %>
-        <%= f.text_field :core, class: 'form-control' %>
-    </div>
+    <%= f.input :core, label: "CORE Ranking" %>
 
-    <div class="mb-3">
-        <%= f.label :start_date, "Start Date", class: 'form-label' %>
-        <%= f.date_field :start_date, class: 'form-control', required: true %>
-    </div>
+    <%= f.input :start_date, label: "Start Date" %>
 
-    <div class="mb-3">
-        <%= f.label :end_date, "End Date", class: 'form-label' %>
-        <%= f.date_field :end_date, class: 'form-control', required: 'true' %>
-    </div>
+    <%= f.input :end_date, label: "End Date" %>
 
     <%= link_to_remove_association "Delete", f, class:"btn btn-danger mb-2" %>
 </div>

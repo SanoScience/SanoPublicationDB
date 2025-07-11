@@ -12,44 +12,24 @@
     </div>
   <% end %>
 
-  <div class="mb-3">
-    <%= form.label :title, class: 'form-label' %>
-    <%= form.text_field :title, class: 'form-control' %>
-  </div>
+  <hr>
 
-    <div class="mb-3">
-    <%= form.label :category, class: 'form-label' %>
-    <%= form.select :category, 
-        Publication.categories.keys.map { |key| [key.humanize, key] }, 
-        {}, class: 'form-select' %>
-  </div>
+  <%= form.input :title %>
 
-  <div class="mb-3">
-    <%= form.label :status, class: 'form-label' %>
-    <%= form.select :status, 
-        Publication.statuses.keys.map { |key| [key.humanize, key] }, 
-        {}, class: 'form-select' %>
-  </div>
+  <%= form.input :category, collection: Publication.categories.keys.map { |key| [key.humanize, key] }, include_blank: true %>
 
-  <div class="mb-3">
-    <%= form.label :author_list, class: 'form-label' %>
-    <%= form.text_area :author_list, class: 'form-control' %>
-  </div>
+  <%= form.input :status, collection: Publication.statuses.keys.map { |key| [key.humanize, key] }, include_blank: true %>
 
-  <div class="mb-3">
-    <%= form.label :publication_date, class: 'form-label' %>
-    <%= form.date_field :publication_date, class: 'form-control' %>
-  </div>
+  <%= form.input :author_list %>
 
-  <div class="mb-3">
-    <%= form.label :link, class: 'form-label' %>
-    <%= form.text_field :link, class: 'form-control' %>
-  </div>
+  <%= form.input :publication_date, as: :date %>
+
+  <%= form.input :link %>
 
   <hr>
 
   <h3> Research Groups Section </h3>
-  <div class="research-group mb-3">
+  <div class="research-group">
     <%= form.fields_for :research_group_publications do |rg_form| %>
       <%= render 'research_group_publication_fields', f: rg_form %>
     <% end %>
@@ -59,7 +39,7 @@
   <hr>
 
   <h3> Identifiers Section </h3>
-  <div class="identifier mb-3">
+  <div class="identifier">
     <%= form.fields_for :identifiers do |id_form| %>
       <%= render 'identifier_fields', f: id_form %>
     <% end %>
@@ -69,7 +49,7 @@
   <hr>
 
   <h3> Repository Links Section </h3>
-  <div class="repository-link mb-3">
+  <div class="repository-link">
     <%= form.fields_for :repository_links do |rl_form| %>
       <%= render 'repository_link_fields', f: rl_form %>
     <% end %>

@@ -1,14 +1,7 @@
 <div class="nested-fields">
-  <div class="mb-3">
-    <%= f.label :research_group, class: "mt-3" %>
-    <%= f.select :research_group, 
-        ResearchGroupPublication.research_groups.keys.map { |key| [ResearchGroupPublication.research_groups[key], key] }, 
-        {}, class: 'form-select' %>
-  </div>
-  <div class="mb-3">
-    <%= f.label :is_primary, class: "mt-3" %>
-    <%= f.check_box :is_primary, {}, 1, 0 %>
-    <%= f.label :is_primary, 'Primary?' %>
-  </div>
+  <%= f.input :research_group, collection: ResearchGroupPublication.research_groups.keys.map { |key| [ResearchGroupPublication.research_groups[key], key] }, include_blank: true %>
+
+  <%= f.input :is_primary, label: "Primary?" %>
+
   <%= link_to_remove_association "Delete", f, class:"btn btn-danger mb-2" %>
 </div>

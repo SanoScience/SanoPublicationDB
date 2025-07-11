@@ -110,39 +110,21 @@
   <hr>
 
   <h3>Open Access Extension</h3>
-  <div class="mb-3">
-    <div class="form-check form-switch">
-      <input class="form-check-input" type="checkbox" id="oa-toggle" name="create_open_access_extension">
-      <label class="form-check-label" for="oa-toggle">Add Open Access Extension</label>
-    </div>
-  </div>
-
-  <div id="open-access-extension-fields" style="display: none;">
-    <%= form.fields_for :open_access_extension, @publication.open_access_extension || OpenAccessExtension.new do |oa_form| %>
-      <div class="mb-3">
-        <%= oa_form.label :category, "Category", class: 'form-label' %>
-        <%= oa_form.select :category, 
-            OpenAccessExtension.categories.keys.map { |key| [key.humanize, key] }, 
-            {}, class: 'form-select', id: 'oa-category-select', name: 'publication[open_access_extension_attributes][category]' %>
-      </div>
-      
-      <div class="mb-3 gold-oa-field" style="display: none;">
-        <%= oa_form.label :gold_oa_charges, "Gold OA Charges (PLN)", class: 'form-label' %>
-        <%= oa_form.number_field :gold_oa_charges, class: 'form-control', name: 'publication[open_access_extension_attributes][gold_oa_charges]' %>
-      </div>
-      
-      <div class="mb-3 gold-oa-field" style="display: none;">
-        <%= oa_form.label :gold_oa_funding_source, "Gold OA Funding Source", class: 'form-label' %>
-        <%= oa_form.text_field :gold_oa_funding_source, class: 'form-control', name: 'publication[open_access_extension_attributes][gold_oa_funding_source]' %>
-      </div>
+  <div class="open-access-extension" data-controller="nested-toggle">
+    <%= form.fields_for :open_access_extension do |oa_form| %>
+      <%= render 'open_access_extension_fields', f: oa_form %>
     <% end %>
+
+    <div class="links max-one-association">
+      <%= link_to_add_association "Add Open Access Extension", form, :open_access_extension, 
+          data: {association_insertion_node: '.open-access-extension', association_insertion_method: :append}, 
+          force_non_association_create: true, class: "btn btn-secondary btn-sm" %>
+    </div>
   </div>
 
   <hr>
 
-  <div class="mb-3">
-    <%= form.submit "Create Publication", class: 'btn btn-success' %>
-  </div>
+  <%= form.submit "Create Publication", class: 'btn btn-success' %>
 <% end %>
 
 <%= link_to 'Back', publications_path, class: 'btn btn-secondary' %>

@@ -110,99 +110,21 @@
   <hr>
 
   <h3>Open Access Extension</h3>
-  <div class="mb-3">
-    <div class="form-check form-switch">
-      <input class="form-check-input" type="checkbox" id="oa-toggle",
-             <%= @publication.open_access_extension.present? ? 'checked' : '' %>
-      <label class="form-check-label" for="oa-toggle">Add Open Access Extension</label>
-    </div>
-  </div>
-
-  <div id="open-access-extension-fields" style="<%= @publication.open_access_extension.present? ? '' : 'display: none;' %>">
-    <%= form.fields_for :open_access_extension, @publication.open_access_extension || @publication.build_open_access_extension do |oa_form| %>
-      <div class="mb-3">
-        <%= oa_form.label :category, "Category", class: 'form-label' %>
-        <%= oa_form.select :category, 
-            OpenAccessExtension.categories.keys.map { |key| [key.humanize, key] }, 
-            {}, class: 'form-select', id: 'oa-category-select' %>
-      </div>
-      
-      <div id="gold-oa-fields" style="<%= @publication.open_access_extension&.gold? ? '' : 'display: none;' %>">
-        <div class="mb-3">
-          <%= oa_form.label :gold_oa_charges, "Gold OA Charges (PLN)", class: 'form-label' %>
-          <%= oa_form.number_field :gold_oa_charges, class: 'form-control' %>
-        </div>
-
-        <div class="mb-3">
-          <%= oa_form.label :gold_oa_funding_source, "Gold OA Funding Source", class: 'form-label' %>
-          <%= oa_form.text_field :gold_oa_funding_source, class: 'form-control' %>
-        </div>
-      </div>
+  <div class="open-access-extension" data-controller="nested-toggle">
+    <%= form.fields_for :open_access_extension do |oa_form| %>
+      <%= render 'open_access_extension_fields', f: oa_form %>
     <% end %>
+
+    <div class="links max-one-association">
+      <%= link_to_add_association "Add Open Access Extension", form, :open_access_extension, 
+          data: {association_insertion_node: '.open-access-extension', association_insertion_method: :append}, 
+          force_non_association_create: true, class: "btn btn-secondary btn-sm" %>
+    </div>
   </div>
 
   <hr>
 
-  <div class="mb-3">
-    <%= form.submit "Update Publication", class: 'btn btn-success' %>
-  </div>
+  <%= form.submit "Update Publication", class: 'btn btn-success' %>
 <% end %>
 
 <%= link_to 'Back', publication_path(@publication), class: 'btn btn-secondary' %>
-
-<script>
-  // Wait for the DOM to be fully loaded
-  document.addEventListener('DOMContentLoaded', function() {
-    initializeHandlers();
-  });
-
-  document.addEventListener('turbo:load', function() {
-    initializeHandlers();
-  });
-
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    initializeHandlers();
-  }
-
-  function initializeHandlers() {
-    if (window.handlersInitialized) return;
-    window.handlersInitialized = true;
-        
-    initKpiExtensionSection();
-    initOpenAccessExtensionSection();
-  }
-
-  function initOpenAccessExtensionSection() {
-    // Open Access Extension toggle functionality
-    const oaToggle = document.getElementById('oa-toggle');
-    const oaCategorySelect = document.getElementById('oa-category-select');
-    const goldOaFields = document.getElementById('gold-oa-fields');
-
-    if (oaToggle) {
-      oaToggle.addEventListener('change', function() {
-        const oaFields = document.getElementById('open-access-extension-fields');
-        if (oaFields) {
-          oaFields.style.display = this.checked ? 'block' : 'none';
-          
-          // Clear fields when toggle is unchecked
-          if (!this.checked) {
-            clearInputFields(oaFields);
-          }
-        }
-      });
-    }
-      
-    // Add event listener for category select
-    if (oaCategorySelect) {
-      oaCategorySelect.addEventListener('change', function() {
-        if (this.value === 'gold') {
-          goldOaFields.style.display = 'block';
-        } else {
-          goldOaFields.style.display = 'none';
-          clearInputFields(goldOaFields);
-        }
-      });
-    } 
-  }
-</script>
-

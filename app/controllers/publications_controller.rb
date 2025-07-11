@@ -5,6 +5,7 @@ class PublicationsController < ApplicationController
 
   def new
     @publication = Publication.new
+    @publication.research_group_publications.build
   end
 
   def create

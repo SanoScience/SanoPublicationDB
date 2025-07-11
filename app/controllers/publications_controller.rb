@@ -28,18 +28,6 @@ class PublicationsController < ApplicationController
   def update
     @publication = Publication.find(params[:id])
 
-    if @publication.kpi_reporting_extension.present?
-      if publication_params[:kpi_reporting_extension_attributes].values.all?(&:blank?)
-        @publication.kpi_reporting_extension.mark_for_destruction
-      end
-    end
-
-    if @publication.open_access_extension.present?
-      if publication_params[:open_access_extension_attributes][:category].blank?
-        @publication.open_access_extension.mark_for_destruction
-      end
-    end
-
     if @publication.update(publication_params)
       redirect_to @publication, notice: "Publication was successfully updated."
     else

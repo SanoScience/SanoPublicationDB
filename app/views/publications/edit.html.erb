@@ -95,71 +95,16 @@
   <hr>
 
   <h3>KPI Reporting Extension</h3>
-  <div class="mb-3">
-    <div class="form-check form-switch">
-      <input class="form-check-input" type="checkbox" id="kpi-toggle",
-             <%= @publication.kpi_reporting_extension.present? ? 'checked' : '' %>
-      <label class="form-check-label" for="kpi-toggle">Add KPI Reporting Extension</label>
-    </div>
-  </div>
-
-  <div id="kpi-extension-fields" style="<%= @publication.kpi_reporting_extension.present? ? '' : 'display: none;' %>">
-    <%= form.fields_for :kpi_reporting_extension, @publication.kpi_reporting_extension || @publication.build_kpi_reporting_extension do |kpi_form| %>
-      <div class="mb-3">
-        <%= kpi_form.label :teaming_reporting_period, "Teaming Reporting Period", class: 'form-label' %>
-        <%= kpi_form.number_field :teaming_reporting_period, class: 'form-control' %>
-      </div>
-      
-      <div class="mb-3">
-        <%= kpi_form.label :invoice_number, "Invoice Number", class: 'form-label' %>
-        <%= kpi_form.number_field :invoice_number, class: 'form-control' %>
-      </div>
-      
-      <div class="mb-3 form-check">
-        <%= kpi_form.check_box :pbn, class: 'form-check-input' %>
-        <%= kpi_form.label :pbn, "PBN", class: 'form-check-label' %>
-      </div>
-      
-      <div class="mb-3 form-check">
-        <%= kpi_form.check_box :jcr, class: 'form-check-input' %>
-        <%= kpi_form.label :jcr, "JCR", class: 'form-check-label' %>
-      </div>
-      
-      <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_added_ft_portal, class: 'form-check-input' %>
-        <%= kpi_form.label :is_added_ft_portal, "Added to FT Portal", class: 'form-check-label' %>
-      </div>
-      
-      <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_checked, class: 'form-check-input' %>
-        <%= kpi_form.label :is_checked, "Checked", class: 'form-check-label' %>
-      </div>
-      
-      <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_new_method_technique, class: 'form-check-input' %>
-        <%= kpi_form.label :is_new_method_technique, "New Method/Technique", class: 'form-check-label' %>
-      </div>
-      
-      <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_methodology_application, class: 'form-check-input' %>
-        <%= kpi_form.label :is_methodology_application, "Methodology Application", class: 'form-check-label' %>
-      </div>
-      
-      <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_polish_med_researcher_involved, class: 'form-check-input' %>
-        <%= kpi_form.label :is_polish_med_researcher_involved, "Polish Medical Researcher Involved", class: 'form-check-label' %>
-      </div>
-
-      <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_peer_reviewed, class: 'form-check-input' %>
-        <%= kpi_form.label :is_peer_reviewed, "Peer Reviewed", class: 'form-check-label' %>
-      </div>
-      
-      <div class="mb-3">
-        <%= kpi_form.label :subsidy_points, "Subsidy Points", class: 'form-label' %>
-          <%= kpi_form.number_field :subsidy_points, class: 'form-control' %>
-      </div>
+  <div class="kpi-reporting-extension" data-controller="nested-toggle">
+    <%= form.fields_for :kpi_reporting_extension do |kpi_form| %>
+      <%= render 'kpi_reporting_extension_fields', f: kpi_form %>
     <% end %>
+
+    <div class="links max-one-association">
+      <%= link_to_add_association "Add KPI Reporting Extension", form, :kpi_reporting_extension, 
+          data: {association_insertion_node: '.kpi-reporting-extension', association_insertion_method: :append}, 
+          force_non_association_create: true, class: "btn btn-secondary btn-sm" %>
+    </div>
   </div>
 
   <hr>

@@ -7,15 +7,9 @@ class Publication < ApplicationRecord
     has_one :kpi_reporting_extension, dependent: :destroy
     has_one :open_access_extension, dependent: :destroy
 
-    accepts_nested_attributes_for :research_group_publications, 
-                                  allow_destroy: true, 
-                                  reject_if: proc { |att| att["research_group"].blank? || att["is_primary"].blank? }
-    accepts_nested_attributes_for :identifiers, 
-                                  allow_destroy: true, 
-                                  reject_if: proc { |att| att["category"].blank? || att["value"].blank? }
-    accepts_nested_attributes_for :repository_links, 
-                                  allow_destroy: true, 
-                                  reject_if: proc { |att| att["repository"].blank? || att["value"].blank? }
+    accepts_nested_attributes_for :research_group_publications, allow_destroy: true, reject_if: :all_blank
+    accepts_nested_attributes_for :identifiers, allow_destroy: true, reject_if: :all_blank
+    accepts_nested_attributes_for :repository_links, allow_destroy: true, reject_if: :all_blank
     accepts_nested_attributes_for :kpi_reporting_extension, allow_destroy: true, reject_if: :all_blank
     accepts_nested_attributes_for :open_access_extension, allow_destroy: true, reject_if: :all_blank
     accepts_nested_attributes_for :conference, allow_destroy: true, reject_if: :all_blank
@@ -40,4 +34,11 @@ class Publication < ApplicationRecord
     validates :status, presence: true, inclusion: { in: statuses.keys }
     validates :author_list, presence: true
     validates :link, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" }, allow_nil: true
+    validates_associated :research_group_publications, 
+                         :identifiers, 
+                         :repository_links, 
+                         :kpi_reporting_extension, 
+                         :open_access_extension, 
+                         :conference, 
+                         :journal_issue
 end

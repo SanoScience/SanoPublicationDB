@@ -1,0 +1,7 @@
+<div class="nested-fields">
+  <%= f.input :research_group, collection: ResearchGroupPublication.research_groups.keys.map { |key| [ResearchGroupPublication.research_groups[key], key] }, include_blank: true %>
+
+  <%= f.input :is_primary, label: "Primary?" %>
+
+  <%= link_to_remove_association "Delete", f, class:"btn btn-danger mb-2" %>
+</div>

@@ -1,0 +1,7 @@
+<div class="nested-fields">
+  <%= f.input :category, collection: Identifier.categories.keys.map { |key| [key.humanize, key] }, include_blank: true %>
+
+  <%= f.input :value %>
+
+  <%= link_to_remove_association "Delete", f, class:"btn btn-danger mb-2" %>
+</div>

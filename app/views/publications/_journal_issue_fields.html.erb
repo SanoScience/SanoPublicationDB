@@ -1,0 +1,13 @@
+<div class="nested-fields">
+    <%= f.input :title, label: "Journal Issue Title" %>
+
+    <%= f.input :journal_num, label: "Journal Number" %>
+
+    <%= f.input :publisher, label: "Publisher" %>
+
+    <%= f.input :volume, label: "Volume" %>
+
+    <%= f.input :impact_factor, label: "Impact Factor" %>
+
+    <%= link_to_remove_association "Delete", f, class:"btn btn-danger mb-2" %>
+</div>

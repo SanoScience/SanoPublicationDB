@@ -1,0 +1,7 @@
+<div class="nested-fields">
+  <%= f.input :repository, collection: RepositoryLink.repositories.keys.map { |key| [RepositoryLink.repositories[key], key] }, include_blank: true %>
+
+  <%= f.input :value %>
+
+  <%= link_to_remove_association "Delete", f, class:"btn btn-danger mb-2" %>
+</div>

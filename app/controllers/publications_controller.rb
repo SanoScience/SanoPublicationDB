@@ -5,44 +5,11 @@ class PublicationsController < ApplicationController
 
   def new
     @publication = Publication.new
+    @publication.research_group_publications.build
   end
 
   def create
     @publication = Publication.new(publication_params)
-
-    if publication_params[:conference_attributes][:name]&.present?
-      conference = Conference.new(publication_params[:conference_attributes])
-
-      if conference.save
-        @publication.conference = conference
-      else
-        conference.errors.full_messages.each do |message|
-          @publication.errors.add(:base, "Conference error: #{message}")
-        end
-        render :new, status: :unprocessable_entity
-        return
-      end
-    elsif publication_params[:conference_id].present? && publication_params[:conference_id] != "0"
-      conference = Conference.find(publication_params[:conference_id])
-      @publication.conference = conference
-    end
-
-    if publication_params[:journal_issue_attributes][:title]&.present?
-      journal_issue = JournalIssue.new(publication_params[:journal_issue_attributes])
-
-      if journal_issue.save
-        @publication.journal_issue = journal_issue
-      else
-        journal_issue.errors.full_messages.each do |message|
-          @publication.errors.add(:base, "Journal issue error: #{message}")
-        end
-        render :new, status: :unprocessable_entity
-        return
-      end
-    elsif publication_params[:journal_issue_id].present? && publication_params[:journal_issue_id] != "0"
-      journal_issue = JournalIssue.find(publication_params[:journal_issue_id])
-      @publication.journal_issue = journal_issue
-    end
 
     if @publication.save
       redirect_to @publication, notice: "Publication was successfully created."
@@ -61,60 +28,6 @@ class PublicationsController < ApplicationController
 
   def update
     @publication = Publication.find(params[:id])
-
-    if publication_params[:research_group_publications_attributes].present?
-      if @publication.research_group_publications.size > publication_params[:research_group_publications_attributes].values.size
-        @publication.research_group_publications.each do |research_group_publication|
-          if !publication_params[:research_group_publications_attributes].values.map { |v| v[:id] }.include?(research_group_publication.id)
-            research_group_publication.mark_for_destruction
-          end
-        end
-      end
-    end
-
-    if @publication.identifiers.present?
-      if publication_params[:identifiers_attributes].present?
-        if @publication.identifiers.size > publication_params[:identifiers_attributes].values.size
-          @publication.identifiers.each do |identifier|
-            if !publication_params[:identifiers_attributes].values.map { |v| v[:id] }.include?(identifier.id.to_s)
-              identifier.mark_for_destruction
-            end
-          end
-        end
-      else
-        @publication.identifiers.each do |identifier|
-          identifier.mark_for_destruction
-        end
-      end
-    end
-
-    if @publication.repository_links.present?
-      if publication_params[:repository_links_attributes].present?
-        if @publication.repository_links.size > publication_params[:repository_links_attributes].values.size
-          @publication.repository_links.each do |repository_link|
-            if !publication_params[:repository_links_attributes].values.map { |v| v[:id] }.include?(repository_link.id.to_s)
-              repository_link.mark_for_destruction
-            end
-          end
-        end
-      else
-        @publication.repository_links.each do |repository_link|
-          repository_link.mark_for_destruction
-        end
-      end
-    end
-
-    if @publication.kpi_reporting_extension.present?
-      if publication_params[:kpi_reporting_extension_attributes].values.all?(&:blank?)
-        @publication.kpi_reporting_extension.mark_for_destruction
-      end
-    end
-
-    if @publication.open_access_extension.present?
-      if publication_params[:open_access_extension_attributes][:category].blank?
-        @publication.open_access_extension.mark_for_destruction
-      end
-    end
 
     if @publication.update(publication_params)
       redirect_to @publication, notice: "Publication was successfully updated."

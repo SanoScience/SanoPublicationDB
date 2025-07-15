@@ -34,11 +34,11 @@ class Publication < ApplicationRecord
     validates :status, presence: true, inclusion: { in: statuses.keys }
     validates :author_list, presence: true
     validates :link, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" }, allow_nil: true
-    validates_associated :research_group_publications, 
-                         :identifiers, 
-                         :repository_links, 
-                         :kpi_reporting_extension, 
-                         :open_access_extension, 
-                         :conference, 
+    validates_associated :research_group_publications,
+                         :identifiers,
+                         :repository_links,
+                         :kpi_reporting_extension,
+                         :open_access_extension,
+                         :conference,
                          :journal_issue
 end

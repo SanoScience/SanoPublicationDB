@@ -41,4 +41,44 @@ class Publication < ApplicationRecord
                          :open_access_extension,
                          :conference,
                          :journal_issue
+
+    scope :with_research_groups, ->(groups) {
+      joins(:research_group_publications)
+        .where(research_group_publications: { research_group: groups })
+        .distinct
+    }
+
+    def self.ransackable_attributes(auth_object = nil)
+        [
+          "title", "category", "status", "author_list", "publication_year", 
+          "research_group_publications_research_group", 
+          "identifiers_type", "identifiers_value", 
+          "journal_issue_title", 
+          "conference_name", 
+          "kpi_reporting_extension_teaming_reporting_period", "kpi_reporting_extension_pbn", "kpi_reporting_extension_jcr", 
+          "open_access_extension_category", "open_access_extension_gold_oa_funding_source"
+        ]
+    end
+
+    def self.ransackable_associations(auth_object = nil)
+        ["research_group_publications", "identifiers", "conference", "journal_issue", "kpi_reporting_extension", "open_access_extension"]
+    end
+
+    ransacker :status, formatter: proc { |v| statuses[v] } do |parent|
+      parent.table[:status]
+    end
+
+    ransacker :category, formatter: proc { |v| categories[v] } do |parent|
+      parent.table[:category]
+    end
+
+    ransacker :publication_year, type: :integer do
+      Arel.sql("EXTRACT(YEAR FROM publication_date)")
+    end
+
+    ransacker :research_group_publications_research_group,
+      formatter: proc { |v| ResearchGroupPublication.research_groups[v] },
+      type: :string do |parent|
+      Arel::Table.new(:research_group_publications)[:research_group]
+    end
 end

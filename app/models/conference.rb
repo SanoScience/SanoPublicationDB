@@ -4,6 +4,14 @@ class Conference < ApplicationRecord
     validates :name, presence: true
     validate :valid_date_range
 
+    def self.ransackable_attributes(auth_object = nil)
+        ["name"]
+    end
+
+    def self.ransackable_associations(auth_object = nil)
+        ["publications"]
+    end
+
     private
 
     def valid_date_range

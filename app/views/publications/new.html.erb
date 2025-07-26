@@ -30,7 +30,7 @@
 
   <h3> Research Groups Section </h3>
   <div class="research-group" data-controller="required-nested-item">
-    <%= form.fields_for :research_group_publications do |rg_form| %>
+    <%= form.simple_fields_for :research_group_publications do |rg_form| %>
       <%= render 'research_group_publication_fields', f: rg_form %>
     <% end %>
   </div>
@@ -40,7 +40,7 @@
 
   <h3> Identifiers Section </h3>
   <div class="identifier">
-    <%= form.fields_for :identifiers do |id_form| %>
+    <%= form.simple_fields_for :identifiers do |id_form| %>
       <%= render 'identifier_fields', f: id_form %>
     <% end %>
   </div>
@@ -50,7 +50,7 @@
 
   <h3> Repository Links Section </h3>
   <div class="repository-link">
-    <%= form.fields_for :repository_links do |rl_form| %>
+    <%= form.simple_fields_for :repository_links do |rl_form| %>
       <%= render 'repository_link_fields', f: rl_form %>
     <% end %>
   </div>
@@ -96,7 +96,7 @@
 
   <h3>KPI Reporting Extension</h3>
   <div class="kpi-reporting-extension" data-controller="nested-toggle">
-    <%= form.fields_for :kpi_reporting_extension do |kpi_form| %>
+    <%= form.simple_fields_for :kpi_reporting_extension do |kpi_form| %>
       <%= render 'kpi_reporting_extension_fields', f: kpi_form %>
     <% end %>
 
@@ -111,7 +111,7 @@
 
   <h3>Open Access Extension</h3>
   <div class="open-access-extension" data-controller="nested-toggle">
-    <%= form.fields_for :open_access_extension do |oa_form| %>
+    <%= form.simple_fields_for :open_access_extension do |oa_form| %>
       <%= render 'open_access_extension_fields', f: oa_form %>
     <% end %>
 

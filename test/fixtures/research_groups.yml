@@ -1,6 +1,7 @@
 # Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
 
-sp_pub1:
-  publication: pub1
-  research_group: group1
-  is_primary: true
+group1:
+  name: one
+
+group2:
+  name: two

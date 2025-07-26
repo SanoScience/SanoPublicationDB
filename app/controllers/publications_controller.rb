@@ -49,7 +49,7 @@ class PublicationsController < ApplicationController
     params.require(:publication).permit(
       :title, :category, :status, :author_list, :publication_date, :link,
       :conference_id, :journal_issue_id,
-      research_group_publications_attributes: [ :id, :research_group, :is_primary, :_destroy ],
+      research_group_publications_attributes: [ :id, :research_group_id, :is_primary, :_destroy ],
       identifiers_attributes: [ :id, :category, :value, :_destroy ],
       repository_links_attributes: [ :id, :repository, :value, :_destroy ],
       kpi_reporting_extension_attributes: [ :id, :teaming_reporting_period, :invoice_number, :pbn, :jcr, :is_added_ft_portal, :is_checked, :is_new_method_technique, :is_methodology_application, :is_polish_med_researcher_involved, :is_peer_reviewed, :subsidy_points, :_destroy ],

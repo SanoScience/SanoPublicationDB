@@ -3,7 +3,8 @@ class Publication < ApplicationRecord
     belongs_to :conference, optional: true
     has_many :identifiers, dependent: :destroy
     has_many :repository_links, dependent: :destroy
-    has_many :research_group_publications, dependent: :destroy, inverse_of: :publication
+    has_many :research_group_publications, dependent: :destroy
+    has_many :research_groups, through: :research_group_publications, class_name: "ResearchGroup"
     has_one :kpi_reporting_extension, dependent: :destroy
     has_one :open_access_extension, dependent: :destroy
 

@@ -1,5 +1,9 @@
 <div class="nested-fields">
-  <%= f.input :research_group, collection: ResearchGroupPublication.research_groups.keys.map { |key| [ResearchGroupPublication.research_groups[key], key] }, include_blank: true %>
+  <%= f.input :research_group_id, 
+      collection: ResearchGroup.all, 
+      label_method: :name, 
+      value_method: :id, 
+      include_blank: "Select a group" %>
 
   <%= f.input :is_primary, label: "Primary?" %>
 

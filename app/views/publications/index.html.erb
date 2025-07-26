@@ -21,7 +21,7 @@
       </p>
       <p class="publication-meta">
         <strong>Research groups:</strong> 
-        <%= publication.research_group_publications.map { |rg| ResearchGroupPublication.research_groups[rg.research_group] }.join(', ') %>
+        <%= publication.research_group_publications.map { |rg| rg.research_group.name }.join(', ') %>
       </p>
       <p class="publication-meta">
         <strong>Category:</strong> <%= publication.category.humanize %> |

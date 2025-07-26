@@ -17,9 +17,9 @@
   <% @publication.research_group_publications.each do |group| %>
     <li>
       <% if group.is_primary %>
-        <strong>🌟 <%= ResearchGroupPublication.research_groups[group.research_group] %> (Primary)</strong>
+        <strong>🌟 <%= group.research_group.name %> (Primary)</strong>
       <% else %>
-        <%= ResearchGroupPublication.research_groups[group.research_group] %>
+        <%= group.research_group.name %>
       <% end %>
     </li>
   <% end %>

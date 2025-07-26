@@ -30,7 +30,7 @@
 
   <h3> Research Groups Section </h3>
   <div class="research-group" data-controller="required-nested-item">
-    <%= form.fields_for :research_group_publications do |rg_form| %>
+    <%= form.simple_fields_for :research_group_publications do |rg_form| %>
       <%= render 'research_group_publication_fields', f: rg_form %>
     <% end %>
   </div>

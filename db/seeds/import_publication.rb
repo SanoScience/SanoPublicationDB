@@ -61,15 +61,20 @@ def import_publications(file_path)
     end
 
     # Handle Research Groups
-    primary_group = row['Sano Research Group']&.strip
-    secondary_groups = row['Secondary Sano Research Group(s)']&.split(',')&.map(&:strip).presence
+    primary_group_name = row['Sano Research Group']&.strip
+    secondary_group_names = row['Secondary Sano Research Group(s)']&.split(',')&.map(&:strip).presence
 
-    publication.research_group_publications.find_or_create_by!(
-      research_group: primary_group,
-      is_primary: true
-    ) if primary_group.present?
+    if primary_group_name.present?
+      group = ResearchGroup.find_or_create_by!(name: primary_group_name)
+      publication.research_group_publications.find_or_create_by!(
+        research_group: group,
+        is_primary: true
+      )
+    end
 
-    secondary_groups&.each do |group|
+    secondary_group_names&.each do |name|
+      next if name == primary_group_name # avoid duplication
+      group = ResearchGroup.find_or_create_by!(name: name)
       publication.research_group_publications.find_or_create_by!(
         research_group: group,
         is_primary: false

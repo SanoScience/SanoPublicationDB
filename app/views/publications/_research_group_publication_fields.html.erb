@@ -5,7 +5,8 @@
       value_method: :id, 
       include_blank: "Select a group" %>
 
-  <%= f.input :is_primary, label: "Primary?" %>
+  <%= f.input :is_primary, label: "Primary?", input_html: { class: "primary-checkbox", disabled: true } %>
+  <%= f.hidden_field :is_primary, class: "primary-field" %>
 
   <%= link_to_remove_association "Delete", f, class:"btn btn-danger mb-2" %>
 </div>

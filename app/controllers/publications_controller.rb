@@ -1,20 +1,13 @@
 class PublicationsController < ApplicationController
   def index
     @q = Publication.ransack(params[:q])
-    scope = @q.result
-  
-    selected_groups = params.dig(:q, :research_group_publications_research_group_in)&.reject(&:blank?)
-    if selected_groups.present?
-      scope = Publication.with_research_groups(selected_groups).merge(scope)
-    end
-  
-    @publications = scope.includes(
-      :research_group_publications,
+    @publications = @q.result.includes(
       :identifiers,
       :kpi_reporting_extension,
       :open_access_extension,
       :conference,
-      :journal_issue
+      :journal_issue,
+      { research_group_publications: :research_group }
     )
   end  
 

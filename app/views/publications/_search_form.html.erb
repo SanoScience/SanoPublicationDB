@@ -1,56 +1,115 @@
-<%= search_form_for query, url: publications_path, method: :get do |f| %>
-  <%= f.label :title_cont, "Title" %>
-  <%= f.search_field :title_cont, class: "form-control" %>
+<div class="card p-4 mb-4">
+  <%= search_form_for query, url: publications_path, method: :get do |f| %>
+    <h5 class="mb-3">General information</h5>
+    <div class="row mb-3">
+      <div class="col-md-12">
+        <%= f.search_field :title_cont, class: "form-control", placeholder: "Title" %>
+      </div>
+    </div>
 
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <%= f.search_field :author_list_cont, class: "form-control", placeholder: "Authors" %>
+      </div>
 
-  <%= f.label :category_in, "Category" %>
-  <%= f.select :category_in, 
-      Publication.categories.keys.map { |key| [key.humanize, key] }, { }, 
-      { class: "form-control", data: { controller: "select2" }, multiple: true } %>
+      <div class="col-md-6">
+        <%= f.select :category_in,
+            Publication.categories.keys.map { |key| [key.humanize, key] },
+            {},
+            multiple: true,
+            data: { controller: "select2", placeholder: "Category" } %>
+      </div>
+    </div>
 
-  <%= f.label :status_in, "Status" %>
-  <%= f.select :status_in, 
-      Publication.statuses.keys.map { |key| [key.humanize, key] }, { }, 
-      { class: "form-control", data: { controller: "select2" }, multiple: true } %>
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <%= f.select :status_in,
+            Publication.statuses.keys.map { |key| [key.humanize, key] },
+            {},
+            multiple: true,
+            data: { controller: "select2", placeholder: "Status" } %>
+      </div>
 
-  <%= f.label :author_list_cont, "Authors" %>
-  <%= f.search_field :author_list_cont, class: "form-control" %>
+      <div class="col-md-6">
+        <%= f.number_field :publication_year_eq,
+            class: "form-control",
+            min: 1900, max: Time.current.year,
+            placeholder: "Publication year" %>
+      </div>
+    </div>
 
-  <%= f.label :publication_year_eq, "Publication year" %>
-  <%= f.number_field :publication_year_eq, class: "form-control", min: 1900, max: Time.current.year %>
+    <h5 class="mb-3">Research groups</h5>
+    <div class="row mb-3">
+      <div class="col-md-12">
+        <%= f.select :research_group_publications_research_group_id_in,
+            ResearchGroup.all.map { |g| [g.name, g.id] },
+            {},
+            multiple: true,
+            data: { controller: "select2", placeholder: "Research groups" } %>
+      </div>
+    </div>
 
-  <%= f.label :research_group_publications_research_group_in, "Research groups" %>
-  <%= f.select :research_group_publications_research_group_in, 
-      ResearchGroupPublication.research_groups.keys.map { |key| [ResearchGroupPublication.research_groups[key], key] }, { }, 
-      { class: "form-control", data: { controller: "select2" }, multiple: true } %>
+    <h5 class="mb-3">Identifiers</h5>
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <%= f.select :identifiers_category_eq,
+            Identifier.categories.keys,
+            { include_blank: true },
+            data: { controller: "select2", placeholder: "Identifier category" } %>
+      </div>
+      <div class="col-md-6">
+        <%= f.search_field :identifiers_value_cont, class: "form-control", placeholder: "Identifier value" %>
+      </div>
+    </div>
 
-  <%= f.label :identifiers_category_eq, "Identifier category" %>
-  <%= f.select :identifiers_category_eq, Identifier.categories.keys, { include_blank: true }, class: "form-control" %>
+    <h5 class="mb-3">Conferences and journals</h5>
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <%= f.search_field :journal_issue_title_cont, class: "form-control", placeholder: "Journal title" %>
+      </div>
+      <div class="col-md-6">
+        <%= f.search_field :conference_name_cont, class: "form-control", placeholder: "Conference name" %>
+      </div>
+    </div>
 
-  <%= f.label :identifiers_value_cont, "Identifier value" %>
-  <%= f.search_field :identifiers_value_cont, class: "form-control" %>
+    <h5 class="mb-3">KPI Reporting</h5>
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <%= f.number_field :kpi_reporting_extension_teaming_reporting_period_eq,
+            class: "form-control",
+            placeholder: "Teaming reporting period" %>
+      </div>
+      <div class="col-md-3">
+        <%= f.select :kpi_reporting_extension_pbn_eq,
+            [["Yes", true], ["No", false]],
+            { include_blank: true },
+            data: { controller: "select2", placeholder: "PBN" } %>
+      </div>
+      <div class="col-md-3">
+        <%= f.select :kpi_reporting_extension_jcr_eq,
+            [["Yes", true], ["No", false]],
+            { include_blank: true },
+            data: { controller: "select2", placeholder: "JCR" } %>
+      </div>
+    </div>
 
-  <%= f.label :journal_issue_title_cont, "Journal title" %>
-  <%= f.search_field :journal_issue_title_cont, class: "form-control" %>
+    <h5 class="mb-3">Open Access</h5>
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <%= f.select :open_access_extension_category_eq,
+            OpenAccessExtension.categories.keys,
+            { include_blank: true },
+            data: { controller: "select2", placeholder: "Open access category" } %>
+      </div>
+      <div class="col-md-6">
+        <%= f.search_field :open_access_extension_gold_oa_funding_source_cont,
+            class: "form-control",
+            placeholder: "Gold OA funding source" %>
+      </div>
+    </div>
 
-  <%= f.label :conference_name_cont, "Conference name" %>
-  <%= f.search_field :conference_name_cont, class: "form-control" %>
-
-  <%= f.label :kpi_reporting_extension_teaming_reporting_period_eq, "Teaming reporting period" %>
-  <%= f.number_field :kpi_reporting_extension_teaming_reporting_period_eq, class: "form-control" %>
-
-  <%= f.label :kpi_reporting_extension_pbn_eq, "PBN" %>
-  <%= f.select :kpi_reporting_extension_pbn_eq, [["Yes", true], ["No", false]], { include_blank: true }, class: "form-control" %>
-
-  <%= f.label :kpi_reporting_extension_jcr_eq, "JCR" %>
-  <%= f.select :kpi_reporting_extension_jcr_eq, [["Yes", true], ["No", false]], { include_blank: true }, class: "form-control" %>
-
-  <%= f.label :open_access_extension_category_eq, "Open access category" %>
-  <%= f.select :open_access_extension_category_eq, OpenAccessExtension.categories.keys, { include_blank: true }, class: "form-control" %>
-
-  <%= f.label :open_access_extension_gold_oa_funding_source_cont, "Gold OA funding source" %>
-  <%= f.search_field :open_access_extension_gold_oa_funding_source_cont, class: "form-control" %>
-
-  <%= f.submit "Search", class: "btn btn-primary" %>
-
-<% end %>
+    <div class="text-end mt-4">
+      <%= f.submit "Search", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

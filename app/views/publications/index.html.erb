@@ -4,23 +4,10 @@
   <div class="col-md-3">
     <div class="d-flex justify-content-start mb-3 gap-3">
       <p class="text-center text-nowrap">Sort by</p>
-      <%= select_tag :sort, options_for_select([
-        ['Title ↑', 'title ASC'],
-        ['Title ↓', 'title DESC'],
-        ['Publication Date ↑', 'publication_date ASC'],
-        ['Publication Date ↓', 'publication_date DESC'],
-        ['Journal Issue Title ↑', 'journal_issues.title ASC NULLS LAST'],
-        ['Journal Issue Title ↓', 'journal_issues.title DESC NULLS LAST'],
-        ['Conference Name ↑', 'conferences.name ASC NULLS LAST'],
-        ['Conference Name ↓', 'conferences.name DESC NULLS LAST'],
-        ['Impact Factor ↑', 'journal_issues.impact_factor ASC NULLS LAST'],
-        ['Impact Factor ↓', 'journal_issues.impact_factor DESC NULLS LAST'],
-        ['Subsidy Points ↑', 'kpi_reporting_extensions.subsidy_points ASC NULLS LAST'],
-        ['Subsidy Points ↓', 'kpi_reporting_extensions.subsidy_points DESC NULLS LAST']
-      ], params[:sort]),
-      class: "form-control",
-      id: "sort_select",
-      data: { controller: "sort", action: "change->sort#submit" } %>
+      <%= select_tag :sort,
+          options_for_select(Publications::SortValidator.options.map { |k, _| [k.humanize, k] }, params[:sort]),
+          class: "form-control",
+          data: { controller: "sort", action: "change->sort#submit" } %>
     </div>
   </div>
   <div class="col-md-9">

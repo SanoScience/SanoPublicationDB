@@ -10,11 +10,8 @@ class PublicationsController < ApplicationController
       { research_group_publications: :research_group }
     ).left_joins(:journal_issue, :conference, :kpi_reporting_extension)
 
-    if params[:sort].present?
-      @publications = base_scope.reorder(Arel.sql(params[:sort]))
-    else
-      @publications = base_scope
-    end
+    order = Publications::SortValidator.safe_order(params[:sort])
+    @publications = order ? base_scope.reorder(order) : base_scope
   end
 
   def new

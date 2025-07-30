@@ -51,7 +51,7 @@ class Publication < ApplicationRecord
 
     def self.ransackable_attributes(auth_object = nil)
         [
-          "title", "category", "status", "author_list", "publication_year", 
+        "title", "category", "status", "author_list", "publication_date", "publication_year",
           "research_group_publications_research_group_id_in", 
           "identifiers_type", "identifiers_value", 
           "journal_issue_title_cont", 

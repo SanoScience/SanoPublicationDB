@@ -1,13 +1,39 @@
 <h1 class="mb-4">Publications</h1>
 
-<div class="d-flex justify-content-end mb-3 gap-3" data-controller="toggle-search">
-    <%= search_form_for @q, url: publications_path, method: :get do |f| %>
-      <%= f.search_field :title_cont, class: "form-control search-field", placeholder: "Search publications by title" %>
-    <% end %>
-    <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#searchForm" aria-expanded="false" aria-controls="searchForm">
-        Advanced Search
-    </button>
-    <%= link_to 'New Publication', new_publication_path, class: "btn btn-primary" %>
+<div class="row">
+  <div class="col-md-3">
+    <div class="d-flex justify-content-start mb-3 gap-3">
+      <p class="text-center text-nowrap">Sort by</p>
+      <%= select_tag :sort, options_for_select([
+        ['Title ↑', 'title ASC'],
+        ['Title ↓', 'title DESC'],
+        ['Publication Date ↑', 'publication_date ASC'],
+        ['Publication Date ↓', 'publication_date DESC'],
+        ['Journal Issue Title ↑', 'journal_issues.title ASC NULLS LAST'],
+        ['Journal Issue Title ↓', 'journal_issues.title DESC NULLS LAST'],
+        ['Conference Name ↑', 'conferences.name ASC NULLS LAST'],
+        ['Conference Name ↓', 'conferences.name DESC NULLS LAST'],
+        ['Impact Factor ↑', 'journal_issues.impact_factor ASC NULLS LAST'],
+        ['Impact Factor ↓', 'journal_issues.impact_factor DESC NULLS LAST'],
+        ['Subsidy Points ↑', 'kpi_reporting_extensions.subsidy_points ASC NULLS LAST'],
+        ['Subsidy Points ↓', 'kpi_reporting_extensions.subsidy_points DESC NULLS LAST']
+      ], params[:sort]),
+      class: "form-control",
+      id: "sort_select",
+      data: { controller: "sort", action: "change->sort#submit" } %>
+    </div>
+  </div>
+  <div class="col-md-9">
+    <div class="d-flex justify-content-end mb-3 gap-3" data-controller="toggle-search">
+        <%= search_form_for @q, url: publications_path, method: :get do |f| %>
+          <%= f.search_field :title_cont, class: "form-control search-field", placeholder: "Search publications by title" %>
+        <% end %>
+        <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#searchForm" aria-expanded="false" aria-controls="searchForm">
+            Advanced Search
+        </button>
+        <%= link_to 'New Publication', new_publication_path, class: "btn btn-primary" %>
+    </div>
+  </div>
 </div>
 
 <div class="collapse" id="searchForm">

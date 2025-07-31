@@ -11,7 +11,7 @@ class PublicationsController < ApplicationController
     ).left_joins(:journal_issue, :conference, :kpi_reporting_extension)
 
     order = Publications::SortValidator.safe_order(params[:sort])
-    @publications = order ? base_scope.reorder(order) : base_scope
+    @pagy, @publications = pagy(order ? base_scope.reorder(order) : base_scope)
   end
 
   def new

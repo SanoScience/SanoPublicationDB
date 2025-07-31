@@ -4,10 +4,10 @@ class JournalIssue < ApplicationRecord
     validates :title, presence: true
 
     def self.ransackable_attributes(auth_object = nil)
-        ["title"]
+        [ "title" ]
     end
 
     def self.ransackable_associations(auth_object = nil)
-        ["publications"]
+        [ "publications" ]
     end
 end

@@ -14,10 +14,10 @@ class Identifier < ApplicationRecord
     validates :value, presence: true
 
     def self.ransackable_attributes(auth_object = nil)
-        ["category", "value"]
+        [ "category", "value" ]
     end
 
     def self.ransackable_associations(auth_object = nil)
-        ["publication"]
+        [ "publication" ]
     end
 end

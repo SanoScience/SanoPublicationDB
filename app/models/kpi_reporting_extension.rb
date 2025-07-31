@@ -4,10 +4,10 @@ class KpiReportingExtension < ApplicationRecord
     validates :publication, presence: true
 
     def self.ransackable_attributes(auth_object = nil)
-        ["teaming_reporting_period", "pbn", "jcr"]
+        [ "teaming_reporting_period", "pbn", "jcr" ]
     end
 
     def self.ransackable_associations(auth_object = nil)
-        ["publication"]
+        [ "publication" ]
     end
 end

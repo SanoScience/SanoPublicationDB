@@ -10,11 +10,11 @@ class OpenAccessExtension < ApplicationRecord
     validate :validate_gold_fields
 
     def self.ransackable_attributes(auth_object = nil)
-        ["category", "gold_oa_funding_source"]
+        [ "category", "gold_oa_funding_source" ]
     end
 
     def self.ransackable_associations(auth_object = nil)
-        ["publication"]
+        [ "publication" ]
     end
 
     private

@@ -50,19 +50,19 @@ class Publication < ApplicationRecord
     }
 
     def self.ransackable_attributes(auth_object = nil)
-        [
+      [
         "title", "category", "status", "author_list", "publication_date", "publication_year",
-          "research_group_publications_research_group_id_in", 
-          "identifiers_type", "identifiers_value", 
-          "journal_issue_title_cont", 
-          "conference_name_cont", 
-          "kpi_reporting_extension_teaming_reporting_period_eq", "kpi_reporting_extension_pbn_eq", "kpi_reporting_extension_jcr_eq", 
-          "open_access_extension_category_eq", "open_access_extension_gold_oa_funding_source_cont"
-        ]
+        "research_group_publications_research_group_id_in",
+        "identifiers_type", "identifiers_value",
+        "journal_issue_title_cont",
+        "conference_name_cont",
+        "kpi_reporting_extension_teaming_reporting_period_eq", "kpi_reporting_extension_pbn_eq", "kpi_reporting_extension_jcr_eq",
+        "open_access_extension_category_eq", "open_access_extension_gold_oa_funding_source_cont"
+      ]
     end
 
     def self.ransackable_associations(auth_object = nil)
-        ["research_group_publications", "identifiers", "conference", "journal_issue", "kpi_reporting_extension", "open_access_extension"]
+        [ "research_group_publications", "identifiers", "conference", "journal_issue", "kpi_reporting_extension", "open_access_extension" ]
     end
 
     ransacker :status, formatter: proc { |v| statuses[v] } do |parent|

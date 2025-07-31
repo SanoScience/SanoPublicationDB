@@ -5,11 +5,11 @@ class Conference < ApplicationRecord
     validate :valid_date_range
 
     def self.ransackable_attributes(auth_object = nil)
-        ["name"]
+        [ "name" ]
     end
 
     def self.ransackable_associations(auth_object = nil)
-        ["publications"]
+        [ "publications" ]
     end
 
     private

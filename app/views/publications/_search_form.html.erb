@@ -53,7 +53,7 @@
     <div class="row mb-3">
       <div class="col-md-6">
         <%= f.select :identifiers_category_eq,
-            Identifier.categories.keys,
+            Identifier.categories.map { |key, value| [value, key] },
             { include_blank: true },
             data: { controller: "select2", placeholder: "Identifier category" } %>
       </div>
@@ -97,7 +97,7 @@
     <div class="row mb-3">
       <div class="col-md-6">
         <%= f.select :open_access_extension_category_eq,
-            OpenAccessExtension.categories.keys,
+            OpenAccessExtension.categories,
             { include_blank: true },
             data: { controller: "select2", placeholder: "Open access category" } %>
       </div>

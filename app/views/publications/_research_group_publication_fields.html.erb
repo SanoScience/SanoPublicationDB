@@ -1,12 +1,31 @@
-<div class="nested-fields">
-  <%= f.input :research_group_id, 
-      collection: ResearchGroup.all, 
-      label_method: :name, 
-      value_method: :id, 
-      include_blank: "Select a group" %>
+<div class="nested-fields grid-item">
+  <div class="row">
+    <div class="col-md-8">
+      <%= f.label :research_group_id, for: "research_group_id", class: "form-label" %>
+    </div>
+  </div>
 
-  <%= f.input :is_primary, label: "Primary?", input_html: { class: "primary-checkbox", disabled: true } %>
-  <%= f.hidden_field :is_primary, class: "primary-field" %>
+  <div class="row align-items-center">
+    <div class="col-md-8">
+      <%= f.input :research_group_id,
+          collection: ResearchGroup.all,
+          value_method: :id,
+          include_blank: "Select a group",
+          label: false,
+          input_html: { class: "form-select mb-0" },
+          wrapper: false %>
+    </div>
 
-  <%= link_to_remove_association "Delete", f, class:"btn btn-danger mb-2" %>
+    <div class="col-md-4">
+      <div class="form-check d-flex align-items-center">
+        <%= f.check_box :is_primary,
+              class: "form-check-input primary-checkbox me-2 mt-0",
+              disabled: true %>
+        <%= f.label :is_primary, "Primary?", class: "form-check-label mb-0" %>
+      </div>
+      <%= f.hidden_field :is_primary, class: "primary-field" %>
+    </div>
+  </div>
+
+  <%= link_to_remove_association "Delete", f, class: "btn btn-danger mt-3" %>
 </div>

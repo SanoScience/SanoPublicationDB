@@ -56,9 +56,9 @@ def import_publications(file_path)
     if row['Digital Object Identifier (DOI)'].present?
       publication.identifiers.find_or_create_by!(category: 'DOI', value: row['Digital Object Identifier (DOI)'].strip)
     end
-    if row[' ISSN or eSSN'].present?
-      publication.identifiers.find_or_create_by!(category: 'ISSN', value: row[' ISSN or eSSN'].strip)
-    end
+    # if row[' ISSN or eSSN'].present?
+    #   publication.identifiers.find_or_create_by!(category: 'ISSN', value: row[' ISSN or eSSN'].strip)
+    # end
 
     # Handle Research Groups
     primary_group_name = row['Sano Research Group']&.strip

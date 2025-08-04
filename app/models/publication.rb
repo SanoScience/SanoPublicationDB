@@ -34,7 +34,7 @@ class Publication < ApplicationRecord
     validates :category, presence: true, inclusion: { in: categories.keys }
     validates :status, presence: true, inclusion: { in: statuses.keys }
     validates :author_list, presence: true
-    validates :link, format: { with: URI::DEFAULT_PARSER.make_regexp, message: "must be a valid URL" }, allow_nil: true
+    validate :link_must_be_valid_url
     validates_associated :research_group_publications,
                          :identifiers,
                          :repository_links,
@@ -75,5 +75,19 @@ class Publication < ApplicationRecord
 
     ransacker :publication_year, type: :integer do
       Arel.sql("EXTRACT(YEAR FROM publication_date)")
+    end
+
+    private
+
+    def link_must_be_valid_url
+      return if link.blank?
+    
+      uri = URI.parse(link)
+    
+      unless uri.is_a?(URI::HTTP) || uri.is_a?(URI::HTTPS)
+        errors.add(:link, "must be a valid HTTP/HTTPS URL")
+      end
+    rescue URI::InvalidURIError
+      errors.add(:link, "must be a valid URL")
     end
 end

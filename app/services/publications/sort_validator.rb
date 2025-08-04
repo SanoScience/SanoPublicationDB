@@ -14,13 +14,13 @@ module Publications
       "subsidy_points_asc" => "kpi_reporting_extensions.subsidy_points ASC NULLS LAST",
       "subsidy_points_desc" => "kpi_reporting_extensions.subsidy_points DESC NULLS LAST"
     }.freeze
-  
+
     def self.safe_order(param)
       return nil unless ALLOWED_SORTS.key?(param)
-  
+
       Arel.sql(ALLOWED_SORTS[param])
     end
-  
+
     def self.options
       ALLOWED_SORTS
     end

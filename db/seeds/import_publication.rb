@@ -110,7 +110,7 @@ def import_publications(file_path)
     KpiReportingExtension.find_or_create_by!(
       publication: publication,
       teaming_reporting_period: row['Teaming Reporting Period']&.to_i,
-      invoice_number: row['Invoice number']&.to_i,
+      invoice_number: row['Invoice number']&.strip,
       pbn: row['PBN']&.to_s&.downcase == 'yes',
       jcr: row['JCR']&.to_s&.downcase == 'yes',
       is_added_ft_portal: row['Added to F&T portal']&.to_s&.downcase == 'yes',

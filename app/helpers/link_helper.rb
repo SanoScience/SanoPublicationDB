@@ -9,5 +9,4 @@ module LinkHelper
         "invalid URL"
       end
     end
-  end
-  
+end

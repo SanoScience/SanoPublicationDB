@@ -42,9 +42,11 @@
     <strong>Authors:</strong> <%= @publication.author_list %>
 </div>
 
-<div class="d-flex gap-2 mb-5">
-    <strong>Link:</strong> <%= link_to truncate(@publication.link, length: 80), @publication.link, target: "_blank", rel: "noopener", class: "text-break d-inline-block" %>
-</div>
+<% if @publication.link.present? %>
+    <div class="d-flex gap-2 mb-5">
+        <strong>Link:</strong> <%= link_to truncate(safe_url(@publication.link), length: 80), safe_url(@publication.link), target: "_blank", rel: "noopener", class: "text-break d-inline-block" %>
+    </div>
+<% end %>
 
 <h4>Research Groups</h4>
 <ul>
@@ -81,7 +83,7 @@
             <li>
                 <p>
                     <strong><%= repo_link.repository.humanize %>:</strong> 
-                    <%= link_to repo_link.value, repo_link.value, target: "_blank" %>
+                    <%= link_to(safe_url(repo_link.value), safe_url(repo_link.value), target: "_blank") %>
                 </p>
             </li>
         <% end %>

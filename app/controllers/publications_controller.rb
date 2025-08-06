@@ -1,6 +1,17 @@
 class PublicationsController < ApplicationController
   def index
-    @publications = Publication.all
+    @q = Publication.ransack(params[:q])
+    base_scope = @q.result.includes(
+      :identifiers,
+      :kpi_reporting_extension,
+      :open_access_extension,
+      :conference,
+      :journal_issue,
+      { research_group_publications: :research_group }
+    ).left_joins(:journal_issue, :conference, :kpi_reporting_extension)
+
+    order = Publications::SortValidator.safe_order(params[:sort])
+    @pagy, @publications = pagy(order ? base_scope.reorder(order) : base_scope)
   end
 
   def new

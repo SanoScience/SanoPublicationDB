@@ -1,6 +1,21 @@
-<h1>New Publication</h1>
+<div class="mb-3">
+    <%= link_to publications_path, class: "text-decoration-none text-muted small d-inline-flex align-items-center gap-1 fs-6" do %>
+        <i class="bi bi-arrow-left"></i> Back
+    <% end %>
+</div>
 
 <%= simple_form_for @publication, html: { class: 'needs-validation' } do |form| %>
+
+  <div class="row align-items-center">
+      <div class="col-md-10">
+          <h2>New Publication</h2>
+      </div>
+
+      <div class="col-md-2 d-flex justify-content-end">
+          <%= form.submit "Create Publication", class: 'btn btn-success' %>
+      </div>
+  </div>
+
   <% if @publication.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(@publication.errors.count, "error") %> prohibited this publication from being saved:</h2>
@@ -16,9 +31,15 @@
 
   <%= form.input :title %>
 
-  <%= form.input :category, collection: Publication.categories.keys.map { |key| [key.humanize, key] }, include_blank: true %>
+  <div class="row">
+    <div class="col-md-6">
+      <%= form.input :category, collection: Publication.categories.keys.map { |key| [key.humanize, key] }, include_blank: true %>
+    </div>
 
-  <%= form.input :status, collection: Publication.statuses.keys.map { |key| [key.humanize, key] }, include_blank: true %>
+    <div class="col-md-6">
+      <%= form.input :status, collection: Publication.statuses.keys.map { |key| [key.humanize, key] }, include_blank: true %>
+    </div>
+  </div>
 
   <%= form.input :author_list %>
 
@@ -29,12 +50,12 @@
   <hr>
 
   <h3> Research Groups Section </h3>
-  <div class="research-group" data-controller="required-nested-item">
+  <div class="research-group d-grid gap-3" style="grid-template-columns: 1fr 1fr;" data-controller="required-nested-item">
     <%= form.simple_fields_for :research_group_publications do |rg_form| %>
       <%= render 'research_group_publication_fields', f: rg_form %>
     <% end %>
   </div>
-  <%= link_to_add_association "Add Research Group", form, :research_group_publications, data: {association_insertion_node: '.research-group', association_insertion_method: :append}, class: "btn btn-secondary btn-sm" %>
+  <%= link_to_add_association "Add Research Group", form, :research_group_publications, data: {association_insertion_node: '.research-group', association_insertion_method: :append}, class: "btn btn-secondary mt-3" %>
 
   <hr>
 
@@ -44,7 +65,7 @@
       <%= render 'identifier_fields', f: id_form %>
     <% end %>
   </div>
-  <%= link_to_add_association "Add Identifier", form, :identifiers, data: {association_insertion_node: '.identifier', association_insertion_method: :append}, class: "btn btn-secondary btn-sm" %>
+  <%= link_to_add_association "Add Identifier", form, :identifiers, data: {association_insertion_node: '.identifier', association_insertion_method: :append}, class: "btn btn-secondary" %>
 
   <hr>
 
@@ -54,7 +75,7 @@
       <%= render 'repository_link_fields', f: rl_form %>
     <% end %>
   </div>
-  <%= link_to_add_association "Add Repository Link", form, :repository_links, data: {association_insertion_node: '.repository-link', association_insertion_method: :append}, class: "btn btn-secondary btn-sm" %>
+  <%= link_to_add_association "Add Repository Link", form, :repository_links, data: {association_insertion_node: '.repository-link', association_insertion_method: :append}, class: "btn btn-secondary" %>
 
   <hr>
 
@@ -70,7 +91,7 @@
             association_insertion_node: '.conference', 
             association_insertion_method: :append
           }, 
-          class: "btn btn-secondary btn-sm" %>
+          class: "btn btn-secondary" %>
     </div>
   </div>
 
@@ -88,7 +109,7 @@
             association_insertion_node: '.journal-issue', 
             association_insertion_method: :append
           }, 
-          class: "btn btn-secondary btn-sm" %>
+          class: "btn btn-secondary" %>
     </div>
   </div>
 
@@ -103,7 +124,7 @@
     <div class="links max-one-association">
       <%= link_to_add_association "Add KPI Reporting Extension", form, :kpi_reporting_extension, 
           data: {association_insertion_node: '.kpi-reporting-extension', association_insertion_method: :append}, 
-          force_non_association_create: true, class: "btn btn-secondary btn-sm" %>
+          force_non_association_create: true, class: "btn btn-secondary" %>
     </div>
   </div>
 
@@ -118,13 +139,9 @@
     <div class="links max-one-association">
       <%= link_to_add_association "Add Open Access Extension", form, :open_access_extension, 
           data: {association_insertion_node: '.open-access-extension', association_insertion_method: :append}, 
-          force_non_association_create: true, class: "btn btn-secondary btn-sm" %>
+          force_non_association_create: true, class: "btn btn-secondary" %>
     </div>
   </div>
 
   <hr>
-
-  <%= form.submit "Create Publication", class: 'btn btn-success' %>
 <% end %>
-
-<%= link_to 'Back', publications_path, class: 'btn btn-secondary' %>

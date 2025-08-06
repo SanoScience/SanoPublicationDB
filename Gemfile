@@ -69,3 +69,7 @@ gem "cocoon", "~> 1.2"
 gem "simple_form", "~> 5.3"
 
 gem "csv", "~> 3.3"
+
+gem "ransack", "~> 4.3"
+
+gem "pagy", "~> 9.3"

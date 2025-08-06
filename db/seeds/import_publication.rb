@@ -56,9 +56,9 @@ def import_publications(file_path)
     if row['Digital Object Identifier (DOI)'].present?
       publication.identifiers.find_or_create_by!(category: 'DOI', value: row['Digital Object Identifier (DOI)'].strip)
     end
-    if row[' ISSN or eSSN'].present?
-      publication.identifiers.find_or_create_by!(category: 'ISSN', value: row[' ISSN or eSSN'].strip)
-    end
+    # if row[' ISSN or eSSN'].present?
+    #   publication.identifiers.find_or_create_by!(category: 'ISSN', value: row[' ISSN or eSSN'].strip)
+    # end
 
     # Handle Research Groups
     primary_group_name = row['Sano Research Group']&.strip
@@ -110,7 +110,7 @@ def import_publications(file_path)
     KpiReportingExtension.find_or_create_by!(
       publication: publication,
       teaming_reporting_period: row['Teaming Reporting Period']&.to_i,
-      invoice_number: row['Invoice number']&.to_i,
+      invoice_number: row['Invoice number']&.strip,
       pbn: row['PBN']&.to_s&.downcase == 'yes',
       jcr: row['JCR']&.to_s&.downcase == 'yes',
       is_added_ft_portal: row['Added to F&T portal']&.to_s&.downcase == 'yes',

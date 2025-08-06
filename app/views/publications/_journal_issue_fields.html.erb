@@ -1,13 +1,26 @@
 <div class="nested-fields">
+    
     <%= f.input :title, label: "Journal Issue Title" %>
 
-    <%= f.input :journal_num, label: "Journal Number" %>
+    <div class="row">
+        <div class="col-md-6">
+            <%= f.input :journal_num, label: "Journal Number" %>
+        </div>
 
-    <%= f.input :publisher, label: "Publisher" %>
+        <div class="col-md-6">
+            <%= f.input :publisher, label: "Publisher" %>
+        </div>
+    </div>
 
-    <%= f.input :volume, label: "Volume" %>
+    <div class="row">
+        <div class="col-md-6">
+            <%= f.input :volume, label: "Volume" %>
+        </div>
 
-    <%= f.input :impact_factor, label: "Impact Factor" %>
+        <div class="col-md-6">
+            <%= f.input :impact_factor, label: "Impact Factor" %>
+        </div>
+    </div>
 
-    <%= link_to_remove_association "Delete", f, class:"btn btn-danger mb-2" %>
+    <%= link_to_remove_association "Delete", f, class:"btn btn-danger" %>
 </div>

@@ -1,4 +1,8 @@
 class PublicationsController < ApplicationController
+  before_action :set_publication, only: %i[show edit update destroy]
+  before_action :authenticate_user!, only: %i[new create edit update destroy]
+  before_action :authorize_owner!, only: %i[edit update destroy]
+
   def index
     @q = Publication.ransack(params[:q])
     base_scope = @q.result.includes(
@@ -20,8 +24,7 @@ class PublicationsController < ApplicationController
   end
 
   def create
-    @publication = Publication.new(publication_params)
-
+    @publication = current_user.publications.build(publication_params)
     if @publication.save
       redirect_to @publication, notice: "Publication was successfully created."
     else
@@ -29,17 +32,11 @@ class PublicationsController < ApplicationController
     end
   end
 
-  def show
-    @publication = Publication.find(params[:id])
-  end
+  def show; end
 
-  def edit
-    @publication = Publication.find(params[:id])
-  end
+  def edit; end
 
   def update
-    @publication = Publication.find(params[:id])
-
     if @publication.update(publication_params)
       redirect_to @publication, notice: "Publication was successfully updated."
     else
@@ -48,13 +45,19 @@ class PublicationsController < ApplicationController
   end
 
   def destroy
-    @publication = Publication.find(params[:id])
     @publication.destroy
-
     redirect_to publications_path, notice: "Publication was successfully deleted."
   end
 
   private
+
+  def set_publication
+    @publication = Publication.find(params[:id])
+  end
+
+  def authorize_owner!
+    redirect_to @publication, alert: "You are not authorized to perform this action." unless @publication.owner == current_user
+  end
 
   def publication_params
     params.require(:publication).permit(

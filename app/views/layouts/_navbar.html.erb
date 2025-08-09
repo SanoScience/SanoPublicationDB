@@ -1,0 +1,23 @@
+<nav class="navbar navbar-expand-lg navbar-light bg-light mb-4 px-3">
+  <a class="navbar-brand" href="<%= root_path %>">PubDB</a>
+
+  <div class="ms-auto">
+    <% if user_signed_in? %>
+      <div class="d-flex align-items-center gap-3">
+        <span title="<%= current_user.email %>">
+          <i class="bi bi-person-circle" style="font-size: 1.5rem;"></i>
+        </span>
+
+        <%= button_to "Sign out", destroy_user_session_path,
+              method: :delete,
+              class: "btn btn-link text-dark p-0" %>
+      </div>
+    <% else %>
+      <%= button_to "Sign in", 
+            user_azure_activedirectory_v2_omniauth_authorize_path, 
+            method: :post,
+            class: "btn btn-link text-dark p-0",
+            form: { data: { turbo: false }, class: "m-0" } %>
+    <% end %>
+  </div>
+</nav>

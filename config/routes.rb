@@ -3,7 +3,7 @@ Rails.application.routes.draw do
     sessions: "users/sessions",
     omniauth_callbacks: "users/omniauth_callbacks"
   }
-  
+
   resources :publications
 
   namespace :api, defaults: { format: :json } do

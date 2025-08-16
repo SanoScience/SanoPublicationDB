@@ -6,6 +6,8 @@ Rails.application.routes.draw do
 
   resources :publications
 
+  resources :research_groups, only: [ :index, :new, :create, :edit, :update, :destroy ]
+
   namespace :api, defaults: { format: :json } do
     get "statistics/publications_count", to: "statistics#publications_count"
     get "statistics/conferences_count", to: "statistics#conferences_count"

@@ -1,8 +1,8 @@
 class Users::OmniauthCallbacksController < Devise::OmniauthCallbacksController
-    def azure_activedirectory_v2
+    def entra_id
       auth_info = request.env["omniauth.auth"]
 
-      if auth_info.dig("extra", "raw_info", "tid") != ENV["AZURE_TENANT_ID"]
+      if auth_info.dig("extra", "raw_info", "tid") != ENV["ENTRA_TENANT_ID"]
         redirect_to root_path, alert: "Access denied: not part of this organization." and return
       end
 

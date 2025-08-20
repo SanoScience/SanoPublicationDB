@@ -218,7 +218,8 @@ GEM
       hashie (>= 3.4.6)
       rack (>= 2.2.3)
       rack-protection
-    omniauth-azure-activedirectory-v2 (2.4.0)
+    omniauth-entra-id (3.1.0)
+      jwt (>= 2.9.2)
       omniauth-oauth2 (~> 1.8)
     omniauth-oauth2 (1.8.0)
       oauth2 (>= 1.4, < 3)
@@ -428,7 +429,7 @@ DEPENDENCIES
   jbuilder
   jquery-rails (~> 4.6)
   kamal
-  omniauth-azure-activedirectory-v2 (~> 2.4)
+  omniauth-entra-id (~> 3.1)
   omniauth-rails_csrf_protection (~> 1.0)
   pagy (~> 9.3)
   pg (~> 1.1)

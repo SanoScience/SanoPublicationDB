@@ -1,7 +1,7 @@
 class User < ApplicationRecord
   devise :database_authenticatable,
          :recoverable, :rememberable, :validatable,
-         :omniauthable, omniauth_providers: %i[azure_activedirectory_v2]
+         :omniauthable, omniauth_providers: %i[entra_id]
 
   has_many :publications, foreign_key: :owner_id, dependent: :nullify
 

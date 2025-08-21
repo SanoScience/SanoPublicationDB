@@ -34,3 +34,5 @@
 /node_modules
 /vendor/javascript
 /config/credentials/*.key
+
+/backups

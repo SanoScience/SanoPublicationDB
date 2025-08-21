@@ -73,3 +73,5 @@ gem "csv", "~> 3.3"
 gem "ransack", "~> 4.3"
 
 gem "pagy", "~> 9.3"
+
+gem "whenever", "~> 1.0"

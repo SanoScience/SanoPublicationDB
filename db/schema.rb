@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_07_25_123632) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_09_115705) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -75,8 +75,10 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_25_123632) do
     t.datetime "updated_at", null: false
     t.bigint "journal_issue_id"
     t.bigint "conference_id"
+    t.bigint "owner_id"
     t.index ["conference_id"], name: "index_publications_on_conference_id"
     t.index ["journal_issue_id"], name: "index_publications_on_journal_issue_id"
+    t.index ["owner_id"], name: "index_publications_on_owner_id"
   end
 
   create_table "repository_links", force: :cascade do |t|
@@ -101,11 +103,25 @@ ActiveRecord::Schema[8.0].define(version: 2025_07_25_123632) do
     t.index ["name"], name: "index_research_groups_on_name", unique: true
   end
 
+  create_table "users", force: :cascade do |t|
+    t.string "email", default: "", null: false
+    t.string "encrypted_password", default: "", null: false
+    t.string "reset_password_token"
+    t.datetime "reset_password_sent_at"
+    t.datetime "remember_created_at"
+    t.integer "role", default: 0
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+  end
+
   add_foreign_key "identifiers", "publications", on_delete: :cascade
   add_foreign_key "kpi_reporting_extensions", "publications", on_delete: :cascade
   add_foreign_key "open_access_extensions", "publications", on_delete: :cascade
   add_foreign_key "publications", "conferences", on_delete: :nullify
   add_foreign_key "publications", "journal_issues", on_delete: :nullify
+  add_foreign_key "publications", "users", column: "owner_id", on_delete: :nullify
   add_foreign_key "repository_links", "publications", on_delete: :cascade
   add_foreign_key "research_group_publications", "publications", on_delete: :cascade
   add_foreign_key "research_group_publications", "research_groups"

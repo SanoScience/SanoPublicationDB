@@ -25,12 +25,20 @@
 </div>
 
 <div class="row mb-0">
-  <div class="col-md-3 d-flex justify-content-start align-items-center">
-    <%== pagy_info(@pagy) %>
-  </div>
+  <div class="col-12 d-flex justify-content-between align-items-center">
+    <div>
+      <%== pagy_info(@pagy) %>
+    </div>
 
-  <div class="col-md-9 d-flex justify-content-end align-items-center">
-    <%= link_to 'New Publication', new_publication_path, class: "btn btn-primary" %>
+    <div class="d-flex gap-2">
+      <% if user_signed_in? && current_user.moderator? %>
+        <%= link_to 'Modify research groups', research_groups_path, class: "btn btn-primary" %>
+      <% end %>
+
+      <% if user_signed_in? %>
+        <%= link_to 'New Publication', new_publication_path, class: "btn btn-primary" %>
+      <% end %>
+    </div>
   </div>
 </div>
 

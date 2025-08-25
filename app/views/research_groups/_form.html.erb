@@ -1,0 +1,21 @@
+<% frame_id = research_group.new_record? ? "new_research_group" : dom_id(research_group) %>
+
+<%= turbo_frame_tag frame_id do %>
+  <%= form_with(model: research_group) do |f| %>
+    <div class="mb-2">
+      <%= f.label :name, "Name" %>
+      <%= f.text_field :name, class: "form-control mb-2", autofocus: true %>
+
+      <div class="d-flex gap-2">
+        <%= f.submit (research_group.new_record? ? "Create" : "Update"), class: "btn btn-primary" %>
+        <%= link_to "Cancel", research_groups_path, class: "btn btn-outline-secondary" %>
+      </div>
+
+      <% if research_group.errors.any? %>
+        <div class="text-danger mt-2">
+          <%= research_group.errors.full_messages.to_sentence %>
+        </div>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>

@@ -74,4 +74,10 @@ gem "ransack", "~> 4.3"
 
 gem "pagy", "~> 9.3"
 
+gem "devise", "~> 4.9"
+
+gem "omniauth-entra-id", "~> 3.1"
+
+gem "omniauth-rails_csrf_protection", "~> 1.0"
+
 gem "whenever", "~> 1.0"

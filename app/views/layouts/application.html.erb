@@ -43,7 +43,11 @@
   </head>
 
   <body>
+    <%= render "layouts/navbar" %>
     <div class="container my-4">
+      <div id="flash">
+        <%= render "layouts/flash" %>
+      </div>
       <%= yield %>
     </div>
   </body>

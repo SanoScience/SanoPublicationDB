@@ -9,3 +9,4 @@ pub1:
   link: "https://example.com"
   journal_issue: jour1
   conference: conf1
+  owner: user

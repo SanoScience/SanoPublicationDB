@@ -41,7 +41,7 @@ class ResearchGroupsControllerTest < ActionDispatch::IntegrationTest
     end
     assert_redirected_to research_groups_path
     assert_equal "Cannot delete record because dependent research group publications exist", flash[:alert]
-  end  
+  end
 
   test "moderator should destroy research group without publications" do
     sign_in @moderator

@@ -12,13 +12,10 @@ class User < ApplicationRecord
 
   def self.from_omniauth(auth_info)
     email = auth_info.fetch("info", {}).fetch("email", nil)
-    name  = auth_info.fetch("info", {}).fetch("name", nil)
     role  = auth_info.fetch("extra", {}).fetch("raw_info", {}).fetch("roles", []).include?("moderator") ? :moderator : :user
 
     user = find_or_initialize_by(email: email)
     if user.new_record?
-      user.name     = name || "User#{User.count + 1}" if user.respond_to?(:name=)
-
       # Since authentication is done via Entra ID, the password doesn't matter, so we set it randomly
       user.password = Devise.friendly_token[0, 20] if user.respond_to?(:password=)
       # In case of email/password authentication implementation, this can be changed
@@ -27,7 +24,6 @@ class User < ApplicationRecord
       user.save!
     else
       updates = {}
-      updates[:name] = name if name && user.name != name && user.respond_to?(:name=)
       updates[:role] = role if role && user.role != role && user.respond_to?(:role=)
       user.assign_attributes(updates)
       user.save! if user.has_changes_to_save?

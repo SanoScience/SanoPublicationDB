@@ -1,0 +1,5 @@
+<h2>New publication has been created</h2>
+<p><strong>Title:</strong> <%= @publication.title %></p>
+<p><strong>Creator:</strong> <%= @publication.owner %></p>
+<p><strong>Authors:</strong> <%= @publication.author_list %></p>
+<p>Go to <%= link_to "publication", publication_url(@publication) %></p>

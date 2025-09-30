@@ -1,5 +1,5 @@
 class NotificationMailer < ApplicationMailer
-    default from: ENV['OUTLOOK_USERNAME']
+    default from: ENV["OUTLOOK_USERNAME"]
 
     def new_publication_notification(publication)
         @publication = publication

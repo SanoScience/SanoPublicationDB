@@ -171,7 +171,6 @@ GEM
       net-imap
       net-pop
       net-smtp
-    mail_xoauth2 (1.0.4)
     marcel (1.0.4)
     matrix (0.4.2)
     mini_mime (1.1.5)
@@ -433,8 +432,6 @@ DEPENDENCIES
   jbuilder
   jquery-rails (~> 4.6)
   kamal
-  mail_xoauth2 (~> 1.0)
-  oauth2 (~> 2.0)
   omniauth-entra-id (~> 3.1)
   omniauth-rails_csrf_protection (~> 1.0)
   pagy (~> 9.3)

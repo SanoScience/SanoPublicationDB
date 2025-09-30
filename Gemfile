@@ -81,7 +81,3 @@ gem "omniauth-entra-id", "~> 3.1"
 gem "omniauth-rails_csrf_protection", "~> 1.0"
 
 gem "whenever", "~> 1.0"
-
-gem "mail_xoauth2", "~> 1.0"
-
-gem "oauth2", "~> 2.0"

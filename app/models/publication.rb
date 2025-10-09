@@ -52,6 +52,8 @@ class Publication < ApplicationRecord
         .distinct
     }
 
+    after_create_commit :notify_moderators
+
     def self.ransackable_attributes(auth_object = nil)
       [
         "title", "category", "status", "author_list", "publication_date", "publication_year",
@@ -78,5 +80,11 @@ class Publication < ApplicationRecord
 
     ransacker :publication_year, type: :integer do
       Arel.sql("EXTRACT(YEAR FROM publication_date)")
+    end
+
+    private
+
+    def notify_moderators
+      NotificationMailer.new_publication_notification(self).deliver_later
     end
 end

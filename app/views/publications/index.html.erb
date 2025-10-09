@@ -50,6 +50,22 @@
           <%= link_to publication.title, publication_path(publication), class: "text-decoration-none" %>
         </h5>
 
+        <div class="d-flex flex-wrap gap-2 mb-2">
+            <% status_class = case publication.status
+                when "submitted" then "bg-warning text-dark"
+                when "accepted"  then "bg-info text-dark"
+                when "printed"   then "bg-success text-white"
+                else "bg-secondary text-white"
+            end %>
+            <span class="badge <%= status_class %> px-2 py-1 fs-6">
+                <%= publication.status.humanize %>
+            </span>
+
+            <span class="badge bg-light text-dark border px-2 py-1 fs-6">
+                <%= publication.category.humanize %>
+            </span>
+        </div>
+
         <p class="mb-1 text-body-secondary">
           <strong>Authors:</strong> <%= publication.author_list %>
         </p>
@@ -57,11 +73,6 @@
         <p class="mb-1 text-body-secondary">
           <strong>Research groups:</strong> 
           <%= publication.research_group_publications.map { |rg| rg.research_group.name }.join(', ') %>
-        </p>
-
-        <p class="mb-0 text-body-secondary">
-          <strong>Category:</strong> <%= publication.category.humanize %> |
-          <strong>Status:</strong> <%= publication.status.humanize %>
         </p>
       </div>
     </div>

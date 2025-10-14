@@ -8,6 +8,12 @@ env :AZCOPY_LINK, ENV["AZCOPY_LINK"]
 
 every 3.days, at: "18:00" do
     command "cd #{path}/backups && ls -1t *.dump | tail -n +16 | xargs -r rm --"
+end
+
+every 3.days, at: "18:05" do
     rake "db:backup"
+end
+
+every 3.days, at: "18:10" do
     command "azcopy sync #{path}/backups/ \"$AZCOPY_LINK\""
 end

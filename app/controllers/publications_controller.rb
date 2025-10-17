@@ -1,49 +1,30 @@
 class PublicationsController < ApplicationController
+  before_action :set_publication, only: %i[show edit update destroy]
+  before_action :authenticate_user!, only: %i[new create edit update destroy]
+  before_action :authorize_owner!, only: %i[edit update destroy]
+
   def index
-    @publications = Publication.all
+    @q = Publication.ransack(params[:q])
+    base_scope = @q.result.includes(
+      :identifiers,
+      :kpi_reporting_extension,
+      :open_access_extension,
+      :conference,
+      :journal_issue,
+      { research_group_publications: :research_group }
+    ).left_joins(:journal_issue, :conference, :kpi_reporting_extension)
+
+    order = Publications::SortValidator.safe_order(params[:sort])
+    @pagy, @publications = pagy(order ? base_scope.reorder(order) : base_scope)
   end
 
   def new
     @publication = Publication.new
+    @publication.research_group_publications.build
   end
 
   def create
-    @publication = Publication.new(publication_params)
-
-    if publication_params[:conference_attributes][:name]&.present?
-      conference = Conference.new(publication_params[:conference_attributes])
-
-      if conference.save
-        @publication.conference = conference
-      else
-        conference.errors.full_messages.each do |message|
-          @publication.errors.add(:base, "Conference error: #{message}")
-        end
-        render :new, status: :unprocessable_entity
-        return
-      end
-    elsif publication_params[:conference_id].present? && publication_params[:conference_id] != "0"
-      conference = Conference.find(publication_params[:conference_id])
-      @publication.conference = conference
-    end
-
-    if publication_params[:journal_issue_attributes][:title]&.present?
-      journal_issue = JournalIssue.new(publication_params[:journal_issue_attributes])
-
-      if journal_issue.save
-        @publication.journal_issue = journal_issue
-      else
-        journal_issue.errors.full_messages.each do |message|
-          @publication.errors.add(:base, "Journal issue error: #{message}")
-        end
-        render :new, status: :unprocessable_entity
-        return
-      end
-    elsif publication_params[:journal_issue_id].present? && publication_params[:journal_issue_id] != "0"
-      journal_issue = JournalIssue.find(publication_params[:journal_issue_id])
-      @publication.journal_issue = journal_issue
-    end
-
+    @publication = current_user.publications.build(publication_params)
     if @publication.save
       redirect_to @publication, notice: "Publication was successfully created."
     else
@@ -51,71 +32,11 @@ class PublicationsController < ApplicationController
     end
   end
 
-  def show
-    @publication = Publication.find(params[:id])
-  end
+  def show; end
 
-  def edit
-    @publication = Publication.find(params[:id])
-  end
+  def edit; end
 
   def update
-    @publication = Publication.find(params[:id])
-
-    if publication_params[:research_group_publications_attributes].present?
-      if @publication.research_group_publications.size > publication_params[:research_group_publications_attributes].values.size
-        @publication.research_group_publications.each do |research_group_publication|
-          if !publication_params[:research_group_publications_attributes].values.map { |v| v[:id] }.include?(research_group_publication.id)
-            research_group_publication.mark_for_destruction
-          end
-        end
-      end
-    end
-
-    if @publication.identifiers.present?
-      if publication_params[:identifiers_attributes].present?
-        if @publication.identifiers.size > publication_params[:identifiers_attributes].values.size
-          @publication.identifiers.each do |identifier|
-            if !publication_params[:identifiers_attributes].values.map { |v| v[:id] }.include?(identifier.id.to_s)
-              identifier.mark_for_destruction
-            end
-          end
-        end
-      else
-        @publication.identifiers.each do |identifier|
-          identifier.mark_for_destruction
-        end
-      end
-    end
-
-    if @publication.repository_links.present?
-      if publication_params[:repository_links_attributes].present?
-        if @publication.repository_links.size > publication_params[:repository_links_attributes].values.size
-          @publication.repository_links.each do |repository_link|
-            if !publication_params[:repository_links_attributes].values.map { |v| v[:id] }.include?(repository_link.id.to_s)
-              repository_link.mark_for_destruction
-            end
-          end
-        end
-      else
-        @publication.repository_links.each do |repository_link|
-          repository_link.mark_for_destruction
-        end
-      end
-    end
-
-    if @publication.kpi_reporting_extension.present?
-      if publication_params[:kpi_reporting_extension_attributes].values.all?(&:blank?)
-        @publication.kpi_reporting_extension.mark_for_destruction
-      end
-    end
-
-    if @publication.open_access_extension.present?
-      if publication_params[:open_access_extension_attributes][:category].blank?
-        @publication.open_access_extension.mark_for_destruction
-      end
-    end
-
     if @publication.update(publication_params)
       redirect_to @publication, notice: "Publication was successfully updated."
     else
@@ -124,19 +45,25 @@ class PublicationsController < ApplicationController
   end
 
   def destroy
-    @publication = Publication.find(params[:id])
     @publication.destroy
-
     redirect_to publications_path, notice: "Publication was successfully deleted."
   end
 
   private
 
+  def set_publication
+    @publication = Publication.find(params[:id])
+  end
+
+  def authorize_owner!
+    redirect_to @publication, alert: "You are not authorized to perform this action." unless @publication.owner == current_user
+  end
+
   def publication_params
     params.require(:publication).permit(
       :title, :category, :status, :author_list, :publication_date, :link,
       :conference_id, :journal_issue_id,
-      research_group_publications_attributes: [ :id, :research_group, :is_primary, :_destroy ],
+      research_group_publications_attributes: [ :id, :research_group_id, :is_primary, :_destroy ],
       identifiers_attributes: [ :id, :category, :value, :_destroy ],
       repository_links_attributes: [ :id, :repository, :value, :_destroy ],
       kpi_reporting_extension_attributes: [ :id, :teaming_reporting_period, :invoice_number, :pbn, :jcr, :is_added_ft_portal, :is_checked, :is_new_method_technique, :is_methodology_application, :is_polish_med_researcher_involved, :is_peer_reviewed, :subsidy_points, :_destroy ],

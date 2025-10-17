@@ -1,0 +1,57 @@
+<div class="nested-fields">
+    <div class="row">
+        <%= f.input :invoice_number, label: "Invoice Number" %>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <%= f.input :teaming_reporting_period, label: "Teaming Reporting Period" %>
+        </div>
+
+        <div class="col-md-6">
+            <%= f.input :subsidy_points, label: "Subsidy Points" %>
+        </div>
+    </div>  
+
+    <div class="row">
+        <div class="col-md-6">
+            <%= f.input :pbn, label: "PBN" %>
+        </div>
+
+        <div class="col-md-6">
+            <%= f.input :jcr, label: "JCR" %>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <%= f.input :is_added_ft_portal, label: "Added to FT Portal" %>
+        </div>
+
+        <div class="col-md-6">
+            <%= f.input :is_checked, label: "Checked" %>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <%= f.input :is_new_method_technique, label: "New Method/Technique" %>
+        </div>
+
+        <div class="col-md-6">
+            <%= f.input :is_methodology_application, label: "Methodology Application" %>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-6">
+            <%= f.input :is_polish_med_researcher_involved, label: "Polish Medical Researcher Involved" %>
+        </div>
+
+        <div class="col-md-6">
+            <%= f.input :is_peer_reviewed, label: "Peer Reviewed" %>
+        </div>
+    </div>
+    
+    <%= link_to_remove_association "Delete", f, class:"btn btn-danger mb-2" %>
+</div>

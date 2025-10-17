@@ -14,7 +14,7 @@ Rails.application.configure do
 
   # Turn on fragment caching in view templates.
   config.action_controller.perform_caching = true
-	
+
   config.public_file_server.enabled = true
 
   # Cache assets for far-future expiry since they are all digest stamped.

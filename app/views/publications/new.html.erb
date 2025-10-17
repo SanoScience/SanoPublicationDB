@@ -1,6 +1,21 @@
-<h1>New Publication</h1>
+<div class="mb-3">
+    <%= link_to publications_path, class: "text-decoration-none text-muted small d-inline-flex align-items-center gap-1 fs-6" do %>
+        <i class="bi bi-arrow-left"></i> Back
+    <% end %>
+</div>
 
-<%= form_with(model: @publication, local: true, html: { class: 'needs-validation', novalidate: true }) do |form| %>
+<%= simple_form_for @publication, html: { class: 'needs-validation' } do |form| %>
+
+  <div class="row align-items-center">
+      <div class="col-md-10">
+          <h2>New Publication</h2>
+      </div>
+
+      <div class="col-md-2 d-flex justify-content-end">
+          <%= form.submit "Create Publication", class: 'btn btn-success' %>
+      </div>
+  </div>
+
   <% if @publication.errors.any? %>
     <div class="alert alert-danger">
       <h2><%= pluralize(@publication.errors.count, "error") %> prohibited this publication from being saved:</h2>
@@ -12,618 +27,121 @@
     </div>
   <% end %>
 
-  <div class="mb-3">
-    <%= form.label :title, class: 'form-label' %>
-    <%= form.text_field :title, class: 'form-control' %>
+  <hr>
+
+  <%= form.input :title %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <%= form.input :category, collection: Publication.categories.keys.map { |key| [key.humanize, key] }, include_blank: true %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.input :status, collection: Publication.statuses.keys.map { |key| [key.humanize, key] }, include_blank: true %>
+    </div>
   </div>
 
-    <div class="mb-3">
-    <%= form.label :category, class: 'form-label' %>
-    <%= form.select :category, 
-        Publication.categories.keys.map { |key| [key.humanize, key] }, 
-        {}, class: 'form-select' %>
-  </div>
+  <%= form.input :author_list %>
 
-  <div class="mb-3">
-    <%= form.label :status, class: 'form-label' %>
-    <%= form.select :status, 
-        Publication.statuses.keys.map { |key| [key.humanize, key] }, 
-        {}, class: 'form-select' %>
-  </div>
+  <%= form.input :publication_date, as: :date %>
 
-  <div class="mb-3">
-    <%= form.label :author_list, class: 'form-label' %>
-    <%= form.text_area :author_list, class: 'form-control' %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :publication_date, class: 'form-label' %>
-    <%= form.date_field :publication_date, class: 'form-control' %>
-  </div>
-
-  <div class="mb-3">
-    <%= form.label :link, class: 'form-label' %>
-    <%= form.text_field :link, class: 'form-control' %>
-  </div>
+  <%= form.input :link %>
 
   <hr>
 
   <h3> Research Groups Section </h3>
-  <div id="research-groups">
-    <div class="research-group mb-3">
-      <%= form.fields_for :research_group_publications, @publication.research_group_publications.build do |rg_form| %>
-        <div class="mb-3">
-          <%= rg_form.label :research_group, class: 'form-label' %>
-          <%= rg_form.select :research_group, 
-              ResearchGroupPublication.research_groups.keys.map { |key| [key.humanize, key] }, 
-              {}, class: 'form-select' %>
-        </div>
-
-        <div id="is-primary-container" class="mb-3">
-          <%= rg_form.label :is_primary, class: 'form-label' %>
-
-          <!-- Hidden field to ensure a default value of 0 is submitted -->
-          <%= rg_form.hidden_field :is_primary, value: 0 %>
-          <%= rg_form.check_box :is_primary, {}, 1, 0 %>
-          <%= rg_form.label :is_primary, 'Primary?' %>
-        </div>
-        
-        <button type="button" class="btn btn-danger btn-sm delete-research-group" style="display: none;">Delete</button>
-      <% end %>
-    </div>
+  <div class="research-group d-grid gap-3" style="grid-template-columns: 1fr 1fr;" data-controller="required-nested-item">
+    <%= form.simple_fields_for :research_group_publications do |rg_form| %>
+      <%= render 'research_group_publication_fields', f: rg_form %>
+    <% end %>
   </div>
-
-  <div class="mb-3">
-    <%= button_tag 'Add Another Research Group', type: 'button', id: 'add-research-group', class: 'btn btn-primary' %>
-  </div>
+  <%= link_to_add_association "Add Research Group", form, :research_group_publications, data: {association_insertion_node: '.research-group', association_insertion_method: :append}, class: "btn btn-secondary mt-3" %>
 
   <hr>
 
   <h3> Identifiers Section </h3>
-  <div id="identifiers">
+  <div class="identifier">
+    <%= form.simple_fields_for :identifiers do |id_form| %>
+      <%= render 'identifier_fields', f: id_form %>
+    <% end %>
   </div>
-
-  <div class="mb-3">
-    <%= button_tag 'Add Identifier', type: 'button', id: 'add-identifier', class: 'btn btn-primary' %>
-  </div>
+  <%= link_to_add_association "Add Identifier", form, :identifiers, data: {association_insertion_node: '.identifier', association_insertion_method: :append}, class: "btn btn-secondary" %>
 
   <hr>
 
   <h3> Repository Links Section </h3>
-  <div id="repository-links">
+  <div class="repository-link">
+    <%= form.simple_fields_for :repository_links do |rl_form| %>
+      <%= render 'repository_link_fields', f: rl_form %>
+    <% end %>
   </div>
-
-  <div class="mb-3">
-    <%= button_tag 'Add Repository Link', type: 'button', id: 'add-repository-link', class: 'btn btn-primary' %>
-  </div>
+  <%= link_to_add_association "Add Repository Link", form, :repository_links, data: {association_insertion_node: '.repository-link', association_insertion_method: :append}, class: "btn btn-secondary" %>
 
   <hr>
 
   <h3> Conference Section </h3>
-  <div class="mb-3">
-    <label class="form-label">Conference</label>
-    <div class="d-flex">
-      <div class="flex-grow-1 me-2">
-        <%= form.select :conference_id, 
-            Conference.all.map { |c| [c.name, c.id] }, 
-            { include_blank: "Select a conference" }, 
-            class: 'form-select', id: 'conference-select' %>
-      </div>
-      <button type="button" class="btn btn-primary" id="new-conference-btn">Add New Conference</button>
+  <div class="conference" data-controller="nested-list">
+    <div id="items-list">
+      <%= form.association :conference, collection: Conference.all, label_method: :name, value_method: :id, include_blank: "Select a conference" %>
     </div>
-  </div>
 
-  <div id="new-conference-fields" style="display: none;">
-    <div class="card mb-3 p-3">
-      <h4>New Conference Details</h4>
-      
-      <%= form.fields_for :conference, Conference.new do |conf_form| %>
-        <div class="mb-3">
-          <%= conf_form.label :name, "Conference Name", class: 'form-label' %>
-          <%= conf_form.text_field :name, class: 'form-control', id: 'new-conference-name', required: true %>
-        </div>
-        
-        <div class="mb-3">
-          <%= conf_form.label :core, "CORE Ranking", class: 'form-label' %>
-          <%= conf_form.text_field :core, class: 'form-control' %>
-        </div>
-        
-        <div class="mb-3">
-          <%= conf_form.label :start_date, "Start Date", class: 'form-label' %>
-          <%= conf_form.date_field :start_date, class: 'form-control', required: true %>
-        </div>
-        
-        <div class="mb-3">
-          <%= conf_form.label :end_date, "End Date", class: 'form-label' %>
-          <%= conf_form.date_field :end_date, class: 'form-control', required: 'true' %>
-        </div>
-      <% end %>
-      
-      <button type="button" class="btn btn-secondary" id="cancel-new-conference-btn">Cancel</button>
+    <div id="add-item-link">
+      <%= link_to_add_association "Add New Conference", form, :conference, 
+          data: {
+            association_insertion_node: '.conference', 
+            association_insertion_method: :append
+          }, 
+          class: "btn btn-secondary" %>
     </div>
   </div>
 
   <hr>
 
   <h3> Journal Issue Section </h3>
-  <div class="mb-3">
-    <label class="form-label">Journal Issue</label>
-    <div class="d-flex">
-      <div class="flex-grow-1 me-2">
-        <%= form.select :journal_issue_id, 
-            JournalIssue.all.map { |j| [j.title, j.id] }, 
-            { include_blank: "Select a journal issue" }, 
-            class: 'form-select', id: 'journal-issue-select' %>
-      </div>
-      <button type="button" class="btn btn-primary" id="new-journal-issue-btn">Add New Journal Issue</button>
+  <div class="journal-issue" data-controller="nested-list">
+    <div id="items-list">
+      <%= form.association :journal_issue, collection: JournalIssue.all, label_method: :title, value_method: :id, include_blank: "Select a journal issue" %>
     </div>
-  </div>
 
-  <div id="new-journal-issue-fields" style="display: none;">
-    <div class="card mb-3 p-3">
-      <h4>New Journal Issue Details</h4>
-      
-      <%= form.fields_for :journal_issue, JournalIssue.new do |ji_form| %>
-        <div class="mb-3">
-          <%= ji_form.label :title, "Journal Issue Title", class: 'form-label' %>
-          <%= ji_form.text_field :title, class: 'form-control', id: 'new-journal-issue-title', required: true %>
-        </div>
-        
-        <div class="mb-3">
-          <%= ji_form.label :journal_num, "Journal Number", class: 'form-label' %>
-          <%= ji_form.text_field :journal_num, class: 'form-control' %>
-        </div>
-        
-        <div class="mb-3">
-          <%= ji_form.label :publisher, "Publisher", class: 'form-label' %>
-          <%= ji_form.text_field :publisher, class: 'form-control' %>
-        </div>
-        
-        <div class="mb-3">
-          <%= ji_form.label :volume, "Volume", class: 'form-label' %>
-          <%= ji_form.number_field :volume, class: 'form-control' %>
-        </div>
-        
-        <div class="mb-3">
-          <%= ji_form.label :impact_factor, "Impact Factor", class: 'form-label' %>
-          <%= ji_form.number_field :impact_factor, class: 'form-control' %>
-        </div>
-      <% end %>
-      
-      <button type="button" class="btn btn-secondary" id="cancel-new-journal-issue-btn">Cancel</button>
+    <div id="add-item-link">
+      <%= link_to_add_association "Add New Journal Issue", form, :journal_issue, 
+          data: {
+            association_insertion_node: '.journal-issue', 
+            association_insertion_method: :append
+          }, 
+          class: "btn btn-secondary" %>
     </div>
   </div>
 
   <hr>
 
   <h3>KPI Reporting Extension</h3>
-  <div class="mb-3">
-    <div class="form-check form-switch">
-      <input class="form-check-input" type="checkbox" id="kpi-toggle" name="create_kpi_extension">
-      <label class="form-check-label" for="kpi-toggle">Add KPI Reporting Extension</label>
-    </div>
-  </div>
-
-  <div id="kpi-extension-fields" style="display: none;">
-    <%= form.fields_for :kpi_reporting_extension, @publication.kpi_reporting_extension || KpiReportingExtension.new do |kpi_form| %>
-      <div class="mb-3">
-        <%= kpi_form.label :teaming_reporting_period, "Teaming Reporting Period", class: 'form-label' %>
-        <%= kpi_form.number_field :teaming_reporting_period, class: 'form-control', name: 'publication[kpi_reporting_extension_attributes][teaming_reporting_period]' %>
-      </div>
-      
-      <div class="mb-3">
-        <%= kpi_form.label :invoice_number, "Invoice Number", class: 'form-label' %>
-        <%= kpi_form.number_field :invoice_number, class: 'form-control', name: 'publication[kpi_reporting_extension_attributes][invoice_number]' %>
-      </div>
-      
-      <div class="mb-3 form-check">
-        <%= kpi_form.check_box :pbn, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][pbn]' %>
-        <%= kpi_form.label :pbn, "PBN", class: 'form-check-label' %>
-      </div>
-      
-      <div class="mb-3 form-check">
-        <%= kpi_form.check_box :jcr, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][jcr]' %>
-        <%= kpi_form.label :jcr, "JCR", class: 'form-check-label' %>
-      </div>
-      
-      <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_added_ft_portal, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_added_ft_portal]' %>
-        <%= kpi_form.label :is_added_ft_portal, "Added to FT Portal", class: 'form-check-label' %>
-      </div>
-      
-      <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_checked, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_checked]' %>
-        <%= kpi_form.label :is_checked, "Checked", class: 'form-check-label' %>
-      </div>
-      
-      <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_new_method_technique, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_new_method_technique]' %>
-        <%= kpi_form.label :is_new_method_technique, "New Method/Technique", class: 'form-check-label' %>
-      </div>
-      
-      <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_methodology_application, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_methodology_application]' %>
-        <%= kpi_form.label :is_methodology_application, "Methodology Application", class: 'form-check-label' %>
-      </div>
-      
-      <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_polish_med_researcher_involved, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_polish_med_researcher_involved]' %>
-        <%= kpi_form.label :is_polish_med_researcher_involved, "Polish Medical Researcher Involved", class: 'form-check-label' %>
-      </div>
-
-      <div class="mb-3 form-check">
-        <%= kpi_form.check_box :is_peer_reviewed, class: 'form-check-input', name: 'publication[kpi_reporting_extension_attributes][is_peer_reviewed]' %>
-        <%= kpi_form.label :is_peer_reviewed, "Peer Reviewed", class: 'form-check-label' %>
-      </div>
-      
-      <div class="mb-3">
-        <%= kpi_form.label :subsidy_points, "Subsidy Points", class: 'form-label' %>
-        <%= kpi_form.number_field :subsidy_points, class: 'form-control', name: 'publication[kpi_reporting_extension_attributes][subsidy_points]' %>
-      </div>
+  <div class="kpi-reporting-extension" data-controller="nested-toggle">
+    <%= form.simple_fields_for :kpi_reporting_extension do |kpi_form| %>
+      <%= render 'kpi_reporting_extension_fields', f: kpi_form %>
     <% end %>
+
+    <div class="links max-one-association">
+      <%= link_to_add_association "Add KPI Reporting Extension", form, :kpi_reporting_extension, 
+          data: {association_insertion_node: '.kpi-reporting-extension', association_insertion_method: :append}, 
+          force_non_association_create: true, class: "btn btn-secondary" %>
+    </div>
   </div>
 
   <hr>
 
   <h3>Open Access Extension</h3>
-  <div class="mb-3">
-    <div class="form-check form-switch">
-      <input class="form-check-input" type="checkbox" id="oa-toggle" name="create_open_access_extension">
-      <label class="form-check-label" for="oa-toggle">Add Open Access Extension</label>
+  <div class="open-access-extension" data-controller="nested-toggle">
+    <%= form.simple_fields_for :open_access_extension do |oa_form| %>
+      <%= render 'open_access_extension_fields', f: oa_form %>
+    <% end %>
+
+    <div class="links max-one-association">
+      <%= link_to_add_association "Add Open Access Extension", form, :open_access_extension, 
+          data: {association_insertion_node: '.open-access-extension', association_insertion_method: :append}, 
+          force_non_association_create: true, class: "btn btn-secondary" %>
     </div>
   </div>
 
-  <div id="open-access-extension-fields" style="display: none;">
-    <%= form.fields_for :open_access_extension, @publication.open_access_extension || OpenAccessExtension.new do |oa_form| %>
-      <div class="mb-3">
-        <%= oa_form.label :category, "Category", class: 'form-label' %>
-        <%= oa_form.select :category, 
-            OpenAccessExtension.categories.keys.map { |key| [key.humanize, key] }, 
-            {}, class: 'form-select', id: 'oa-category-select', name: 'publication[open_access_extension_attributes][category]' %>
-      </div>
-      
-      <div class="mb-3 gold-oa-field" style="display: none;">
-        <%= oa_form.label :gold_oa_charges, "Gold OA Charges (PLN)", class: 'form-label' %>
-        <%= oa_form.number_field :gold_oa_charges, class: 'form-control', name: 'publication[open_access_extension_attributes][gold_oa_charges]' %>
-      </div>
-      
-      <div class="mb-3 gold-oa-field" style="display: none;">
-        <%= oa_form.label :gold_oa_funding_source, "Gold OA Funding Source", class: 'form-label' %>
-        <%= oa_form.text_field :gold_oa_funding_source, class: 'form-control', name: 'publication[open_access_extension_attributes][gold_oa_funding_source]' %>
-      </div>
-    <% end %>
-  </div>
-
   <hr>
-
-  <div class="mb-3">
-    <%= form.submit "Create Publication", class: 'btn btn-success' %>
-  </div>
 <% end %>
-
-<%= link_to 'Back', publications_path, class: 'btn btn-secondary' %>
-
-<script>
-  function initializePublicationForm() {
-    // Skip if already initialized
-    if (window.publicationFormInitialized) return;
-    window.publicationFormInitialized = true;
-
-    document.querySelectorAll('[id*="fields"]').forEach(element => {
-      clearInputFields(element);
-    });
-    
-    // Generic function to handle adding new nested items
-    function addNestedItem(containerId, itemClass, deleteButtonClass, getOptionsFunc) {
-      const container = document.getElementById(containerId);
-      
-      // If container is empty, create the first item
-      if (container.children.length === 0) {
-        recreateTemplate(container, itemClass, deleteButtonClass, getOptionsFunc);
-        return;
-      }
-      
-      const template = container.querySelector(`.${itemClass}`);
-      const newItem = template.cloneNode(true);
-      
-      // Get the current number of items
-      const index = container.querySelectorAll(`.${itemClass}`).length;
-
-      // Update all form elements with the new index
-      const inputs = newItem.querySelectorAll('input, select');
-      inputs.forEach(input => {
-        const name = input.getAttribute('name');
-        if (name) {
-          input.setAttribute('name', name.replace(/\[\d*\]/, `[${index}]`));
-        }
-        
-        // Update ID if it exists
-        if (input.id && input.id.includes(`${itemClass}-value`)) {
-          input.id = `${itemClass}-value-${index}`;
-        }
-      });
-      
-      // Show delete button for the new item
-      const deleteButton = newItem.querySelector(`.${deleteButtonClass}`);
-      if (deleteButton) {
-        deleteButton.style.display = 'block';
-        
-        // Add event listener to the delete button
-        deleteButton.addEventListener('click', function() {
-          newItem.remove();
-        });
-      }
-      
-      container.appendChild(newItem);
-    }
-
-    // Generic function to recreate templates
-    function recreateTemplate(container, itemClass, deleteButtonClass, getOptionsFunc) {
-      const newTemplate = document.createElement('div');
-      newTemplate.className = `${itemClass} mb-3`;
-      
-      let templateHTML = '';
-      
-      if (itemClass === 'identifier') {
-        templateHTML = `
-          <div class="mb-3">
-            <label class="form-label">Category</label>
-            <select class="form-select" name="publication[identifiers_attributes][0][category]">
-              ${getOptionsFunc()}
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Value</label>
-            <input type="text" id="${itemClass}-value-0" class="form-control" name="publication[identifiers_attributes][0][value]">
-          </div>`;
-      } else if (itemClass === 'repository-link') {
-        templateHTML = `
-          <div class="mb-3">
-            <label class="form-label">Repository</label>
-            <select class="form-select" name="publication[repository_links_attributes][0][repository]">
-              ${getOptionsFunc()}
-            </select>
-          </div>
-          <div class="mb-3">
-            <label class="form-label">Value</label>
-            <input type="text" id="${itemClass}-value-0" class="form-control" name="publication[repository_links_attributes][0][value]">
-          </div>`;
-      }
-      
-      templateHTML += `<button type="button" class="btn btn-danger btn-sm ${deleteButtonClass}" style="display: block;">Delete</button>`;
-      newTemplate.innerHTML = templateHTML;
-      
-      container.appendChild(newTemplate);
-      
-      // Add event listener to the delete button
-      const deleteButton = newTemplate.querySelector(`.${deleteButtonClass}`);
-      deleteButton.addEventListener('click', function() {
-        newTemplate.remove();
-      });
-    }
-
-    // Helper functions to get options for select elements
-    function getResearchGroupOptions() {
-      const select = document.querySelector('#research-groups select');
-      if (select) {
-        return select.innerHTML;
-      } else {
-        return `<%= raw ResearchGroupPublication.research_groups.map { |k, v| "<option value=\"#{k}\">#{v}</option>" }.join %>`;
-      }
-    }
-
-    function getIdentifierCategoryOptions() {
-      const select = document.querySelector('#identifiers select');
-      if (select) {
-        return select.innerHTML;
-      } else {
-        return `<%= raw Identifier.categories.map { |k, v| "<option value=\"#{k}\">#{k.humanize}</option>" }.join %>`;
-      }
-    }
-
-    function getRepositoryOptions() {
-      const select = document.querySelector('#repository-links select');
-      if (select) {
-        return select.innerHTML;
-      } else {
-        return `<%= raw RepositoryLink.repositories.map { |k, v| "<option value=\"#{k}\">#{k.humanize}</option>" }.join %>`;
-      }
-    }
-
-    // Helper function to clear input fields
-    function clearInputFields(fields) {
-      inputs = fields.querySelectorAll('input, select');
-      inputs.forEach(input => {
-        if (input.type === 'checkbox') {
-          input.checked = false;
-        } else {
-          input.value = '';
-        }
-      });
-    }
-
-    // Add event listeners to buttons
-    const addResearchGroupBtn = document.getElementById('add-research-group');
-    if (addResearchGroupBtn) {
-      addResearchGroupBtn.addEventListener('click', function() {
-        addNestedItem('research-groups', 'research-group', 'delete-research-group', getResearchGroupOptions);
-      });
-    }
-
-    const addIdentifierBtn = document.getElementById('add-identifier');
-    if (addIdentifierBtn) {
-      addIdentifierBtn.addEventListener('click', function() {
-        addNestedItem('identifiers', 'identifier', 'delete-identifier', getIdentifierCategoryOptions);
-      });
-    }
-
-    const addRepositoryLinkBtn = document.getElementById('add-repository-link');
-    if (addRepositoryLinkBtn) {
-      addRepositoryLinkBtn.addEventListener('click', function() {
-        addNestedItem('repository-links', 'repository-link', 'delete-repository-link', getRepositoryOptions);
-      });
-    }
-
-    // Add event listeners to all initial delete buttons
-    document.querySelectorAll('.delete-research-group, .delete-identifier, .delete-repository-link').forEach(button => {
-      button.addEventListener('click', function() {
-        this.closest('.research-group, .identifier, .repository-link').remove();
-      });
-    });
-
-    // KPI Extension toggle functionality
-    const kpiToggleElement = document.getElementById('kpi-toggle');
-    if (kpiToggleElement) {
-      kpiToggleElement.addEventListener('change', function() {
-        const kpiFields = document.getElementById('kpi-extension-fields');
-        if (kpiFields) {
-          kpiFields.style.display = this.checked ? 'block' : 'none';
-          
-          // Clear fields when toggle is unchecked
-          if (!this.checked) {
-            clearInputFields(kpiFields);
-          }
-        }
-      });
-    }
-
-    // Open Access Extension toggle functionality
-    const oaToggleElement = document.getElementById('oa-toggle');
-    if (oaToggleElement) {
-      oaToggleElement.addEventListener('change', function() {
-        const oaFields = document.getElementById('open-access-extension-fields');
-        if (oaFields) {
-          oaFields.style.display = this.checked ? 'block' : 'none';
-          
-          // Clear fields when toggle is unchecked
-          if (!this.checked) {
-            clearInputFields(oaFields);
-            
-            // Hide gold OA fields
-            const goldOaFields = document.querySelectorAll('.gold-oa-field');
-            goldOaFields.forEach(field => {
-              field.style.display = 'none';
-            });
-          }
-        }
-      });
-    }
-    
-    // OA Category select functionality
-    const oaCategorySelect = document.getElementById('oa-category-select');
-    if (oaCategorySelect) {
-      oaCategorySelect.addEventListener('change', function() {
-        const goldOaFields = document.querySelectorAll('.gold-oa-field');
-        
-        if (this.value === 'gold') {
-          // Show Gold OA fields
-          goldOaFields.forEach(field => {
-            field.style.display = 'block';
-          });
-        } else {
-          // Hide and clear Gold OA fields
-          goldOaFields.forEach(field => {
-            field.style.display = 'none';
-            
-            // Clear inputs within the field
-            clearInputFields(field);
-          });
-        }
-      });
-      
-      // Trigger change event on page load to set initial state
-      oaCategorySelect.dispatchEvent(new Event('change'));
-    }
-
-    // Conference functionality
-    const newConferenceBtn = document.getElementById('new-conference-btn');
-    const conferenceSelect = document.getElementById('conference-select');
-    const newConferenceFields = document.getElementById('new-conference-fields');
-    const cancelNewConferenceBtn = document.getElementById('cancel-new-conference-btn');
-    const newConferenceName = document.getElementById('new-conference-name');
-
-    if (newConferenceBtn) {
-      newConferenceBtn.addEventListener('click', function() {
-        console.log('New conference button clicked');
-        if (newConferenceFields) {
-          newConferenceFields.style.display = 'block';
-        }
-        if (conferenceSelect) {
-          conferenceSelect.disabled = true;
-        }
-        newConferenceBtn.disabled = true;
-      });
-    }
-    
-    if (cancelNewConferenceBtn) {
-      cancelNewConferenceBtn.addEventListener('click', function() {
-        console.log('Cancel new conference button clicked');
-        if (newConferenceFields) {
-          newConferenceFields.style.display = 'none';
-        }
-        if (conferenceSelect) {
-          conferenceSelect.disabled = false;
-        }
-        if (newConferenceBtn) {
-          newConferenceBtn.disabled = false;
-        }
-        
-        // Clear the new conference fields
-        if (newConferenceFields) {
-          clearInputFields(newConferenceFields);
-        }
-      });
-    }
-    
-    // Journal Issue functionality
-    const journalIssueSelect = document.getElementById('journal-issue-select');
-    const newJournalIssueBtn = document.getElementById('new-journal-issue-btn');
-    const newJournalIssueFields = document.getElementById('new-journal-issue-fields');
-    const cancelNewJournalIssueBtn = document.getElementById('cancel-new-journal-issue-btn');
-    
-    if (newJournalIssueBtn) {
-      newJournalIssueBtn.addEventListener('click', function() {
-        console.log('New journal issue button clicked');
-        if (newJournalIssueFields) {
-          newJournalIssueFields.style.display = 'block';
-        }
-        if (journalIssueSelect) {
-          journalIssueSelect.disabled = true;
-        }
-        newJournalIssueBtn.disabled = true;
-      });
-    }
-    
-    if (cancelNewJournalIssueBtn) {
-      cancelNewJournalIssueBtn.addEventListener('click', function() {
-        console.log('Cancel new journal issue button clicked');
-        if (newJournalIssueFields) {
-          newJournalIssueFields.style.display = 'none';
-        }
-        if (journalIssueSelect) {
-          journalIssueSelect.disabled = false;
-        }
-        if (newJournalIssueBtn) {
-          newJournalIssueBtn.disabled = false;
-        }
-
-        // Clear the new journal issue fields
-        if (newJournalIssueFields) {
-          clearInputFields(newJournalIssueFields);
-        }
-      });
-    }
-  }
-
-  // Initialize on DOMContentLoaded
-  document.addEventListener('DOMContentLoaded', initializePublicationForm);
-  
-  // Initialize on Turbo navigation
-  document.addEventListener('turbo:load', initializePublicationForm);
-  
-  // Initialize immediately if document is already loaded
-  if (document.readyState === 'complete' || document.readyState === 'interactive') {
-    initializePublicationForm();
-  }
-</script>
-

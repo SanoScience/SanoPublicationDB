@@ -1,0 +1,17 @@
+<div class="nested-fields" data-controller="open-access">
+    <%= f.input :category, collection: OpenAccessExtension.categories.keys.map { |key| [key.humanize, key] }, include_blank: false %>
+
+    <div id="gold-oa-fields" style="<%= @publication.open_access_extension&.gold? ? '' : 'display: none;' %>">
+        <div class="row">
+            <div class="col-md-6">
+                <%= f.input :gold_oa_charges, label: "Gold OA Charges (PLN)"%>
+            </div>
+
+            <div class="col-md-6">
+                <%= f.input :gold_oa_funding_source, label: "Gold OA Funding Source" %>
+            </div>
+        </div>
+    </div>
+
+    <%= link_to_remove_association "Delete", f, class:"btn btn-danger mb-2" %>
+</div>

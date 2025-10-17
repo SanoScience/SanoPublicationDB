@@ -45,7 +45,7 @@ group :development, :test do
   gem "debug", platforms: %i[ mri windows ], require: "debug/prelude"
 
   # Static analysis for security vulnerabilities [https://brakemanscanner.org/]
-  gem "brakeman", require: false
+  gem "brakeman", "~> 7.1.0", require: false
 
   # Omakase Ruby styling [https://github.com/rails/rubocop-rails-omakase/]
   gem "rubocop-rails-omakase", require: false
@@ -61,3 +61,23 @@ group :test do
   gem "capybara"
   gem "selenium-webdriver"
 end
+
+gem "jquery-rails", "~> 4.6"
+
+gem "cocoon", "~> 1.2"
+
+gem "simple_form", "~> 5.3"
+
+gem "csv", "~> 3.3"
+
+gem "ransack", "~> 4.3"
+
+gem "pagy", "~> 9.3"
+
+gem "devise", "~> 4.9"
+
+gem "omniauth-entra-id", "~> 3.1"
+
+gem "omniauth-rails_csrf_protection", "~> 1.0"
+
+gem "whenever", "~> 1.0"

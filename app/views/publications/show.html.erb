@@ -135,22 +135,22 @@
     <hr>
     <h4>KPI Reporting Information</h4>
     <ul>
-        <% if @publication.kpi_reporting_extension.teaming_reporting_period %>
+        <% if @publication.kpi_reporting_extension.teaming_reporting_period && user_signed_in? && current_user.moderator? %>
             <p><strong>Teaming reporting period:</strong> <%= @publication.kpi_reporting_extension.teaming_reporting_period %></p>
         <% end %>
-        <% if @publication.kpi_reporting_extension.invoice_number %>
+        <% if @publication.kpi_reporting_extension.invoice_number && user_signed_in? && current_user.moderator? %>
             <p><strong>Invoice number Reporting:</strong> <%= @publication.kpi_reporting_extension.invoice_number %></p>
         <% end %>
-        <% if @publication.kpi_reporting_extension.pbn %>
+        <% if @publication.kpi_reporting_extension.pbn && user_signed_in? && current_user.moderator? %>
             <p><strong>PBN:</strong> <%= @publication.kpi_reporting_extension.pbn %></p>
         <% end %>
-        <% if @publication.kpi_reporting_extension.jcr %>
+        <% if @publication.kpi_reporting_extension.jcr && user_signed_in? && current_user.moderator? %>
             <p><strong>JCR:</strong> <%= @publication.kpi_reporting_extension.jcr %></p>
         <% end %>
-        <% if @publication.kpi_reporting_extension.is_added_ft_portal %>
+        <% if @publication.kpi_reporting_extension.is_added_ft_portal && user_signed_in? && current_user.moderator? %>
             <p><strong>Is added on F&T portal:</strong> <%= @publication.kpi_reporting_extension.is_added_ft_portal %></p>
         <% end %>
-        <% if @publication.kpi_reporting_extension.is_checked %>
+        <% if @publication.kpi_reporting_extension.is_checked && user_signed_in? && current_user.moderator? %>
             <p><strong>Is checked:</strong> <%= @publication.kpi_reporting_extension.is_checked %></p>
         <% end %>
         <% if @publication.kpi_reporting_extension.is_new_method_technique %>
@@ -176,7 +176,7 @@
     <h4>Open Access Details</h4>
     <ul>
         <p><strong>Open Access:</strong> <%= @publication.open_access_extension.category.humanize %></p>
-        <% if @publication.open_access_extension.gold? %>
+        <% if @publication.open_access_extension.gold? && user_signed_in? && current_user.moderator? %>
             <p> <strong>Gold OA Charges:</strong> <%= @publication.open_access_extension.gold_oa_charges %></p>
             <p> <strong>Funding Source:</strong> <%= @publication.open_access_extension.gold_oa_funding_source %></p>
         <% end %>

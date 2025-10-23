@@ -71,41 +71,51 @@
         <%= f.search_field :conference_name_cont, class: "form-control", placeholder: "Conference name" %>
       </div>
     </div>
-
-    <h5 class="mb-3">KPI Reporting</h5>
-    <div class="row mb-3">
-      <div class="col-md-6">
-        <%= f.number_field :kpi_reporting_extension_teaming_reporting_period_eq,
-            class: "form-control",
-            placeholder: "Teaming reporting period" %>
+    <% if user_signed_in? && current_user.moderator? %>
+      <h5 class="mb-3">KPI Reporting</h5>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <%= f.number_field :kpi_reporting_extension_teaming_reporting_period_eq,
+              class: "form-control",
+              placeholder: "Teaming reporting period" %>
+        </div>
+        <div class="col-md-3">
+          <%= f.select :kpi_reporting_extension_pbn_eq,
+              [["Yes", true], ["No", false]],
+              { include_blank: true },
+              data: { controller: "select2", placeholder: "PBN" } %>
+        </div>
+        <div class="col-md-3">
+          <%= f.select :kpi_reporting_extension_jcr_eq,
+              [["Yes", true], ["No", false]],
+              { include_blank: true },
+              data: { controller: "select2", placeholder: "JCR" } %>
+        </div>
       </div>
-      <div class="col-md-3">
-        <%= f.select :kpi_reporting_extension_pbn_eq,
-            [["Yes", true], ["No", false]],
-            { include_blank: true },
-            data: { controller: "select2", placeholder: "PBN" } %>
-      </div>
-      <div class="col-md-3">
-        <%= f.select :kpi_reporting_extension_jcr_eq,
-            [["Yes", true], ["No", false]],
-            { include_blank: true },
-            data: { controller: "select2", placeholder: "JCR" } %>
-      </div>
-    </div>
+    <% end %>
 
     <h5 class="mb-3">Open Access</h5>
     <div class="row mb-3">
-      <div class="col-md-6">
-        <%= f.select :open_access_extension_category_eq,
-            OpenAccessExtension.categories,
-            { include_blank: true },
-            data: { controller: "select2", placeholder: "Open access category" } %>
-      </div>
-      <div class="col-md-6">
-        <%= f.search_field :open_access_extension_gold_oa_funding_source_cont,
-            class: "form-control",
-            placeholder: "Gold OA funding source" %>
-      </div>
+      <% if user_signed_in? && current_user.moderator? %>
+        <div class="col-md-6">
+          <%= f.select :open_access_extension_category_eq,
+              OpenAccessExtension.categories,
+              { include_blank: true },
+              data: { controller: "select2", placeholder: "Open access category" } %>
+        </div>
+        <div class="col-md-6">
+          <%= f.search_field :open_access_extension_gold_oa_funding_source_cont,
+              class: "form-control",
+              placeholder: "Gold OA funding source" %>
+        </div>
+      <% else %>
+        <div class="col-md-12">
+          <%= f.select :open_access_extension_category_eq,
+              OpenAccessExtension.categories,
+              { include_blank: true },
+              data: { controller: "select2", placeholder: "Open access category" } %>
+        </div>
+      <% end %>
     </div>
 
     <div class="text-end mt-4">

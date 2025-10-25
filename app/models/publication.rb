@@ -38,6 +38,7 @@ class Publication < ApplicationRecord
     validates :category, presence: true, inclusion: { in: categories.keys }
     validates :status, presence: true, inclusion: { in: statuses.keys }
     validates :author_list, presence: true
+    validates :publication_year, presence: true, numericality: { only_integer: true, greater_than: 2000, less_than: Date.current.year + 1 }
     validates_associated :research_group_publications,
                          :identifiers,
                          :repository_links,
@@ -56,7 +57,7 @@ class Publication < ApplicationRecord
 
     def self.ransackable_attributes(auth_object = nil)
       [
-        "title", "category", "status", "author_list", "publication_date", "publication_year",
+        "title", "category", "status", "author_list", "publication_year",
         "research_group_publications_research_group_id_in",
         "identifiers_type", "identifiers_value",
         "journal_issue_title_cont",
@@ -76,10 +77,6 @@ class Publication < ApplicationRecord
 
     ransacker :category, formatter: proc { |v| categories[v] } do |parent|
       parent.table[:category]
-    end
-
-    ransacker :publication_year, type: :integer do
-      Arel.sql("EXTRACT(YEAR FROM publication_date)")
     end
 
     private

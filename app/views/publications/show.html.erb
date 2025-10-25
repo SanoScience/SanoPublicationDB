@@ -49,6 +49,12 @@
     <strong>Authors:</strong> <%= @publication.author_list %>
 </div>
 
+<% if @publication.publication_year.present? %>
+    <div class="d-flex gap-2 mb-3">
+        <strong>Publication year:</strong> <%= @publication.publication_year %>
+    </div>
+<% end %>
+
 <% if @publication.link.present? %>
     <div class="d-flex gap-2 mb-5">
         <strong>Link:</strong> <%= link_to truncate(safe_url(@publication.link), length: 80), safe_url(@publication.link), target: "_blank", rel: "noopener", class: "text-break d-inline-block" %>

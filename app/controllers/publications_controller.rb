@@ -61,7 +61,7 @@ class PublicationsController < ApplicationController
 
   def publication_params
     params.require(:publication).permit(
-      :title, :category, :status, :author_list, :publication_date, :link,
+      :title, :category, :status, :author_list, :publication_year, :link,
       :conference_id, :journal_issue_id,
       research_group_publications_attributes: [ :id, :research_group_id, :is_primary, :_destroy ],
       identifiers_attributes: [ :id, :category, :value, :_destroy ],

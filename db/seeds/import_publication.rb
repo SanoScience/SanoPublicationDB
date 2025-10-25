@@ -3,6 +3,7 @@
 
 require 'csv'
 require 'pp'
+require 'uri'
 
 def import_publications(file_path)
   unless File.exist?(file_path)
@@ -28,33 +29,49 @@ def import_publications(file_path)
     puts row
 
     title = row['Title of the scientific publication']&.strip
-    next if title.blank?
+    authors = row['Authors']&.strip
+    status = row['Status (submitted, accepted, printed)']&.strip
+    publication_type = row[row.keys.first]&.strip
+    next if title.blank? || authors.blank? || status.blank? || publication_type.blank?
 
     publication = Publication.find_or_initialize_by(title: title)
-    file_publication_type = row[row.keys.first]&.strip
 
-    category = case file_publication_type
-    when "article in journal" then :journal_article
-    when "conference manuscript" then :conference_manuscript
-    when "book/monograph" then :book
-    when "chapter book" then :book_chapter
-    when "conference abstract" then :conference_abstract
-    else nil
+    category = case publication_type
+      when "article in journal" then :journal_article
+      when "conference manuscript" then :conference_manuscript
+      when "book/monograph" then :book
+      when "chapter book" then :book_chapter
+      when "conference abstract" then :conference_abstract
+      else nil
+    end
+
+    valid_url = ->(s) do
+      return false if s.blank?
+      u = URI.parse(s.strip)
+      u.is_a?(URI::HTTP) && u.host.present?
+    rescue URI::InvalidURIError
+      false
     end
 
     publication.assign_attributes(
       category: category,
-      status: row['Status (submitted, accepted, printed)']&.strip,
-      author_list: row['Authors']&.strip,
-      publication_date: (Date.parse(row['Year of publication'].to_s) rescue nil),
-      link: (row['Link']&.strip =~ URI.regexp ? row['Link'].strip : nil)
+      status: status,
+      author_list: authors,
+      publication_year: (Integer(row['Year of publication']) rescue nil),
+      link: (valid_url.call(row['Link']&.strip) ? row['Link']&.strip : nil)
     )
     publication.save!
 
 
     # Handle Identifiers
     if row['Digital Object Identifier (DOI)'].present?
-      publication.identifiers.find_or_create_by!(category: 'DOI', value: row['Digital Object Identifier (DOI)'].strip)
+      doi = row['Digital Object Identifier (DOI)']&.strip
+      if doi =~ /\A10\.\S+/
+        doi = "https://doi.org/#{doi}"
+      elsif valid_url.call(doi)
+        doi = doi
+      end
+      publication.identifiers.find_or_create_by!(category: 'DOI', value: doi) if !doi.blank?
     end
     # if row[' ISSN or eSSN'].present?
     #   publication.identifiers.find_or_create_by!(category: 'ISSN', value: row[' ISSN or eSSN'].strip)
@@ -100,10 +117,13 @@ def import_publications(file_path)
 
     # Handle Repository Links
     if row["Repository link':"].present?
-      publication.repository_links.find_or_create_by!(
-        repository: 'other',
-        value: row["Repository link':"].strip
-      )
+      repository_link = (valid_url.call(row["Repository link':"]&.strip) ? row["Repository link':"]&.strip : nil)
+      if repository_link.present?
+        publication.repository_links.find_or_create_by!(
+          repository: 'other',
+          value: repository_link
+        )
+      end
     end
 
     # Handle KPI Reporting Extensions

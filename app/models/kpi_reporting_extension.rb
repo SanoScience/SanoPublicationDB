@@ -16,4 +16,8 @@ class KpiReportingExtension < ApplicationRecord
     def self.ransackable_associations(auth_object = nil)
         [ "publication" ]
     end
+
+    def invoice_number=(val)
+        super(val.presence)
+    end
 end

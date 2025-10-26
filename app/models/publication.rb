@@ -38,8 +38,17 @@ class Publication < ApplicationRecord
     validates :category, presence: true, inclusion: { in: categories.keys }
     validates :status, presence: true, inclusion: { in: statuses.keys }
     validates :author_list, presence: true
-    validates :publication_year, presence: true, numericality: { only_integer: true, greater_than: 2000, less_than: Date.current.year + 1 }
-    validates :kpi_reporting_extension, presence: true
+    validates :publication_year, 
+              numericality: { only_integer: true, greater_than: 2000, less_than: Date.current.year + 1 }, 
+              allow_nil: true
+
+    with_options on: :ui do
+      validates :publication_year, 
+                presence: true,
+                numericality: { only_integer: true, greater_than: 2000, less_than: Date.current.year + 1 }
+      validates :kpi_reporting_extension, presence: true
+    end
+    
     validates_associated :research_group_publications,
                          :identifiers,
                          :repository_links,

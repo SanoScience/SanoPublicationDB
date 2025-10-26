@@ -139,7 +139,8 @@ def import_publications(file_path)
       is_methodology_application: row['Publications describing application of the methodology (YES/NO)']&.to_s&.downcase == 'yes',
       is_polish_med_researcher_involved: row['Polish medical researchers involved']&.to_s&.downcase == 'yes',
       subsidy_points: row['Subsidy points'].to_s.match?(/\A\d+\z/) ? row['Subsidy points'].to_i : nil,
-      is_peer_reviewed: row['Peer-review']&.to_s&.downcase == 'yes'
+      is_peer_reviewed: row['Peer-review']&.to_s&.downcase == 'yes',
+      is_co_publication_with_partners: row['Co-publications with national and foreign partners [t]']&.to_s&.downcase == 'yes'
     )
 
     # Handle Conference

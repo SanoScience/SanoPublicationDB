@@ -26,7 +26,7 @@ class PublicationsController < ApplicationController
 
   def create
     @publication = current_user.publications.build(publication_params)
-    if @publication.save
+    if @publication.save(context: :ui)
       redirect_to @publication, notice: "Publication was successfully created."
     else
       render :new, status: :unprocessable_entity
@@ -38,7 +38,8 @@ class PublicationsController < ApplicationController
   def edit; end
 
   def update
-    if @publication.update(publication_params)
+    @publication.assign_attributes(publication_params)
+    if @publication.save(context: :ui)
       redirect_to @publication, notice: "Publication was successfully updated."
     else
       render :edit, status: :unprocessable_entity

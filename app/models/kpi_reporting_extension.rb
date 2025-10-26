@@ -1,13 +1,16 @@
 class KpiReportingExtension < ApplicationRecord
     belongs_to :publication
 
-    validates :publication, presence: true
-    validates :is_new_method_technique,
-              :is_methodology_application,
-              :is_polish_med_researcher_involved,
-              :is_co_publication_with_partners,
-              :is_peer_reviewed,
-              inclusion: { in: [true, false], message: "should be selected" }
+    before_validation :nilify_blanks
+
+    with_options on: :ui do
+        validates :is_new_method_technique,
+                :is_methodology_application,
+                :is_polish_med_researcher_involved,
+                :is_co_publication_with_partners,
+                :is_peer_reviewed,
+                inclusion: { in: [true, false], message: "should be selected" }
+    end
 
     def self.ransackable_attributes(auth_object = nil)
         [ "teaming_reporting_period", "pbn", "jcr" ]
@@ -17,7 +20,10 @@ class KpiReportingExtension < ApplicationRecord
         [ "publication" ]
     end
 
-    def invoice_number=(val)
-        super(val.presence)
+    private
+
+    def nilify_blanks
+        self.teaming_reporting_period = teaming_reporting_period.presence
+        self.subsidy_points           = subsidy_points.presence
     end
 end

@@ -21,6 +21,7 @@ class PublicationsController < ApplicationController
   def new
     @publication = Publication.new
     @publication.research_group_publications.build
+    @publication.build_kpi_reporting_extension
   end
 
   def create
@@ -56,7 +57,7 @@ class PublicationsController < ApplicationController
   end
 
   def authorize_owner!
-    redirect_to @publication, alert: "You are not authorized to perform this action." unless @publication.owner == current_user
+    redirect_to @publication, alert: "You are not authorized to perform this action." unless @publication.owner == current_user || current_user&.role == "moderator"
   end
 
   def publication_params
@@ -66,7 +67,7 @@ class PublicationsController < ApplicationController
       research_group_publications_attributes: [ :id, :research_group_id, :is_primary, :_destroy ],
       identifiers_attributes: [ :id, :category, :value, :_destroy ],
       repository_links_attributes: [ :id, :repository, :value, :_destroy ],
-      kpi_reporting_extension_attributes: [ :id, :teaming_reporting_period, :invoice_number, :pbn, :jcr, :is_added_ft_portal, :is_checked, :is_new_method_technique, :is_methodology_application, :is_polish_med_researcher_involved, :is_peer_reviewed, :subsidy_points, :_destroy ],
+      kpi_reporting_extension_attributes: [ :id, :teaming_reporting_period, :invoice_number, :pbn, :jcr, :is_added_ft_portal, :is_checked, :is_new_method_technique, :is_methodology_application, :is_polish_med_researcher_involved, :is_peer_reviewed, :subsidy_points, :is_co_publication_with_partners, :_destroy ],
       open_access_extension_attributes: [ :id, :category, :gold_oa_charges, :gold_oa_funding_source, :_destroy ],
       conference_attributes: [ :id, :name, :core, :start_date, :end_date, :_destroy ],
       journal_issue_attributes: [ :id, :title, :journal_num, :publisher, :volume, :impact_factor, :_destroy ]

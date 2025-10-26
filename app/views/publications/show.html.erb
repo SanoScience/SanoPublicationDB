@@ -56,10 +56,16 @@
 <% end %>
 
 <% if @publication.link.present? %>
-    <div class="d-flex gap-2 mb-5">
+    <div class="d-flex gap-2 mb-3">
         <strong>Link:</strong> <%= link_to truncate(safe_url(@publication.link), length: 80), safe_url(@publication.link), target: "_blank", rel: "noopener", class: "text-break d-inline-block" %>
     </div>
 <% end %>
+
+<div class="d-flex gap-2 mb-5">
+    <strong>Last update:</strong> <%= @publication.updated_at %>
+</div>
+
+<hr>
 
 <h4>Research Groups</h4>
 <ul>
@@ -76,8 +82,69 @@
   <% end %>
 </ul>
 
-<% if @publication.identifiers.any? %>
+<hr>
+
+<% if @publication.kpi_reporting_extension %>
+    <h4>KPI Reporting Information</h4>
+    <ul>
+        <% unless @publication.kpi_reporting_extension.is_new_method_technique.nil? %>
+            <p><strong>Does publication describe new methods and techniques:</strong> <%= yes_no(@publication.kpi_reporting_extension.is_new_method_technique) %></p>
+        <% end %>
+        <% unless @publication.kpi_reporting_extension.is_methodology_application.nil? %>
+            <p><strong>Does publication describe application of the methodology:</strong> <%= yes_no(@publication.kpi_reporting_extension.is_methodology_application) %></p>
+        <% end %>
+        <% unless @publication.kpi_reporting_extension.is_polish_med_researcher_involved.nil? %>
+            <p><strong>Are Polish medical researchers involved:</strong> <%= yes_no(@publication.kpi_reporting_extension.is_polish_med_researcher_involved) %></p>
+        <% end %>
+        <% unless @publication.kpi_reporting_extension.is_peer_reviewed.nil? %>
+            <p><strong>Is peer reviewed?:</strong> <%= yes_no(@publication.kpi_reporting_extension.is_peer_reviewed) %></p>
+        <% end %>
+        <% unless @publication.kpi_reporting_extension.is_co_publication_with_partners.nil? %>
+            <p><strong>Is this a co-publication with national and foreign partners?:</strong> <%= yes_no(@publication.kpi_reporting_extension.is_co_publication_with_partners) %></p>
+        <% end %>
+        <% if @publication.kpi_reporting_extension.subsidy_points %>
+            <p><strong>Subsidy points:</strong> <%= @publication.kpi_reporting_extension.subsidy_points %></p>
+        <% end %>
+        <% if @publication.kpi_reporting_extension.teaming_reporting_period && user_signed_in? && current_user.moderator? %>
+            <p><strong>Teaming reporting period:</strong> <%= @publication.kpi_reporting_extension.teaming_reporting_period %></p>
+        <% end %>
+        <% if @publication.kpi_reporting_extension.invoice_number && user_signed_in? && current_user.moderator? %>
+            <p><strong>Invoice number Reporting:</strong> <%= @publication.kpi_reporting_extension.invoice_number %></p>
+        <% end %>
+        <% if !@publication.kpi_reporting_extension.pbn.nil? && user_signed_in? && current_user.moderator? %>
+            <p><strong>PBN:</strong> <%= yes_no(@publication.kpi_reporting_extension.pbn) %></p>
+        <% end %>
+        <% if !@publication.kpi_reporting_extension.jcr.nil? && user_signed_in? && current_user.moderator? %>
+            <p><strong>JCR:</strong> <%= yes_no(@publication.kpi_reporting_extension.jcr) %></p>
+        <% end %>
+        <% if !@publication.kpi_reporting_extension.is_added_ft_portal.nil? && user_signed_in? && current_user.moderator? %>
+            <p><strong>Is added on F&T portal:</strong> <%= yes_no(@publication.kpi_reporting_extension.is_added_ft_portal) %></p>
+        <% end %>
+        <% if !@publication.kpi_reporting_extension.is_checked.nil? && user_signed_in? && current_user.moderator? %>
+            <p><strong>Is checked:</strong> <%= yes_no(@publication.kpi_reporting_extension.is_checked) %></p>
+        <% end %>
+        <% if @publication.kpi_reporting_extension.updated_at %>
+            <p><strong>Last update:</strong> <%= @publication.kpi_reporting_extension.updated_at %></p>
+        <% end %>
+    </ul>
+
     <hr>
+<% end %>
+
+<% if @publication.open_access_extension %>
+    <h4>Open Access Details</h4>
+    <ul>
+        <p><strong>Open Access:</strong> <%= @publication.open_access_extension.category.humanize %></p>
+        <% if @publication.open_access_extension.gold? && user_signed_in? && current_user.moderator? %>
+            <p> <strong>Gold OA Charges:</strong> <%= @publication.open_access_extension.gold_oa_charges %></p>
+            <p> <strong>Funding Source:</strong> <%= @publication.open_access_extension.gold_oa_funding_source %></p>
+        <% end %>
+    </ul>
+
+    <hr>
+<% end %>
+
+<% if @publication.identifiers.any? %>
     <h4>Identifiers</h4>
     <ul>
         <% @publication.identifiers.each do |identifier| %>
@@ -86,10 +153,11 @@
             </li>
         <% end %>
     </ul>
+
+    <hr>
 <% end %>
 
 <% if @publication.repository_links.any? %>
-    <hr>
     <h4>Repository Links</h4>
     <ul>
         <% @publication.repository_links.each do |repo_link| %>
@@ -101,10 +169,11 @@
             </li>
         <% end %>
     </ul>
+
+    <hr>
 <% end %>
 
 <% if @publication.conference %>
-    <hr>
     <h4>Conference</h4>
     <ul>
         <p><strong>Name:</strong> <%= @publication.conference.name %></p>
@@ -115,10 +184,11 @@
             <p><strong>Dates:</strong> <%= @publication.conference.start_date %> - <%= @publication.conference.end_date %></p>
         <% end %>
     </ul>
+
+    <hr>
 <% end %>
 
 <% if @publication.journal_issue %>
-    <hr>
     <h4>Journal Issue</h4>
     <ul>
         <p><strong>Title:</strong> <%= @publication.journal_issue.title %></p>
@@ -135,56 +205,6 @@
             <p><strong>Impact factor:</strong> <%= @publication.journal_issue.impact_factor %></p>
         <% end %>
     </ul>
-<% end %>
 
-<% if @publication.kpi_reporting_extension %>
     <hr>
-    <h4>KPI Reporting Information</h4>
-    <ul>
-        <% if @publication.kpi_reporting_extension.teaming_reporting_period && user_signed_in? && current_user.moderator? %>
-            <p><strong>Teaming reporting period:</strong> <%= @publication.kpi_reporting_extension.teaming_reporting_period %></p>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.invoice_number && user_signed_in? && current_user.moderator? %>
-            <p><strong>Invoice number Reporting:</strong> <%= @publication.kpi_reporting_extension.invoice_number %></p>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.pbn && user_signed_in? && current_user.moderator? %>
-            <p><strong>PBN:</strong> <%= @publication.kpi_reporting_extension.pbn %></p>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.jcr && user_signed_in? && current_user.moderator? %>
-            <p><strong>JCR:</strong> <%= @publication.kpi_reporting_extension.jcr %></p>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.is_added_ft_portal && user_signed_in? && current_user.moderator? %>
-            <p><strong>Is added on F&T portal:</strong> <%= @publication.kpi_reporting_extension.is_added_ft_portal %></p>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.is_checked && user_signed_in? && current_user.moderator? %>
-            <p><strong>Is checked:</strong> <%= @publication.kpi_reporting_extension.is_checked %></p>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.is_new_method_technique %>
-            <p><strong>Does publication describe new methods and techniques:</strong> <%= @publication.kpi_reporting_extension.is_new_method_technique %></p>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.is_methodology_application %>
-            <p><strong>Does publication describe application of the methodology:</strong> <%= @publication.kpi_reporting_extension.is_methodology_application %></p>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.is_polish_med_researcher_involved %>
-            <p><strong>Is Polish medical researchers involved:</strong> <%= @publication.kpi_reporting_extension.is_polish_med_researcher_involved %></p>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.subsidy_points %>
-            <p><strong>Subsidy points:</strong> <%= @publication.kpi_reporting_extension.subsidy_points %></p>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.updated_at %>
-            <p><strong>Last update:</strong> <%= @publication.kpi_reporting_extension.updated_at %></p>
-        <% end %>
-    </ul>
-<% end %>
-
-<% if @publication.open_access_extension %>
-    <hr>
-    <h4>Open Access Details</h4>
-    <ul>
-        <p><strong>Open Access:</strong> <%= @publication.open_access_extension.category.humanize %></p>
-        <% if @publication.open_access_extension.gold? && user_signed_in? && current_user.moderator? %>
-            <p> <strong>Gold OA Charges:</strong> <%= @publication.open_access_extension.gold_oa_charges %></p>
-            <p> <strong>Funding Source:</strong> <%= @publication.open_access_extension.gold_oa_funding_source %></p>
-        <% end %>
-    </ul>
 <% end %>

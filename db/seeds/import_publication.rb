@@ -37,12 +37,12 @@ def import_publications(file_path)
     publication = Publication.find_or_initialize_by(title: title)
 
     category = case publication_type
-      when "article in journal" then :journal_article
-      when "conference manuscript" then :conference_manuscript
-      when "book/monograph" then :book
-      when "chapter book" then :book_chapter
-      when "conference abstract" then :conference_abstract
-      else nil
+    when "article in journal" then :journal_article
+    when "conference manuscript" then :conference_manuscript
+    when "book/monograph" then :book
+    when "chapter book" then :book_chapter
+    when "conference abstract" then :conference_abstract
+    else nil
     end
 
     valid_url = ->(s) do

@@ -9,7 +9,7 @@ class KpiReportingExtension < ApplicationRecord
                 :is_polish_med_researcher_involved,
                 :is_co_publication_with_partners,
                 :is_peer_reviewed,
-                inclusion: { in: [true, false], message: "should be selected" }
+                inclusion: { in: [ true, false ], message: "should be selected" }
     end
 
     def self.ransackable_attributes(auth_object = nil)

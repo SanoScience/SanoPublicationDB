@@ -26,7 +26,8 @@ class PublicationsControllerTest < ActionDispatch::IntegrationTest
           title:  "Test publication",
           category: "journal_article",
           status: "submitted",
-          author_list: "John Doe, Jane Smith"
+          author_list: "John Doe, Jane Smith",
+          publication_year: Time.zone.today.year
         }
       }, xhr: true
     end

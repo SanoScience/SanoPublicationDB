@@ -39,13 +39,13 @@ class Publication < ApplicationRecord
     validates :status, presence: true, inclusion: { in: statuses.keys }
     validates :author_list, presence: true
     validates :publication_year,
-              numericality: { only_integer: true, greater_than: 2000, less_than: Date.current.year + 1 },
+              numericality: { only_integer: true, greater_than: 2000, less_than: Time.zone.today.year + 1 },
               allow_nil: true
 
     with_options on: :ui do
       validates :publication_year,
                 presence: true,
-                numericality: { only_integer: true, greater_than: 2000, less_than: Date.current.year + 1 }
+                numericality: { only_integer: true, greater_than: 2000, less_than: Time.zone.today.year + 1 }
       validates :kpi_reporting_extension, presence: true
     end
 

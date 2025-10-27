@@ -63,8 +63,6 @@ class Publication < ApplicationRecord
         .distinct
     }
 
-    after_create_commit :notify_moderators
-
     after_initialize do
       build_kpi_reporting_extension if new_record? && kpi_reporting_extension.nil?
     end
@@ -91,11 +89,5 @@ class Publication < ApplicationRecord
 
     ransacker :category, formatter: proc { |v| categories[v] } do |parent|
       parent.table[:category]
-    end
-
-    private
-
-    def notify_moderators
-      NotificationMailer.new_publication_notification(self).deliver_later
     end
 end

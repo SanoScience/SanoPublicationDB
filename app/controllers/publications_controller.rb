@@ -27,6 +27,7 @@ class PublicationsController < ApplicationController
   def create
     @publication = current_user.publications.build(publication_params)
     if @publication.save(context: :ui)
+      NotificationMailer.new_publication_notification(@publication).deliver_now
       redirect_to @publication, notice: "Publication was successfully created."
     else
       render :new, status: :unprocessable_entity

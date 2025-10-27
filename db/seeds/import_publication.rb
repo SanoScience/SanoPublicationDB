@@ -99,20 +99,37 @@ def import_publications(file_path)
     end
 
     # Handle Open Access Extensions
-    if row['OA: Green or Gold?'].present? && row['OA: Green or Gold?'].downcase != "no"
-      if row['OA: Green or Gold?'].downcase == "green"
-        OpenAccessExtension.find_or_create_by!(
-          publication: publication,
-          category: row['OA: Green or Gold?']&.strip
-        )
+    oa_raw  = row['OA: Green or Gold?']
+    oa_kind = oa_raw.to_s.strip.downcase
+
+    parse_money = ->(s) do
+      return nil if s.blank?
+      normalized = s.to_s.strip
+                    .gsub(/[^\d,.\-]/, '')
+                    .gsub(/\s+/, '')
+      if normalized.include?(',') && normalized.include?('.')
+        normalized = normalized.gsub(',', '')     # comma as thousands
       else
-        OpenAccessExtension.find_or_create_by!(
-          publication: publication,
-          gold_oa_charges: row['For Gold OA: insert the amount of processing charges in PLN paid by SANO if any']&.to_f,
-          gold_oa_funding_source: row['Funding source of OA']&.strip,
-          category: row['OA: Green or Gold?']&.strip
-        )
+        normalized = normalized.tr(',', '.')      # comma as decimal
       end
+      Float(normalized)
+    rescue ArgumentError
+      nil
+    end
+
+    case oa_kind
+    when 'green'
+      publication.create_open_access_extension!(
+        category: :green,
+        gold_oa_charges: nil,
+        gold_oa_funding_source: nil
+      )
+    when 'gold'
+      publication.create_open_access_extension!(
+        category: :gold,
+        gold_oa_charges: parse_money.call(row['For Gold OA: insert the amount of processing charges in PLN paid by SANO if any']),
+        gold_oa_funding_source: row['Funding source of OA']&.strip&.presence
+      )
     end
 
     # Handle Repository Links
@@ -127,21 +144,24 @@ def import_publications(file_path)
     end
 
     # Handle KPI Reporting Extensions
-    KpiReportingExtension.find_or_create_by!(
-      publication: publication,
+    to_bool = ->(v) { v.to_s.strip.downcase == 'yes' }
+
+    kpi = KpiReportingExtension.find_or_initialize_by(publication: publication)
+    kpi.assign_attributes(
       teaming_reporting_period: row['Teaming Reporting Period']&.to_i,
       invoice_number: row['Invoice number']&.strip,
-      pbn: row['PBN']&.to_s&.downcase == 'yes',
-      jcr: row['JCR']&.to_s&.downcase == 'yes',
-      is_added_ft_portal: row['Added to F&T portal']&.to_s&.downcase == 'yes',
-      is_checked: row['checked?']&.to_s&.downcase == 'yes',
-      is_new_method_technique: row['Publications describing new methods and techniques (YES/NO)']&.to_s&.downcase == 'yes',
-      is_methodology_application: row['Publications describing application of the methodology (YES/NO)']&.to_s&.downcase == 'yes',
-      is_polish_med_researcher_involved: row['Polish medical researchers involved']&.to_s&.downcase == 'yes',
+      pbn: to_bool.call(row['PBN']),
+      jcr: to_bool.call(row['JCR']),
+      is_added_ft_portal: to_bool.call(row['Added to F&T portal']),
+      is_checked: to_bool.call(row['checked?']),
+      is_new_method_technique: to_bool.call(row['Publications describing new methods and techniques (YES/NO)']),
+      is_methodology_application: to_bool.call(row['Publications describing application of the methodology (YES/NO)']),
+      is_polish_med_researcher_involved: to_bool.call(row['Polish medical researchers involved']),
       subsidy_points: row['Subsidy points'].to_s.match?(/\A\d+\z/) ? row['Subsidy points'].to_i : nil,
-      is_peer_reviewed: row['Peer-review']&.to_s&.downcase == 'yes',
-      is_co_publication_with_partners: row['Co-publications with national and foreign partners [t]']&.to_s&.downcase == 'yes'
+      is_peer_reviewed: to_bool.call(row['Peer-review']),
+      is_co_publication_with_partners: to_bool.call(row['Co-publications with national and foreign partners [t]'])
     )
+    kpi.save!
 
     # Handle Conference
     if row['Title of the journal or equivalent'].present?

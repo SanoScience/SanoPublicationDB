@@ -92,7 +92,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_25_132801) do
   create_table "research_group_publications", force: :cascade do |t|
     t.bigint "publication_id", null: false
     t.boolean "is_primary", null: false
-    t.bigint "research_group_id", null: false
+    t.bigint "research_group_id"
     t.index ["publication_id"], name: "index_research_group_publications_on_publication_id"
     t.index ["research_group_id"], name: "index_research_group_publications_on_research_group_id"
   end

@@ -27,7 +27,14 @@ class PublicationsControllerTest < ActionDispatch::IntegrationTest
           category: "journal_article",
           status: "submitted",
           author_list: "John Doe, Jane Smith",
-          publication_year: Time.zone.today.year
+          publication_year: Time.zone.today.year,
+          kpi_reporting_extension_attributes: {
+            is_new_method_technique: false,
+            is_methodology_application: false,
+            is_polish_med_researcher_involved: false,
+            is_peer_reviewed: false,
+            is_co_publication_with_partners: false
+          }
         }
       }, xhr: true
     end

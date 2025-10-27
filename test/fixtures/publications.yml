@@ -5,7 +5,7 @@ pub1:
   category: journal_article
   status: submitted
   author_list: "John Doe, Jane Smith"
-  publication_year: <% Time.zone.today.year %>
+  publication_year: <%= Time.zone.today.year %>
   link: "https://example.com"
   journal_issue: jour1
   conference: conf1

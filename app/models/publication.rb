@@ -15,7 +15,7 @@ class Publication < ApplicationRecord
     accepts_nested_attributes_for :research_group_publications, allow_destroy: true, reject_if: :all_blank
     accepts_nested_attributes_for :identifiers, allow_destroy: true, reject_if: :all_blank
     accepts_nested_attributes_for :repository_links, allow_destroy: true, reject_if: :all_blank
-    accepts_nested_attributes_for :kpi_reporting_extension, allow_destroy: true, reject_if: :all_blank
+    accepts_nested_attributes_for :kpi_reporting_extension, allow_destroy: true
     accepts_nested_attributes_for :open_access_extension, allow_destroy: true, reject_if: :all_blank
     accepts_nested_attributes_for :conference, allow_destroy: true, reject_if: :all_blank
     accepts_nested_attributes_for :journal_issue, allow_destroy: true, reject_if: :all_blank
@@ -38,6 +38,17 @@ class Publication < ApplicationRecord
     validates :category, presence: true, inclusion: { in: categories.keys }
     validates :status, presence: true, inclusion: { in: statuses.keys }
     validates :author_list, presence: true
+    validates :publication_year,
+              numericality: { only_integer: true, greater_than: 2000, less_than: Time.zone.today.year + 1 },
+              allow_nil: true
+
+    with_options on: :ui do
+      validates :publication_year,
+                presence: true,
+                numericality: { only_integer: true, greater_than: 2000, less_than: Time.zone.today.year + 1 }
+      validates :kpi_reporting_extension, presence: true
+    end
+
     validates_associated :research_group_publications,
                          :identifiers,
                          :repository_links,
@@ -54,9 +65,13 @@ class Publication < ApplicationRecord
 
     after_create_commit :notify_moderators
 
+    after_initialize do
+      build_kpi_reporting_extension if new_record? && kpi_reporting_extension.nil?
+    end
+
     def self.ransackable_attributes(auth_object = nil)
       [
-        "title", "category", "status", "author_list", "publication_date", "publication_year",
+        "title", "category", "status", "author_list", "publication_year",
         "research_group_publications_research_group_id_in",
         "identifiers_type", "identifiers_value",
         "journal_issue_title_cont",
@@ -76,10 +91,6 @@ class Publication < ApplicationRecord
 
     ransacker :category, formatter: proc { |v| categories[v] } do |parent|
       parent.table[:category]
-    end
-
-    ransacker :publication_year, type: :integer do
-      Arel.sql("EXTRACT(YEAR FROM publication_date)")
     end
 
     private

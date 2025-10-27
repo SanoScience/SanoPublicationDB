@@ -1,60 +1,101 @@
 <div class="nested-fields">
 
     <div class="row">
-        <div class="col-md-6">
-            <%= f.input :is_new_method_technique, label: "New Method/Technique" %>
+        <div class="col-md-4">
+            <%= f.input :is_new_method_technique,
+                        as: :select,
+                        collection: [['Yes', true], ['No', false]],
+                        include_blank: true,
+                        required: true,
+                        label: "New Method/Technique" %>
         </div>
 
-        <div class="col-md-6">
-            <%= f.input :is_methodology_application, label: "Methodology Application" %>
+        <div class="col-md-4">
+            <%= f.input :is_methodology_application,
+                        as: :select,
+                        collection: [['Yes', true], ['No', false]],
+                        include_blank: true,
+                        required: true,
+                        label: "Methodology Application" %>
+        </div>
+
+        <div class="col-md-4">
+        <%= f.input :is_polish_med_researcher_involved,
+                    as: :select,
+                    collection: [['Yes', true], ['No', false]],
+                    include_blank: true,
+                    required: true,
+                    label: "Polish Medical Researcher Involved" %>
         </div>
     </div>
 
     <div class="row">
-        <div class="col-md-6">
-            <%= f.input :is_polish_med_researcher_involved, label: "Polish Medical Researcher Involved" %>
+        <div class="col-md-4">
+            <%= f.input :is_peer_reviewed,
+                        as: :select,
+                        collection: [['Yes', true], ['No', false]],
+                        include_blank: true,
+                        required: true,
+                        label: "Peer Reviewed" %>
         </div>
 
-        <div class="col-md-6">
-            <%= f.input :is_peer_reviewed, label: "Peer Reviewed" %>
+        <div class="col-md-4">
+            <%= f.input :is_co_publication_with_partners,
+                        as: :select,
+                        collection: [['Yes', true], ['No', false]],
+                        include_blank: true,
+                        required: true,
+                        label: "Co-Publication with Partners" %>
         </div>
-    </div>
 
-    <div class="row">
-        <%= f.input :subsidy_points, label: "Subsidy Points" %>
+        <div class="col-md-4">
+            <%= f.input :subsidy_points, label: "Subsidy Points" %>
+        </div>
     </div>
 
     <% if current_user.role == "moderator" %>
         <div class="row">
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <%= f.input :teaming_reporting_period, label: "Teaming Reporting Period" %>
             </div>
 
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <%= f.input :invoice_number, label: "Invoice Number" %>
+            </div>
+
+            <div class="col-md-4">
+                <%= f.input :pbn,
+                            as: :select,
+                            collection: [['Yes', true], ['No', false]],
+                            include_blank: true,
+                            label: "PBN" %>
             </div>
         </div>  
 
         <div class="row">
-            <div class="col-md-6">
-                <%= f.input :pbn, label: "PBN" %>
+            <div class="col-md-4">
+                <%= f.input :jcr,
+                            as: :select,
+                            collection: [['Yes', true], ['No', false]],
+                            include_blank: true,
+                            label: "JCR" %>
             </div>
 
-            <div class="col-md-6">
-                <%= f.input :jcr, label: "JCR" %>
-            </div>
-        </div>
-
-        <div class="row">
-            <div class="col-md-6">
-                <%= f.input :is_added_ft_portal, label: "Added to FT Portal" %>
+            <div class="col-md-4">
+                <%= f.input :is_added_ft_portal,
+                            as: :select,
+                            collection: [['Yes', true], ['No', false]],
+                            include_blank: true,
+                            label: "Added to FT Portal" %>
             </div>
 
-            <div class="col-md-6">
-                <%= f.input :is_checked, label: "Checked" %>
+            <div class="col-md-4">
+                <%= f.input :is_checked,
+                            as: :select,
+                            collection: [['Yes', true], ['No', false]],
+                            include_blank: true,
+                            label: "Checked" %>
             </div>
         </div>
     <% end %>
-    
-    <%= link_to_remove_association "Delete", f, class:"btn btn-danger mb-2" %>
 </div>

@@ -43,7 +43,7 @@
 
   <%= form.input :author_list %>
 
-  <%= form.input :publication_date, as: :date %>
+  <%= form.input :publication_year, as: :integer %>
 
   <%= form.input :link %>
 
@@ -56,6 +56,36 @@
     <% end %>
   </div>
   <%= link_to_add_association "Add Research Group", form, :research_group_publications, data: {association_insertion_node: '.research-group', association_insertion_method: :append}, class: "btn btn-secondary mt-3" %>
+
+  <hr>
+
+  <h3>KPI Reporting Extension</h3>
+  <div class="kpi-reporting-extension" data-controller="nested-toggle">
+    <%= form.simple_fields_for :kpi_reporting_extension do |kpi_form| %>
+      <%= render 'kpi_reporting_extension_fields', f: kpi_form %>
+    <% end %>
+
+    <div class="links max-one-association">
+      <%= link_to_add_association "Add KPI Reporting Extension", form, :kpi_reporting_extension, 
+          data: {association_insertion_node: '.kpi-reporting-extension', association_insertion_method: :append}, 
+          force_non_association_create: true, class: "btn btn-secondary" %>
+    </div>
+  </div>
+
+  <hr>
+
+  <h3>Open Access Extension</h3>
+  <div class="open-access-extension" data-controller="nested-toggle">
+    <%= form.simple_fields_for :open_access_extension do |oa_form| %>
+      <%= render 'open_access_extension_fields', f: oa_form %>
+    <% end %>
+
+    <div class="links max-one-association">
+      <%= link_to_add_association "Add Open Access Extension", form, :open_access_extension, 
+          data: {association_insertion_node: '.open-access-extension', association_insertion_method: :append}, 
+          force_non_association_create: true, class: "btn btn-secondary" %>
+    </div>
+  </div>
 
   <hr>
 
@@ -110,36 +140,6 @@
             association_insertion_method: :append
           }, 
           class: "btn btn-secondary" %>
-    </div>
-  </div>
-
-  <hr>
-
-  <h3>KPI Reporting Extension</h3>
-  <div class="kpi-reporting-extension" data-controller="nested-toggle">
-    <%= form.simple_fields_for :kpi_reporting_extension do |kpi_form| %>
-      <%= render 'kpi_reporting_extension_fields', f: kpi_form %>
-    <% end %>
-
-    <div class="links max-one-association">
-      <%= link_to_add_association "Add KPI Reporting Extension", form, :kpi_reporting_extension, 
-          data: {association_insertion_node: '.kpi-reporting-extension', association_insertion_method: :append}, 
-          force_non_association_create: true, class: "btn btn-secondary" %>
-    </div>
-  </div>
-
-  <hr>
-
-  <h3>Open Access Extension</h3>
-  <div class="open-access-extension" data-controller="nested-toggle">
-    <%= form.simple_fields_for :open_access_extension do |oa_form| %>
-      <%= render 'open_access_extension_fields', f: oa_form %>
-    <% end %>
-
-    <div class="links max-one-association">
-      <%= link_to_add_association "Add Open Access Extension", form, :open_access_extension, 
-          data: {association_insertion_node: '.open-access-extension', association_insertion_method: :append}, 
-          force_non_association_create: true, class: "btn btn-secondary" %>
     </div>
   </div>
 

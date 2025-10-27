@@ -3,8 +3,8 @@ module Publications
     ALLOWED_SORTS = {
       "title_asc" => "publications.title ASC",
       "title_desc" => "publications.title DESC",
-      "publication_date_asc" => "publications.publication_date ASC",
-      "publication_date_desc" => "publications.publication_date DESC",
+      "publication_year_asc" => "publications.publication_year ASC NULLS LAST",
+      "publication_year_desc" => "publications.publication_year DESC NULLS LAST",
       "journal_issue_title_asc" => "journal_issues.title ASC NULLS LAST",
       "journal_issue_title_desc" => "journal_issues.title DESC NULLS LAST",
       "conference_name_asc" => "conferences.name ASC NULLS LAST",

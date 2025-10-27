@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_09_115705) do
+ActiveRecord::Schema[8.0].define(version: 2025_10_25_132801) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -39,7 +39,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_115705) do
   create_table "kpi_reporting_extensions", force: :cascade do |t|
     t.bigint "publication_id", null: false
     t.integer "teaming_reporting_period"
-    t.integer "invoice_number"
+    t.string "invoice_number"
     t.boolean "pbn"
     t.boolean "jcr"
     t.boolean "is_added_ft_portal"
@@ -51,6 +51,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_115705) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.boolean "is_peer_reviewed"
+    t.boolean "is_co_publication_with_partners"
     t.index ["publication_id"], name: "index_kpi_reporting_extensions_on_publication_id"
   end
 
@@ -69,7 +70,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_115705) do
     t.integer "category", null: false
     t.integer "status", null: false
     t.string "author_list", null: false
-    t.date "publication_date"
+    t.integer "publication_year"
     t.string "link"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false

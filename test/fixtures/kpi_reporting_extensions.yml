@@ -2,4 +2,8 @@
 
 kpi1:
   publication: pub1
-  teaming_reporting_period: 1
+  is_new_method_technique: false
+  is_methodology_application: false
+  is_polish_med_researcher_involved: false
+  is_peer_reviewed: false
+  is_co_publication_with_partners: false

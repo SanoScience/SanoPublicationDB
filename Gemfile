@@ -81,3 +81,5 @@ gem "omniauth-entra-id", "~> 3.1"
 gem "omniauth-rails_csrf_protection", "~> 1.0"
 
 gem "whenever", "~> 1.0"
+
+gem "arel_extensions"

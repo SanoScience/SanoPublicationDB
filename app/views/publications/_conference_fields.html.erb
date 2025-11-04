@@ -3,9 +3,9 @@
 
     <%= f.input :core, label: "CORE Ranking" %>
 
-    <%= f.input :start_date, label: "Start Date" %>
+    <%= f.input :start_date, label: "Start Date", include_blank: true, start_year: 2020, end_year: Date.today.year + 1 %>
 
-    <%= f.input :end_date, label: "End Date" %>
+    <%= f.input :end_date, label: "End Date", include_blank: true, start_year: 2020, end_year: Date.today.year + 1 %>
 
     <%= link_to_remove_association "Delete", f, class:"btn btn-danger mb-2" %>
 </div>

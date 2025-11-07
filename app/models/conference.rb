@@ -1,4 +1,6 @@
 class Conference < ApplicationRecord
+    include NotifiesPublicationOnChange
+
     has_many :publications, foreign_key: :conference_id
 
     before_save :nilify_blanks

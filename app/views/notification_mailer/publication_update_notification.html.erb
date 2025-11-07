@@ -1,0 +1,33 @@
+<!-- app/views/notification_mailer/updated_publication_notification.html.erb -->
+<h2>Publication has been updated</h2>
+<h3>Please review the changes and ensure data consistency.</h3>
+<br>
+
+<p><strong>Title:</strong> <%= @publication.title %></p>
+<p><strong>Updated by:</strong> <%= @publication.owner.email %></p>
+
+<% if @changes[:publication].present? %>
+  <h3>Publication fields</h3>
+  <ul>
+    <% @changes[:publication].each do |field, (old_v, new_v)| %>
+      <li><strong><%= field.humanize %>:</strong> <%= display_value(old_v) %> &rarr; <%= display_value(new_v) %></li>
+    <% end %>
+  </ul>
+<% end %>
+
+<% if @changes[:children].present? %>
+  <h3>Nested changes</h3>
+  <% @changes[:children].each do |row| %>
+    <p><strong><%= row[:model] %> #<%= row[:id] || "new" %></strong> - <%= row[:action] %></p>
+    <% if row[:changes].present? %>
+      <ul>
+        <% row[:changes].each do |f, (o, n)| %>
+          <li><strong><%= f.humanize %>:</strong> <%= display_value(o) %> &rarr; <%= display_value(n) %></li>
+        <% end %>
+      </ul>
+    <% end %>
+  <% end %>
+<% end %>
+
+<br>
+<p>Go to the <%= link_to "publication", publication_url(@publication) %></p>

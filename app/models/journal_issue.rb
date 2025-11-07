@@ -1,4 +1,6 @@
 class JournalIssue < ApplicationRecord
+    include NotifiesPublicationOnChange
+
     has_many :publications, foreign_key: :journal_issue_id
 
     before_save :nilify_blanks

@@ -1,4 +1,6 @@
 class ResearchGroupPublication < ApplicationRecord
+    include NotifiesPublicationOnChange
+
     belongs_to :publication
     belongs_to :research_group
 

@@ -57,6 +57,17 @@ class Publication < ApplicationRecord
                          :conference,
                          :journal_issue
 
+    attr_accessor :_notification_changes
+    
+    after_commit :deliver_update_notification_if_needed, on: :update
+
+    def __aggregate_child_change!(klass_name, record_id, action, changes)
+      self._notification_changes ||= { publication: {}, children: [] }
+      self._notification_changes[:children] << {
+        model: klass_name, id: record_id, action: action, changes: changes
+      }
+    end
+
     scope :with_research_groups, ->(groups) {
       joins(:research_group_publications)
         .where(research_group_publications: { research_group: groups })
@@ -90,4 +101,22 @@ class Publication < ApplicationRecord
     ransacker :category, formatter: proc { |v| categories[v] } do |parent|
       parent.table[:category]
     end
+
+    private
+
+  def deliver_update_notification_if_needed
+    payload = build_notification_payload
+    return if payload.blank?
+
+    NotificationMailer.publication_update_notification(self, payload).deliver_now
+    self._notification_changes = nil
+  end
+
+  def build_notification_payload
+    pub_changes = previous_changes.except("updated_at", "created_at", "id", "owner_id")
+    children_changes = _notification_changes&.dig(:children) || []
+    return if pub_changes.blank? && children_changes.blank?
+
+    { publication: pub_changes.presence, children: children_changes.presence }.compact
+  end
 end

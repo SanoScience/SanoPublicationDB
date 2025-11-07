@@ -1,4 +1,6 @@
 class KpiReportingExtension < ApplicationRecord
+    include NotifiesPublicationOnChange
+
     belongs_to :publication
 
     before_validation :nilify_blanks

@@ -1,5 +1,5 @@
 class NotificationMailer < ApplicationMailer
-    helper :application
+    helper :change_display
     default from: ENV["OUTLOOK_USERNAME"]
 
     def new_publication_notification(publication)

@@ -9,5 +9,5 @@ module ApplicationHelper
         else
             value.respond_to?(:blank?) && value.blank? ? "-" : value.to_s
         end
-    end      
+    end
 end

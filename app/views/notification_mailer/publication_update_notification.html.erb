@@ -10,22 +10,27 @@
   <h3>Publication fields</h3>
   <ul>
     <% @changes[:publication].each do |field, (old_v, new_v)| %>
-      <li><strong><%= field.humanize %>:</strong> <%= display_value(old_v) %> &rarr; <%= display_value(new_v) %></li>
-    <% end %>
+      <% old_label, new_label = display_changed_any(@publication, field, old_v, new_v) %>
+      <li>
+        <strong><%= field.to_s.sub(/_id\z/, "").humanize %>:</strong>
+        <%= old_label %> &rarr; <%= new_label %>
+      </li>
+    <% end %>  
   </ul>
 <% end %>
 
-<% if @changes[:children].present? %>
-  <h3>Nested changes</h3>
-  <% @changes[:children].each do |row| %>
-    <p><strong><%= row[:model] %> #<%= row[:id] || "new" %></strong> - <%= row[:action] %></p>
-    <% if row[:changes].present? %>
-      <ul>
-        <% row[:changes].each do |f, (o, n)| %>
-          <li><strong><%= f.humanize %>:</strong> <%= display_value(o) %> &rarr; <%= display_value(n) %></li>
-        <% end %>
-      </ul>
-    <% end %>
+<% @changes[:children]&.each do |row| %>
+  <p><strong><%= row[:model] %> #<%= row[:id] || "new" %></strong> - <%= row[:action] %></p>
+  <% if row[:changes].present? %>
+    <ul>
+      <% row[:changes].each do |f, (o, n)| %>
+        <% old_label, new_label = display_changed_any(row[:model], f, o, n) %>
+        <li>
+          <strong><%= f.to_s.sub(/_id\z/, "").humanize %>:</strong>
+          <%= old_label %> &rarr; <%= new_label %>
+        </li>
+      <% end %>    
+    </ul>
   <% end %>
 <% end %>
 

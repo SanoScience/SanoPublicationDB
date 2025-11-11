@@ -41,6 +41,11 @@ class PublicationsController < ApplicationController
   def update
     @publication.assign_attributes(publication_params)
     if @publication.save(context: :ui)
+      payload = @publication.build_notification_payload
+      if payload.present?
+        NotificationMailer.publication_update_notification(@publication, payload).deliver_now
+        @publication._notification_changes = nil
+      end
       redirect_to @publication, notice: "Publication was successfully updated."
     else
       render :edit, status: :unprocessable_entity

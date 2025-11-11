@@ -1,4 +1,6 @@
 class Identifier < ApplicationRecord
+    include NotifiesPublicationOnChange
+
     belongs_to :publication
 
     enum :category, {

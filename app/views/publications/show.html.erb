@@ -88,19 +88,19 @@
     <h4>KPI Reporting Information</h4>
     <ul>
         <% unless @publication.kpi_reporting_extension.is_new_method_technique.nil? %>
-            <p><strong>Does publication describe new methods and techniques:</strong> <%= yes_no(@publication.kpi_reporting_extension.is_new_method_technique) %></p>
+            <p><strong>Does publication describe new methods and techniques:</strong> <%= display_value(@publication.kpi_reporting_extension.is_new_method_technique) %></p>
         <% end %>
         <% unless @publication.kpi_reporting_extension.is_methodology_application.nil? %>
-            <p><strong>Does publication describe application of the methodology:</strong> <%= yes_no(@publication.kpi_reporting_extension.is_methodology_application) %></p>
+            <p><strong>Does publication describe application of the methodology:</strong> <%= display_value(@publication.kpi_reporting_extension.is_methodology_application) %></p>
         <% end %>
         <% unless @publication.kpi_reporting_extension.is_polish_med_researcher_involved.nil? %>
-            <p><strong>Are Polish medical researchers involved:</strong> <%= yes_no(@publication.kpi_reporting_extension.is_polish_med_researcher_involved) %></p>
+            <p><strong>Are Polish medical researchers involved:</strong> <%= display_value(@publication.kpi_reporting_extension.is_polish_med_researcher_involved) %></p>
         <% end %>
         <% unless @publication.kpi_reporting_extension.is_peer_reviewed.nil? %>
-            <p><strong>Is peer reviewed?:</strong> <%= yes_no(@publication.kpi_reporting_extension.is_peer_reviewed) %></p>
+            <p><strong>Is peer reviewed?:</strong> <%= display_value(@publication.kpi_reporting_extension.is_peer_reviewed) %></p>
         <% end %>
         <% unless @publication.kpi_reporting_extension.is_co_publication_with_partners.nil? %>
-            <p><strong>Is this a co-publication with national and foreign partners?:</strong> <%= yes_no(@publication.kpi_reporting_extension.is_co_publication_with_partners) %></p>
+            <p><strong>Is this a co-publication with national and foreign partners?:</strong> <%= display_value(@publication.kpi_reporting_extension.is_co_publication_with_partners) %></p>
         <% end %>
         <% if @publication.kpi_reporting_extension.subsidy_points %>
             <p><strong>Subsidy points:</strong> <%= @publication.kpi_reporting_extension.subsidy_points %></p>
@@ -112,16 +112,16 @@
             <p><strong>Invoice number Reporting:</strong> <%= @publication.kpi_reporting_extension.invoice_number %></p>
         <% end %>
         <% if !@publication.kpi_reporting_extension.pbn.nil? && user_signed_in? && current_user.moderator? %>
-            <p><strong>PBN:</strong> <%= yes_no(@publication.kpi_reporting_extension.pbn) %></p>
+            <p><strong>PBN:</strong> <%= display_value(@publication.kpi_reporting_extension.pbn) %></p>
         <% end %>
         <% if !@publication.kpi_reporting_extension.jcr.nil? && user_signed_in? && current_user.moderator? %>
-            <p><strong>JCR:</strong> <%= yes_no(@publication.kpi_reporting_extension.jcr) %></p>
+            <p><strong>JCR:</strong> <%= display_value(@publication.kpi_reporting_extension.jcr) %></p>
         <% end %>
         <% if !@publication.kpi_reporting_extension.is_added_ft_portal.nil? && user_signed_in? && current_user.moderator? %>
-            <p><strong>Is added on F&T portal:</strong> <%= yes_no(@publication.kpi_reporting_extension.is_added_ft_portal) %></p>
+            <p><strong>Is added on F&T portal:</strong> <%= display_value(@publication.kpi_reporting_extension.is_added_ft_portal) %></p>
         <% end %>
         <% if !@publication.kpi_reporting_extension.is_checked.nil? && user_signed_in? && current_user.moderator? %>
-            <p><strong>Is checked:</strong> <%= yes_no(@publication.kpi_reporting_extension.is_checked) %></p>
+            <p><strong>Is checked:</strong> <%= display_value(@publication.kpi_reporting_extension.is_checked) %></p>
         <% end %>
         <% if @publication.kpi_reporting_extension.updated_at %>
             <p><strong>Last update:</strong> <%= @publication.kpi_reporting_extension.updated_at %></p>

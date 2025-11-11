@@ -1,4 +1,6 @@
 class KpiReportingExtension < ApplicationRecord
+    include NotifiesPublicationOnChange
+
     belongs_to :publication
 
     before_validation :nilify_blanks
@@ -24,6 +26,7 @@ class KpiReportingExtension < ApplicationRecord
 
     def nilify_blanks
         self.teaming_reporting_period = teaming_reporting_period.presence
+        self.invoice_number           = invoice_number.presence
         self.subsidy_points           = subsidy_points.presence
     end
 end

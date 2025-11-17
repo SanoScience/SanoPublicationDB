@@ -14,8 +14,9 @@ class NotificationMailer < ApplicationMailer
         )
     end
 
-    def publication_update_notification(publication, changes_hash = {})
+    def publication_update_notification(publication, user, changes_hash = {})
         @publication = publication
+        @user = user
         @changes = sanitize_changes(changes_hash)
 
         moderator_emails = User.where(role: :moderator).pluck(:email)

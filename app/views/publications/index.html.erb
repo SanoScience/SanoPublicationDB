@@ -4,7 +4,10 @@
   <div class="col-md-3 d-flex justify-content-start gap-3 align-items-center">
     <label for="sort_select" class="form-label mb-0 text-nowrap">Sort by</label>
     <%= select_tag :sort,
-        options_for_select(Publications::SortValidator.options.map { |k, _| [k.humanize, k] }, params[:sort]),
+        options_for_select(
+          Publications::SortValidator.options.map { |key, label| [label, key] }, 
+          params[:sort].presence || Publications::SortValidator.default_key
+        ),
         class: "form-control",
         data: { controller: "sort", action: "change->sort#submit" } %>
   </div>

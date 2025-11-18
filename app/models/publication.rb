@@ -84,6 +84,7 @@ class Publication < ApplicationRecord
         "journal_issue_title_cont",
         "conference_name_cont",
         "kpi_reporting_extension_teaming_reporting_period_eq", "kpi_reporting_extension_pbn_eq", "kpi_reporting_extension_jcr_eq",
+        "kpi_reporting_extension_is_new_method_technique_eq", "kpi_reporting_extension_is_methodology_application_eq", "kpi_reporting_extension_is_peer_reviewed_eq",
         "open_access_extension_category_eq", "open_access_extension_gold_oa_funding_source_cont"
       ]
     end

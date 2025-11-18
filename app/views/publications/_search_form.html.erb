@@ -92,6 +92,26 @@
               data: { controller: "select2", placeholder: "JCR" } %>
         </div>
       </div>
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <%= f.select :kpi_reporting_extension_is_new_method_technique_eq,
+              [["Yes", true], ["No", false]],
+              { include_blank: true },
+              data: { controller: "select2", placeholder: "New method/technique" } %>
+        </div>
+        <div class="col-md-4">
+          <%= f.select :kpi_reporting_extension_is_methodology_application_eq,
+              [["Yes", true], ["No", false]],
+              { include_blank: true },
+              data: { controller: "select2", placeholder: "Methodology application" } %>
+        </div>
+        <div class="col-md-4">
+          <%= f.select :kpi_reporting_extension_is_peer_reviewed_eq,
+              [["Yes", true], ["No", false]],
+              { include_blank: true },
+              data: { controller: "select2", placeholder: "Peer reviewed" } %>
+        </div>
+      </div>
     <% end %>
 
     <h5 class="mb-3">Open Access</h5>

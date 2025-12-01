@@ -1,0 +1,97 @@
+# app/views/exports/excel_export.xlsx.axlsx
+
+wb = xlsx_package.workbook
+
+wb.add_worksheet(name: "Publications") do |sheet|
+  sheet.add_row [
+    "ID",
+    "Title",
+    "Category",
+    "Status",
+    "Authors",
+    "Year",
+    "Link",
+    "Owner email",
+    "Primary research group",
+    "Other research groups",
+    "Identifiers",
+    "Repository links",
+    "Conference name",
+    "Conference CORE",
+    "Conference start date",
+    "Conference end date",
+    "Journal issue title",
+    "Journal number",
+    "Journal publisher",
+    "Journal volume",
+    "Journal impact factor",
+    "OA category",
+    "Gold OA charges",
+    "Gold OA funding source",
+    "KPI: subsidy_points",
+    "Are Polish medical researchers involved?",
+    "Does describe application of the methodology?",
+    "Does describe new method/technique?",
+    "Is peer-reviewed?",
+    "Is co-publication with partners?",
+    "Teaming reporting period",
+    "Invoice number",
+    "PBN",
+    "JCR",
+    "FT portal",
+  ]
+
+  (@publications_for_export || @publications).each do |pub|
+    identifiers = pub.identifiers.map { |i| "#{i.category}: #{i.value}" }.join("; ")
+    repos       = pub.repository_links.map { |r| "#{r.repository}: #{r.value}" }.join("; ")
+
+    rgps = pub.research_group_publications.includes(:research_group).to_a
+
+    primary_rgp = rgps.find(&:is_primary)
+    primary     = primary_rgp&.research_group&.name
+
+    other_groups = rgps
+      .reject(&:is_primary)
+      .map { |rgp| rgp.research_group&.name }
+      .compact
+      .join(", ")
+
+    sheet.add_row [
+      pub.id,
+      pub.title,
+      pub.category,
+      pub.status,
+      pub.author_list,
+      pub.publication_year,
+      pub.link,
+      pub.owner&.email || "imported",
+      primary,
+      other_groups,
+      identifiers,
+      repos,
+      pub.conference&.name,
+      pub.conference&.core,
+      pub.conference&.start_date,
+      pub.conference&.end_date,
+      pub.journal_issue&.title,
+      pub.journal_issue&.journal_num,
+      pub.journal_issue&.publisher,
+      pub.journal_issue&.volume,
+      pub.journal_issue&.impact_factor,
+      pub.open_access_extension&.category,
+      pub.open_access_extension&.gold_oa_charges,
+      pub.open_access_extension&.gold_oa_funding_source,
+      pub.kpi_reporting_extension&.subsidy_points,
+      pub.kpi_reporting_extension&.is_polish_med_researcher_involved ? "yes" : "no",
+      pub.kpi_reporting_extension&.is_methodology_application ? "yes" : "no",
+      pub.kpi_reporting_extension&.is_new_method_technique ? "yes" : "no",
+      pub.kpi_reporting_extension&.is_peer_reviewed ? "yes" : "no",
+      pub.kpi_reporting_extension&.is_co_publication_with_partners ? "yes" : "no",
+      pub.kpi_reporting_extension&.teaming_reporting_period,
+      pub.kpi_reporting_extension&.invoice_number,
+      pub.kpi_reporting_extension&.pbn ? "yes" : "no",
+      pub.kpi_reporting_extension&.jcr ? "yes" : "no",
+      pub.kpi_reporting_extension&.is_added_ft_portal ? "yes" : "no"
+    ]
+  end
+end

@@ -1,4 +1,18 @@
-<h1 class="mb-4">Publications</h1>
+<div class="row align-items-center mb-4">
+  <div class="col">
+    <h1 class="mb-0">Publications</h1>
+  </div>
+
+  <div class="col-auto d-flex justify-content-end">
+    <% if current_user&.role == "moderator" %>
+      <%= link_to publications_path(request.query_parameters.merge(format: :xlsx)),
+                  class: "btn btn-outline-success btn-sm d-inline-flex align-items-center justify-content-center",
+                  title: "Export to Excel" do %>
+        <i class="bi bi-file-earmark-spreadsheet"></i>
+      <% end %>
+    <% end %>
+  </div>
+</div>
 
 <div class="row mb-2">
   <div class="col-md-3 d-flex justify-content-start gap-3 align-items-center">

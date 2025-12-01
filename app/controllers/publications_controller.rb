@@ -23,7 +23,7 @@ class PublicationsController < ApplicationController
       format.html
       format.xlsx do
         @publications_for_export = base_scope.reorder(order)
-        render xlsx: 'publications', template: 'exports/excel_export'
+        render xlsx: "publications", template: "exports/excel_export"
       end
     end
   end

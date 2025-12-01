@@ -84,6 +84,6 @@ gem "whenever", "~> 1.0"
 
 gem "arel_extensions"
 
-gem 'caxlsx'
+gem "caxlsx"
 
-gem 'caxlsx_rails'
+gem "caxlsx_rails"

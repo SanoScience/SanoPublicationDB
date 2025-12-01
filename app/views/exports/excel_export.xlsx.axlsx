@@ -38,7 +38,7 @@ wb.add_worksheet(name: "Publications") do |sheet|
     "Invoice number",
     "PBN",
     "JCR",
-    "FT portal",
+    "FT portal"
   ]
 
   (@publications_for_export || @publications).each do |pub|

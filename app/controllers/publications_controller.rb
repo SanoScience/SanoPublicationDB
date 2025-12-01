@@ -2,6 +2,7 @@ class PublicationsController < ApplicationController
   before_action :set_publication, only: %i[show edit update destroy]
   before_action :authenticate_user!, only: %i[new create edit update destroy]
   before_action :authorize_owner!, only: %i[edit update destroy]
+  before_action :authorize_export!, only: :index, if: -> { request.format.xlsx? }
 
   def index
     @q = Publication.ransack(params[:q])
@@ -17,6 +18,14 @@ class PublicationsController < ApplicationController
     sort_param = params[:sort].presence || Publications::SortValidator.default_key
     order = Publications::SortValidator.safe_order(sort_param) || Publications::SortValidator.default_order
     @pagy, @publications = pagy(base_scope.reorder(order))
+
+    respond_to do |format|
+      format.html
+      format.xlsx do
+        @publications_for_export = base_scope.reorder(order)
+        render xlsx: "publications", template: "exports/excel_export"
+      end
+    end
   end
 
   def new
@@ -68,8 +77,14 @@ class PublicationsController < ApplicationController
     redirect_to @publication, alert: "You are not authorized to perform this action." unless @publication.owner == current_user || current_user&.role == "moderator"
   end
 
+  def authorize_export!
+    unless current_user&.role == "moderator"
+      redirect_to publications_path, alert: "You are not authorized to export data."
+    end
+  end
+
   def publication_params
-    params.require(:publication).permit(
+    permitted = params.require(:publication).permit(
       :title, :category, :status, :author_list, :publication_year, :link,
       :conference_id, :journal_issue_id,
       research_group_publications_attributes: [ :id, :research_group_id, :is_primary, :_destroy ],
@@ -80,5 +95,27 @@ class PublicationsController < ApplicationController
       conference_attributes: [ :id, :name, :core, :start_date, :end_date, :_destroy ],
       journal_issue_attributes: [ :id, :title, :journal_num, :publisher, :volume, :impact_factor, :_destroy ]
     )
+
+    sanitize_nested_for_non_moderator(permitted) unless current_user&.role == "moderator"
+
+    permitted
+  end
+
+  def sanitize_nested_for_non_moderator(permitted)
+    if (conf = permitted[:conference_attributes])
+      if conf[:id].present?
+        permitted.delete(:conference_attributes)
+      else
+        conf.delete(:_destroy)
+      end
+    end
+
+    if (ji = permitted[:journal_issue_attributes])
+      if ji[:id].present?
+        permitted.delete(:journal_issue_attributes)
+      else
+        ji.delete(:_destroy)
+      end
+    end
   end
 end

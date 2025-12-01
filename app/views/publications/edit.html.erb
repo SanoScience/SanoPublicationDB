@@ -110,38 +110,84 @@
   <hr>
 
   <h3> Conference Section </h3>
-  <div class="conference" data-controller="nested-list">
-    <div id="items-list">
-      <%= form.association :conference, collection: Conference.all, label_method: :name, value_method: :id, include_blank: "Select a conference" %>
-    </div>
+  <% conferences = Conference.all %>
+  <% if current_user&.role == "moderator" %>
+    <div class="conference"
+        data-controller="nested-list conference-editor"
+        data-conference-editor-items-value='<%= conferences.to_json(only: [:id, :name, :core, :start_date, :end_date]) %>'>
 
-    <div id="add-item-link">
-      <%= link_to_add_association "Add New Conference", form, :conference, 
-          data: {
-            association_insertion_node: '.conference', 
-            association_insertion_method: :append
-          }, 
-          class: "btn btn-secondary" %>
+      <div class="items-list">
+        <%= form.association :conference,
+              collection: conferences,
+              label_method: :name,
+              value_method: :id,
+              include_blank: "Select a conference" %>
+      </div>
+
+      <div class="edit-fields">
+        <%= form.fields_for :conference do |conf_form| %>
+          <%= render 'conference_fields', f: conf_form, wrapper_class: 'conference-edit' %>
+        <% end %>
+      </div>
+  <% else %>
+    <div class="conference">
+      <%= form.association :conference,
+            collection: conferences,
+            label_method: :name,
+            value_method: :id,
+            include_blank: "Select a conference" %>
+  <% end %>
+
+      <div class="add-item-link">
+        <%= link_to_add_association "Add New Conference", form, :conference, 
+            data: {
+              association_insertion_node: '.conference', 
+              association_insertion_method: :append
+            }, 
+            class: "btn btn-secondary" %>
+      </div>
     </div>
-  </div>
 
   <hr>
 
   <h3> Journal Issue Section </h3>
-  <div class="journal-issue" data-controller="nested-list">
-    <div id="items-list">
-      <%= form.association :journal_issue, collection: JournalIssue.all, label_method: :title, value_method: :id, include_blank: "Select a journal issue" %>
-    </div>
+  <% journal_issues = JournalIssue.all %>
+  <% if current_user&.role == "moderator" %>
+    <div class="journal-issue" 
+        data-controller="nested-list journal-issue-editor"
+        data-journal-issue-editor-items-value='<%= journal_issues.to_json(only: [:id, :title, :journal_num, :publisher, :volume, :impact_factor]) %>'>
+      
+      <div class="items-list">
+        <%= form.association :journal_issue, 
+              collection: journal_issues,
+              label_method: :title,
+              value_method: :id,
+              include_blank: "Select a journal issue" %>
+      </div>
 
-    <div id="add-item-link">
-      <%= link_to_add_association "Add New Journal Issue", form, :journal_issue, 
-          data: {
-            association_insertion_node: '.journal-issue', 
-            association_insertion_method: :append
-          }, 
-          class: "btn btn-secondary" %>
+      <div class="edit-fields">
+        <%= form.fields_for :journal_issue do |ji_form| %>
+          <%= render 'journal_issue_fields', f: ji_form, wrapper_class: 'journal-issue-edit' %>
+        <% end %>
+      </div>
+  <% else %>
+    <div class="journal-issue">
+      <%= form.association :journal_issue,
+            collection: journal_issues,
+            label_method: :title,
+            value_method: :id,
+            include_blank: "Select a journal issue" %>
+  <% end %>
+
+      <div class="add-item-link">
+        <%= link_to_add_association "Add New Journal Issue", form, :journal_issue, 
+            data: {
+              association_insertion_node: '.journal-issue', 
+              association_insertion_method: :append
+            }, 
+            class: "btn btn-secondary" %>
+      </div>
     </div>
-  </div>
 
   <hr>
 <% end %>

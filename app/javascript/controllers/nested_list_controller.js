@@ -3,27 +3,34 @@ import { Controller } from "@hotwired/stimulus"
 // Connects to data-controller="nested-list"
 export default class extends Controller {
   connect() {
-    const $container = $(this.element)
-    
-    const $list = $container.find('#items-list')
-    const $addLink = $container.find('#add-item-link')
+    this.$container = $(this.element)
 
-    $container.off('cocoon:after-insert')
-    $container.off('cocoon:after-remove')
+    this.$list      = this.$container.find('.items-list')
+    this.$addLink   = this.$container.find('.add-item-link')
 
-    $container.on('cocoon:after-insert', () => {
-      $list?.hide()
-      $addLink?.hide()
-    })
+    this.$container.off('cocoon:after-insert.nestedList cocoon:after-remove.nestedList')
 
-    $container.on('cocoon:after-remove', () => {
-      $list?.show()
-      $addLink?.show()
-    })
+    this.$container.on('cocoon:after-insert.nestedList', () => this.handleAfterInsert())
+    this.$container.on('cocoon:after-remove.nestedList', () => this.handleAfterRemove())
 
-    if ($container.find('.nested-fields').length > 0) {
-      $list?.hide()
-      $addLink?.hide()
+    if (this.$container.find('.nested-fields').length > 0) {
+      this.handleAfterInsert()
     }
+  }
+
+  disconnect() {
+    if (this.$container) {
+      this.$container.off('.nestedList')
+    }
+  }
+
+  handleAfterInsert() {
+    if (this.$list && this.$list.length) this.$list.hide()
+    if (this.$addLink && this.$addLink.length) this.$addLink.hide()
+  }
+
+  handleAfterRemove() {
+    if (this.$list && this.$list.length) this.$list.show()
+    if (this.$addLink && this.$addLink.length) this.$addLink.show()
   }
 }

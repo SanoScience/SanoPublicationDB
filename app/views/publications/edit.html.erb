@@ -113,8 +113,10 @@
   <% conferences = Conference.all %>
   <% if current_user&.role == "moderator" %>
     <div class="conference"
-        data-controller="nested-list conference-editor"
-        data-conference-editor-items-value='<%= conferences.to_json(only: [:id, :name, :core, :start_date, :end_date]) %>'>
+         data-controller="nested-list association-editor"
+         data-association-editor-items-value='<%= conferences.to_json(only: [:id, :name, :core, :start_date, :end_date]) %>'
+         data-association-editor-simple-fields-value='["name","core"]'
+         data-association-editor-date-fields-value='["start_date","end_date"]'>
 
       <div class="items-list">
         <%= form.association :conference,
@@ -130,12 +132,15 @@
         <% end %>
       </div>
   <% else %>
-    <div class="conference">
-      <%= form.association :conference,
-            collection: conferences,
-            label_method: :name,
-            value_method: :id,
-            include_blank: "Select a conference" %>
+    <div class="conference"
+        data-controller="nested-list">
+      <div class="items-list">
+        <%= form.association :conference,
+              collection: conferences,
+              label_method: :name,
+              value_method: :id,
+              include_blank: "Select a conference" %>
+      </div>
   <% end %>
 
       <div class="add-item-link">
@@ -153,9 +158,11 @@
   <h3> Journal Issue Section </h3>
   <% journal_issues = JournalIssue.all %>
   <% if current_user&.role == "moderator" %>
-    <div class="journal-issue" 
-        data-controller="nested-list journal-issue-editor"
-        data-journal-issue-editor-items-value='<%= journal_issues.to_json(only: [:id, :title, :journal_num, :publisher, :volume, :impact_factor]) %>'>
+    <div class="journal-issue"
+         data-controller="nested-list association-editor"
+         data-association-editor-items-value='<%= journal_issues.to_json(only: [:id, :title, :journal_num, :publisher, :volume, :impact_factor]) %>'
+         data-association-editor-simple-fields-value='["title","journal_num","publisher","volume","impact_factor"]'
+         data-association-editor-date-fields-value='[]'>
       
       <div class="items-list">
         <%= form.association :journal_issue, 
@@ -171,12 +178,15 @@
         <% end %>
       </div>
   <% else %>
-    <div class="journal-issue">
-      <%= form.association :journal_issue,
-            collection: journal_issues,
-            label_method: :title,
-            value_method: :id,
-            include_blank: "Select a journal issue" %>
+    <div class="journal-issue"
+         data-controller="nested-list">
+      <div class="items-list">
+        <%= form.association :journal_issue,
+              collection: journal_issues,
+              label_method: :title,
+              value_method: :id,
+              include_blank: "Select a journal issue" %>
+      </div>
   <% end %>
 
       <div class="add-item-link">

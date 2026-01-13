@@ -7,7 +7,15 @@
                         collection: [['Yes', true], ['No', false]],
                         include_blank: true,
                         required: true,
-                        label: "New Method/Technique" %>
+                        label: "New Method/Technique",
+                        label_html: {
+                            data: {
+                                controller: "tooltip",
+                                tooltip_content: "Does publication describe new method or technique?",
+                                tooltip_trigger_value: "mouseenter"
+                            },
+                            style: "cursor: help;"
+                        } %>
         </div>
 
         <div class="col-md-4">
@@ -16,16 +24,24 @@
                         collection: [['Yes', true], ['No', false]],
                         include_blank: true,
                         required: true,
-                        label: "Methodology Application" %>
+                        label: "Methodology Application",
+                        label_html: {
+                            data: {
+                                controller: "tooltip",
+                                tooltip_content: "Does publication describe application of the methodology?",
+                                tooltip_trigger_value: "mouseenter"
+                            },
+                            style: "cursor: help;"
+                        } %>
         </div>
 
         <div class="col-md-4">
-        <%= f.input :is_polish_med_researcher_involved,
-                    as: :select,
-                    collection: [['Yes', true], ['No', false]],
-                    include_blank: true,
-                    required: true,
-                    label: "Polish Medical Researcher Involved" %>
+            <%= f.input :is_polish_med_researcher_involved,
+                        as: :select,
+                        collection: [['Yes', true], ['No', false]],
+                        include_blank: true,
+                        required: true,
+                        label: "Polish Medical Researcher Involved" %>
         </div>
     </div>
 
@@ -45,7 +61,15 @@
                         collection: [['Yes', true], ['No', false]],
                         include_blank: true,
                         required: true,
-                        label: "Co-Publication with Partners" %>
+                        label: "Co-Publication with Partners",
+                        label_html: {
+                            data: {
+                                controller: "tooltip",
+                                tooltip_content: "Is it a co-publication with national and foreign partners?",
+                                tooltip_trigger_value: "mouseenter"
+                            },
+                            style: "cursor: help;"
+                        } %>
         </div>
 
         <div class="col-md-4">

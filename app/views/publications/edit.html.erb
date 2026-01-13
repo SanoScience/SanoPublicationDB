@@ -89,7 +89,26 @@
 
   <hr>
 
-  <h3> Identifiers Section </h3>
+  <h3 class="d-flex align-items-center gap-2">
+    Identifiers Section
+    <button type="button"
+            class="btn btn-outline-secondary btn-sm rounded-circle p-0"
+            style="width:20px;height:20px;line-height:18px;text-decoration:none;"
+            data-bs-toggle="collapse"
+            data-bs-target="#identifiers-help"
+            aria-expanded="false"
+            aria-controls="identifiers-help">
+      ?
+    </button>
+  </h3>
+
+  <div id="identifiers-help" class="collapse mt-1 mb-2">
+    <div class="text-muted small">
+      Add identifiers for your publication: select the identifier category and enter its value
+      (e.g., doi:10.71580/SANO/R3RRTZ).
+    </div>
+  </div>
+
   <div class="identifier">
     <%= form.fields_for :identifiers do |id_form| %>
       <%= render 'identifier_fields', f: id_form %>
@@ -99,7 +118,26 @@
 
   <hr>
 
-  <h3> Repository Links Section </h3>
+  <h3 class="d-flex align-items-center gap-2">
+    Repository Links Section
+    <button type="button"
+            class="btn btn-outline-secondary btn-sm rounded-circle p-0"
+            style="width:20px;height:20px;line-height:18px;text-decoration:none;"
+            data-bs-toggle="collapse"
+            data-bs-target="#repo-links-help"
+            aria-expanded="false"
+            aria-controls="repo-links-help">
+      ?
+    </button>
+  </h3>
+
+  <div id="repo-links-help" class="collapse">
+    <div class="text-muted small mt-1 mb-2">
+      If your publication is associated with one or more datasets, you can add links to them by selecting
+      the repository where the data is stored and providing the corresponding link.
+    </div>
+  </div>
+
   <div class="repository-link">
     <%= form.fields_for :repository_links do |rl_form| %>
       <%= render 'repository_link_fields', f: rl_form %>
@@ -109,12 +147,34 @@
 
   <hr>
 
-  <h3> Conference Section </h3>
+  <h3 class="d-flex align-items-center gap-2">
+    Conference Section
+    <button type="button"
+            class="btn btn-outline-secondary btn-sm rounded-circle p-0"
+            style="width:20px;height:20px;line-height:18px;text-decoration:none;"
+            data-bs-toggle="collapse"
+            data-bs-target="#conference-help"
+            aria-expanded="false"
+            aria-controls="conference-help">
+      ?
+    </button>
+  </h3>
+
+  <div id="conference-help" class="collapse my-2">
+    <div class="text-muted small">
+      If your publication was presented at a conference, select it from the list. If it isn't available, 
+      click “Add New Conference” to create it and provide all required conference details. If a conference 
+      is already selected but some information needs updating, edit the fields and update the publication to save your changes.
+    </div>
+  </div>
+
   <% conferences = Conference.all %>
   <% if current_user&.role == "moderator" %>
     <div class="conference"
-        data-controller="nested-list conference-editor"
-        data-conference-editor-items-value='<%= conferences.to_json(only: [:id, :name, :core, :start_date, :end_date]) %>'>
+         data-controller="nested-list association-editor"
+         data-association-editor-items-value='<%= conferences.to_json(only: [:id, :name, :core, :start_date, :end_date]) %>'
+         data-association-editor-simple-fields-value='["name","core"]'
+         data-association-editor-date-fields-value='["start_date","end_date"]'>
 
       <div class="items-list">
         <%= form.association :conference,
@@ -130,12 +190,15 @@
         <% end %>
       </div>
   <% else %>
-    <div class="conference">
-      <%= form.association :conference,
-            collection: conferences,
-            label_method: :name,
-            value_method: :id,
-            include_blank: "Select a conference" %>
+    <div class="conference"
+        data-controller="nested-list">
+      <div class="items-list">
+        <%= form.association :conference,
+              collection: conferences,
+              label_method: :name,
+              value_method: :id,
+              include_blank: "Select a conference" %>
+      </div>
   <% end %>
 
       <div class="add-item-link">
@@ -150,12 +213,34 @@
 
   <hr>
 
-  <h3> Journal Issue Section </h3>
+  <h3 class="d-flex align-items-center gap-2">
+    Journal Issue Section
+    <button type="button"
+            class="btn btn-outline-secondary btn-sm rounded-circle p-0"
+            style="width:20px;height:20px;line-height:18px;text-decoration:none;"
+            data-bs-toggle="collapse"
+            data-bs-target="#journal-issue-help"
+            aria-expanded="false"
+            aria-controls="journal-issue-help">
+      ?
+    </button>
+  </h3>
+
+  <div id="journal-issue-help" class="collapse my-2">
+    <div class="text-muted small">
+      If your publication was published in a journal issue, select it from the list. If it isn't available, 
+      click “Add New Journal Issue” to create it and provide all required details. If a journal issue is 
+      already selected but some information needs updating, edit the fields and update the publication to save your changes.
+    </div>
+  </div>
+
   <% journal_issues = JournalIssue.all %>
   <% if current_user&.role == "moderator" %>
-    <div class="journal-issue" 
-        data-controller="nested-list journal-issue-editor"
-        data-journal-issue-editor-items-value='<%= journal_issues.to_json(only: [:id, :title, :journal_num, :publisher, :volume, :impact_factor]) %>'>
+    <div class="journal-issue"
+         data-controller="nested-list association-editor"
+         data-association-editor-items-value='<%= journal_issues.to_json(only: [:id, :title, :journal_num, :publisher, :volume, :impact_factor]) %>'
+         data-association-editor-simple-fields-value='["title","journal_num","publisher","volume","impact_factor"]'
+         data-association-editor-date-fields-value='[]'>
       
       <div class="items-list">
         <%= form.association :journal_issue, 
@@ -171,12 +256,15 @@
         <% end %>
       </div>
   <% else %>
-    <div class="journal-issue">
-      <%= form.association :journal_issue,
-            collection: journal_issues,
-            label_method: :title,
-            value_method: :id,
-            include_blank: "Select a journal issue" %>
+    <div class="journal-issue"
+         data-controller="nested-list">
+      <div class="items-list">
+        <%= form.association :journal_issue,
+              collection: journal_issues,
+              label_method: :title,
+              value_method: :id,
+              include_blank: "Select a journal issue" %>
+      </div>
   <% end %>
 
       <div class="add-item-link">

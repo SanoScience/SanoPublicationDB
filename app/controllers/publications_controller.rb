@@ -84,7 +84,11 @@ class PublicationsController < ApplicationController
   end
 
   def publication_params
-    permitted = params.require(:publication).permit(
+    raw = params.require(:publication)
+
+    scrub_foreign_destroy_flags(raw)
+
+    permitted = raw.permit(
       :title, :category, :status, :author_list, :publication_year, :link,
       :conference_id, :journal_issue_id,
       research_group_publications_attributes: [ :id, :research_group_id, :is_primary, :_destroy ],
@@ -99,6 +103,35 @@ class PublicationsController < ApplicationController
     sanitize_nested_for_non_moderator(permitted) unless current_user&.role == "moderator"
 
     permitted
+  end
+
+  def scrub_foreign_destroy_flags(raw)
+    return unless @publication&.persisted?
+    return unless current_user&.role == "moderator"
+
+    if (conf = raw[:conference_attributes])
+      destroy = conf[:_destroy]
+      id      = conf[:id]
+
+      if destroy == "1" &&
+         id.present? &&
+         @publication.conference_id.present? &&
+         id.to_s != @publication.conference_id.to_s
+        conf[:_destroy] = "0"
+      end
+    end
+
+    if (ji = raw[:journal_issue_attributes])
+      destroy = ji[:_destroy]
+      id      = ji[:id]
+
+      if destroy == "1" &&
+         id.present? &&
+         @publication.journal_issue_id.present? &&
+         id.to_s != @publication.journal_issue_id.to_s
+        ji[:_destroy] = "0"
+      end
+    end
   end
 
   def sanitize_nested_for_non_moderator(permitted)

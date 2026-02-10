@@ -169,47 +169,35 @@
   </div>
 
   <% conferences = Conference.all %>
-  <% if current_user&.role == "moderator" %>
-    <div class="conference"
-         data-controller="nested-list association-editor"
-         data-association-editor-items-value='<%= conferences.to_json(only: [:id, :name, :core, :start_date, :end_date]) %>'
-         data-association-editor-simple-fields-value='["name","core"]'
-         data-association-editor-date-fields-value='["start_date","end_date"]'>
+  <div class="conference"
+        data-controller="nested-list association-editor"
+        data-association-editor-items-value='<%= conferences.to_json(only: [:id, :name, :core, :start_date, :end_date]) %>'
+        data-association-editor-simple-fields-value='["name","core"]'
+        data-association-editor-date-fields-value='["start_date","end_date"]'>
 
-      <div class="items-list">
-        <%= form.association :conference,
-              collection: conferences,
-              label_method: :name,
-              value_method: :id,
-              include_blank: "Select a conference" %>
-      </div>
-
-      <div class="edit-fields">
-        <%= form.fields_for :conference, (form.object.conference || Conference.new) do |conf_form| %>
-          <%= render 'conference_fields', f: conf_form, wrapper_class: 'conference-edit' %>
-        <% end %>
-      </div>
-  <% else %>
-    <div class="conference"
-        data-controller="nested-list">
-      <div class="items-list">
-        <%= form.association :conference,
-              collection: conferences,
-              label_method: :name,
-              value_method: :id,
-              include_blank: "Select a conference" %>
-      </div>
-  <% end %>
-
-      <div class="add-item-link">
-        <%= link_to_add_association "Add New Conference", form, :conference, 
-            data: {
-              association_insertion_node: '.conference', 
-              association_insertion_method: :append
-            }, 
-            class: "btn btn-secondary" %>
-      </div>
+    <div class="items-list">
+      <%= form.association :conference,
+            collection: conferences,
+            label_method: :name,
+            value_method: :id,
+            include_blank: "Select a conference" %>
     </div>
+
+    <div class="edit-fields">
+      <%= form.fields_for :conference, (form.object.conference || Conference.new) do |conf_form| %>
+        <%= render 'conference_fields', f: conf_form, wrapper_class: 'conference-edit' %>
+      <% end %>
+    </div>
+
+    <div class="add-item-link">
+      <%= link_to_add_association "Add New Conference", form, :conference, 
+          data: {
+            association_insertion_node: '.conference', 
+            association_insertion_method: :append
+          }, 
+          class: "btn btn-secondary" %>
+    </div>
+  </div>
 
   <hr>
 

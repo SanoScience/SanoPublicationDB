@@ -185,7 +185,7 @@
       </div>
 
       <div class="edit-fields">
-        <%= form.fields_for :conference do |conf_form| %>
+        <%= form.fields_for :conference, (form.object.conference || Conference.new) do |conf_form| %>
           <%= render 'conference_fields', f: conf_form, wrapper_class: 'conference-edit' %>
         <% end %>
       </div>

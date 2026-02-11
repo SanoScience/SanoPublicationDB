@@ -223,47 +223,35 @@
   </div>
 
   <% journal_issues = JournalIssue.all %>
-  <% if current_user&.role == "moderator" %>
-    <div class="journal-issue"
-         data-controller="nested-list association-editor"
-         data-association-editor-items-value='<%= journal_issues.to_json(only: [:id, :title, :journal_num, :publisher, :volume, :impact_factor]) %>'
-         data-association-editor-simple-fields-value='["title","journal_num","publisher","volume","impact_factor"]'
-         data-association-editor-date-fields-value='[]'>
-      
-      <div class="items-list">
-        <%= form.association :journal_issue, 
-              collection: journal_issues,
-              label_method: :title,
-              value_method: :id,
-              include_blank: "Select a journal issue" %>
-      </div>
-
-      <div class="edit-fields">
-        <%= form.fields_for :journal_issue do |ji_form| %>
-          <%= render 'journal_issue_fields', f: ji_form, wrapper_class: 'journal-issue-edit' %>
-        <% end %>
-      </div>
-  <% else %>
-    <div class="journal-issue"
-         data-controller="nested-list">
-      <div class="items-list">
-        <%= form.association :journal_issue,
-              collection: journal_issues,
-              label_method: :title,
-              value_method: :id,
-              include_blank: "Select a journal issue" %>
-      </div>
-  <% end %>
-
-      <div class="add-item-link">
-        <%= link_to_add_association "Add New Journal Issue", form, :journal_issue, 
-            data: {
-              association_insertion_node: '.journal-issue', 
-              association_insertion_method: :append
-            }, 
-            class: "btn btn-secondary" %>
-      </div>
+  <div class="journal-issue"
+        data-controller="nested-list association-editor"
+        data-association-editor-items-value='<%= journal_issues.to_json(only: [:id, :title, :journal_num, :publisher, :volume, :impact_factor]) %>'
+        data-association-editor-simple-fields-value='["title","journal_num","publisher","volume","impact_factor"]'
+        data-association-editor-date-fields-value='[]'>
+    
+    <div class="items-list">
+      <%= form.association :journal_issue, 
+            collection: journal_issues,
+            label_method: :title,
+            value_method: :id,
+            include_blank: "Select a journal issue" %>
     </div>
+
+    <div class="edit-fields">
+      <%= form.fields_for :journal_issue, (form.object.journal_issue || JournalIssue.new) do |ji_form| %>
+        <%= render 'journal_issue_fields', f: ji_form, wrapper_class: 'journal-issue-edit' %>
+      <% end %>
+    </div>
+
+    <div class="add-item-link">
+      <%= link_to_add_association "Add New Journal Issue", form, :journal_issue, 
+          data: {
+            association_insertion_node: '.journal-issue', 
+            association_insertion_method: :append
+          }, 
+          class: "btn btn-secondary" %>
+    </div>
+  </div>
 
   <hr>
 <% end %>

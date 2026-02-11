@@ -37,13 +37,15 @@ class ConferenceTest < ActiveSupport::TestCase
   end
 
   test "should nullify references in publications if deleted" do
+    conference = conferences("conf1")
     publication = publications("pub1")
-    assert_equal @conference.id, publication.conference_id do
-      @conference.destroy
 
-      assert_not_nil publication do
-        assert_nil publication.reload.conference_id
-      end
+    assert_equal conference.id, publication.conference_id
+
+    assert_difference("Conference.count", -1) do
+      conference.destroy
     end
+
+    assert_nil publication.reload.conference_id
   end
 end

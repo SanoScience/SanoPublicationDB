@@ -136,19 +136,11 @@ class PublicationsController < ApplicationController
 
   def sanitize_nested_for_non_moderator(permitted)
     if (conf = permitted[:conference_attributes])
-      if conf[:id].present?
-        permitted.delete(:conference_attributes)
-      else
-        conf.delete(:_destroy)
-      end
+      conf.delete(:_destroy)
     end
 
     if (ji = permitted[:journal_issue_attributes])
-      if ji[:id].present?
-        permitted.delete(:journal_issue_attributes)
-      else
-        ji.delete(:_destroy)
-      end
+      ji.delete(:_destroy)
     end
   end
 end

@@ -3,5 +3,11 @@
 conf1: 
   name: "Example Conference"
   core: "A"
-  start_date: "2012-12-12"
-  end_date: "2012-12-15"
+  start_date: "2021-12-12"
+  end_date: "2021-12-15"
+
+conf2:
+  name: "Second Conference"
+  core: "B"
+  start_date: "2023-01-10"
+  end_date: "2023-01-12"

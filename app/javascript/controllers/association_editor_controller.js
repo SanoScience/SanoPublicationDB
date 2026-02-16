@@ -19,6 +19,7 @@ export default class extends Controller {
 
     this.initialId = this.$select.val() || null
     this.$destroyToggle = this.$edit.find('.association-destroy-toggle')
+    this.$idField = this.$edit.find('.id-field')
 
     this.$inputs       = this.$edit.find(':input').not('[name*="[_destroy]"]').not('.id-field').not('.association-destroy-toggle')
     this.$destroyField = this.$edit.find('input[name*="[_destroy]"]')
@@ -31,6 +32,7 @@ export default class extends Controller {
     } else {
       this.$edit.hide()
       this.$inputs.prop('disabled', true)
+      if (this.$idField && this.$idField.length) this.$idField.prop('disabled', true)
     }
 
     this.$select
@@ -108,6 +110,12 @@ export default class extends Controller {
 
     if (!val) {
       this.$edit.hide()
+
+      if (this.$idField && this.$idField.length) {
+        this.$idField.val('')
+        this.$idField.prop('disabled', true)
+      }
+
       this.$inputs.prop('disabled', true)
       this.resetDestroyState()
       this.updateDestroyVisibility(null)
@@ -127,8 +135,12 @@ export default class extends Controller {
 
     this.$edit.show()
     this.$inputs.prop('disabled', false)
-
-    this.$edit.find('input[name*="[id]"]').val(item.id)
+    if (this.$idField && this.$idField.length) {
+      this.$idField.prop('disabled', false)
+      this.$idField.val(item.id)
+    } else {
+      this.$edit.find('input[name*="[id]"]').val(item.id)
+    }
 
     if (this.hasSimpleFieldsValue) {
       this.simpleFieldsValue.forEach((attr) => {

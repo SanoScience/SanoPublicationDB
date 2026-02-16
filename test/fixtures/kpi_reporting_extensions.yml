@@ -7,3 +7,11 @@ kpi1:
   is_polish_med_researcher_involved: false
   is_peer_reviewed: false
   is_co_publication_with_partners: false
+
+kpi2:
+  publication: pub_no_conf_jour
+  is_new_method_technique: false
+  is_methodology_application: false
+  is_polish_med_researcher_involved: false
+  is_peer_reviewed: false
+  is_co_publication_with_partners: false

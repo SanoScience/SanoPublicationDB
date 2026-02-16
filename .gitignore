@@ -26,3 +26,13 @@
 
 /app/assets/builds/*
 !/app/assets/builds/.keep
+/app/assets/stylesheets/*
+/app/javascript/bootstrap*
+
+/public/assets
+
+/node_modules
+/vendor/javascript
+/config/credentials/*.key
+
+/backups

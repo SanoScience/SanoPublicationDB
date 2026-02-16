@@ -1,0 +1,258 @@
+<div class="mb-3">
+    <%= link_to publications_path, class: "text-decoration-none text-muted small d-inline-flex align-items-center gap-1 fs-6" do %>
+        <i class="bi bi-arrow-left"></i> Back
+    <% end %>
+</div>
+
+<%= simple_form_for @publication, html: { class: 'needs-validation' } do |form| %>
+
+  <div class="row align-items-center">
+      <div class="col-md-10">
+          <h2>New Publication</h2>
+      </div>
+
+      <div class="col-md-2 d-flex justify-content-end">
+          <%= form.submit "Create Publication", class: 'btn btn-success' %>
+      </div>
+  </div>
+
+  <% if @publication.errors.any? %>
+    <div class="alert alert-danger">
+      <h2><%= pluralize(@publication.errors.count, "error") %> prohibited this publication from being saved:</h2>
+      <ul>
+        <% @publication.errors.full_messages.each do |message| %>
+          <li><%= message %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <hr>
+
+  <%= form.input :title %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <%= form.input :category, collection: Publication.categories.keys.map { |key| [key.humanize, key] }, include_blank: true %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.input :status, collection: Publication.statuses.keys.map { |key| [key.humanize, key] }, include_blank: true %>
+    </div>
+  </div>
+
+  <%= form.input :author_list, hint: '* To improve findability, please provide full names in the format: "LastName FirstName, John Doe"', hint_html: { class: 'text-danger small' } %>
+
+  <%= form.input :publication_year, as: :integer, required: true %>
+
+  <%= form.input :link %>
+
+  <hr>
+
+  <h3> Research Groups Section </h3>
+  <div class="research-group d-grid gap-3" style="grid-template-columns: 1fr 1fr;" data-controller="required-nested-item">
+    <%= form.simple_fields_for :research_group_publications do |rg_form| %>
+      <%= render 'research_group_publication_fields', f: rg_form %>
+    <% end %>
+  </div>
+  <%= link_to_add_association "Add Research Group", form, :research_group_publications, data: {association_insertion_node: '.research-group', association_insertion_method: :append}, class: "btn btn-secondary mt-3" %>
+
+  <hr>
+
+  <h3>KPI Reporting Extension</h3>
+  <div class="kpi-reporting-extension" data-controller="nested-toggle">
+    <%= form.simple_fields_for :kpi_reporting_extension do |kpi_form| %>
+      <%= render 'kpi_reporting_extension_fields', f: kpi_form %>
+    <% end %>
+
+    <div class="links max-one-association">
+      <%= link_to_add_association "Add KPI Reporting Extension", form, :kpi_reporting_extension, 
+          data: {association_insertion_node: '.kpi-reporting-extension', association_insertion_method: :append}, 
+          force_non_association_create: true, class: "btn btn-secondary" %>
+    </div>
+  </div>
+
+  <hr>
+
+  <h3>Open Access Extension</h3>
+  <div class="open-access-extension" data-controller="nested-toggle">
+    <%= form.simple_fields_for :open_access_extension do |oa_form| %>
+      <%= render 'open_access_extension_fields', f: oa_form %>
+    <% end %>
+
+    <div class="links max-one-association">
+      <%= link_to_add_association "Add Open Access Extension", form, :open_access_extension, 
+          data: {association_insertion_node: '.open-access-extension', association_insertion_method: :append}, 
+          force_non_association_create: true, class: "btn btn-secondary" %>
+    </div>
+  </div>
+
+  <hr>
+
+  <h3 class="d-flex align-items-center gap-2">
+    Identifiers Section
+    <button type="button"
+            class="btn btn-outline-secondary btn-sm rounded-circle p-0"
+            style="width:20px;height:20px;line-height:18px;text-decoration:none;"
+            data-bs-toggle="collapse"
+            data-bs-target="#identifiers-help"
+            aria-expanded="false"
+            aria-controls="identifiers-help">
+      ?
+    </button>
+  </h3>
+
+  <div id="identifiers-help" class="collapse mt-1 mb-2">
+    <div class="text-muted small">
+      Add identifiers for your publication: select the identifier category and enter its value
+      (e.g., doi:10.71580/SANO/R3RRTZ).
+    </div>
+  </div>
+
+  <div class="identifier">
+    <%= form.simple_fields_for :identifiers do |id_form| %>
+      <%= render 'identifier_fields', f: id_form %>
+    <% end %>
+  </div>
+  <%= link_to_add_association "Add Identifier", form, :identifiers, data: {association_insertion_node: '.identifier', association_insertion_method: :append}, class: "btn btn-secondary" %>
+
+  <hr>
+
+  <h3 class="d-flex align-items-center gap-2">
+    Repository Links Section
+
+    <button type="button"
+            class="btn btn-outline-secondary btn-sm rounded-circle p-0"
+            style="width:20px;height:20px;line-height:18px;text-decoration:none;"
+            data-bs-toggle="collapse"
+            data-bs-target="#repo-links-help"
+            aria-expanded="false"
+            aria-controls="repo-links-help">
+      ?
+    </button>
+  </h3>
+
+  <div id="repo-links-help" class="collapse">
+    <div class="text-muted small mt-1 mb-2">
+      If your publication is associated with one or more datasets, you can add links to them by selecting
+      the repository where the data is stored and providing the corresponding link.
+    </div>
+  </div>
+
+  <div class="repository-link">
+    <%= form.simple_fields_for :repository_links do |rl_form| %>
+      <%= render 'repository_link_fields', f: rl_form %>
+    <% end %>
+  </div>
+  <%= link_to_add_association "Add Repository Link", form, :repository_links, data: {association_insertion_node: '.repository-link', association_insertion_method: :append}, class: "btn btn-secondary" %>
+
+  <hr>
+
+  <h3 class="d-flex align-items-center gap-2">
+    Conference Section
+    <button type="button"
+            class="btn btn-outline-secondary btn-sm rounded-circle p-0"
+            style="width:20px;height:20px;line-height:18px;text-decoration:none;"
+            data-bs-toggle="collapse"
+            data-bs-target="#conference-help"
+            aria-expanded="false"
+            aria-controls="conference-help">
+      ?
+    </button>
+  </h3>
+
+  <div id="conference-help" class="collapse my-2">
+    <div class="text-muted small">
+      If your publication was presented at a conference, select it from the list. If it isn't available, 
+      click “Add New Conference” to create it and provide all required conference details. If a conference 
+      is already selected but some information needs updating, edit the fields and update the publication to save your changes.
+    </div>
+  </div>
+
+  <% conferences = Conference.all %>
+  <div class="conference" 
+        data-controller="nested-list association-editor"
+        data-association-editor-items-value='<%= conferences.to_json(only: [:id, :name, :core, :start_date, :end_date]) %>'
+        data-association-editor-simple-fields-value='["name","core"]'
+        data-association-editor-date-fields-value='["start_date","end_date"]'>
+    
+    <div class="items-list">
+      <%= form.association :conference, 
+            collection: conferences, 
+            label_method: :name, 
+            value_method: :id, 
+            include_blank: "Select a conference" %>
+    </div>
+
+    <div class="edit-fields">
+      <%= form.fields_for :conference, (form.object.conference || Conference.new) do |conf_form| %>
+        <%= render 'conference_fields', f: conf_form, wrapper_class: 'conference-edit' %>
+      <% end %>
+    </div>
+
+    <div class="add-item-link">
+      <%= link_to_add_association "Add New Conference", form, :conference, 
+          data: {
+            association_insertion_node: '.conference', 
+            association_insertion_method: :append
+          }, 
+          class: "btn btn-secondary" %>
+    </div>
+  </div>
+
+  <hr>
+
+  <h3 class="d-flex align-items-center gap-2">
+    Journal Issue Section
+    <button type="button"
+            class="btn btn-outline-secondary btn-sm rounded-circle p-0"
+            style="width:20px;height:20px;line-height:18px;text-decoration:none;"
+            data-bs-toggle="collapse"
+            data-bs-target="#journal-issue-help"
+            aria-expanded="false"
+            aria-controls="journal-issue-help">
+      ?
+    </button>
+  </h3>
+
+  <div id="journal-issue-help" class="collapse my-2">
+    <div class="text-muted small">
+      If your publication was published in a journal issue, select it from the list. If it isn't available, 
+      click “Add New Journal Issue” to create it and provide all required details. If a journal issue is 
+      already selected but some information needs updating, edit the fields and update the publication to save your changes.
+    </div>
+  </div>
+  
+  <% journal_issues = JournalIssue.all %>
+  <div class="journal-issue" 
+        data-controller="nested-list association-editor"
+        data-association-editor-items-value='<%= journal_issues.to_json(only: [:id, :title, :journal_num, :publisher, :volume, :impact_factor]) %>'
+        data-association-editor-simple-fields-value='["title","journal_num","publisher","volume","impact_factor"]'
+        data-association-editor-date-fields-value='[]'>
+    
+    <div class="items-list">
+      <%= form.association :journal_issue, 
+            collection: JournalIssue.all, 
+            label_method: :title, 
+            value_method: :id, 
+            include_blank: "Select a journal issue" %>
+    </div>
+
+    <div class="edit-fields">
+      <%= form.fields_for :journal_issue, (form.object.journal_issue || JournalIssue.new) do |ji_form| %>
+        <%= render 'journal_issue_fields', f: ji_form, wrapper_class: 'journal-issue-edit' %>
+      <% end %>
+    </div>
+
+    <div class="add-item-link">
+      <%= link_to_add_association "Add New Journal Issue", form, :journal_issue, 
+          data: {
+            association_insertion_node: '.journal-issue', 
+            association_insertion_method: :append
+          }, 
+          class: "btn btn-secondary" %>
+    </div>
+  </div>
+
+  <hr>
+<% end %>

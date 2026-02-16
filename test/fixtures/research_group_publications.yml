@@ -2,5 +2,5 @@
 
 sp_pub1:
   publication: pub1
-  research_group: scientific_programmers
+  research_group: group1
   is_primary: true

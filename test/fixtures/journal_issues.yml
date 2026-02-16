@@ -6,3 +6,10 @@ jour1:
   publisher: "Example Publisher"
   volume: 1
   impact_factor: 1
+
+jour2:
+  title: "Other Journal"
+  journal_num: "Number 2"
+  publisher: "Other Publisher"
+  volume: 2
+  impact_factor: 2

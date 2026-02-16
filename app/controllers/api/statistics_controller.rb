@@ -43,11 +43,13 @@ class Api::StatisticsController < ActionController::API
     end
 
     def publications_by_research_groups_count
-        publications_by_research_groups_count = ResearchGroupPublication.joins(:publication)
-                                                                   .where.not(publications: { status: "submitted" })
-                                                                   .group(:research_group)
-                                                                   .count
-        render json: publications_by_research_groups_count
+        counts = ResearchGroupPublication
+                   .joins(:research_group, :publication)
+                   .merge(Publication.where.not(status: "submitted"))
+                   .group("research_groups.name")
+                   .count
+
+        render json: counts
     end
 
     def publications_by_category_count
@@ -65,7 +67,7 @@ class Api::StatisticsController < ActionController::API
                                             .where.not(publications: { status: "submitted" })
                                             .where.not(impact_factor: [ nil, 0 ])
                                             .average(:impact_factor)
-        formatted_average = format("%.2f", average_impact_factor)
+        formatted_average = average_impact_factor ? format("%.2f", average_impact_factor) : 0
         render json: formatted_average
     end
 
@@ -77,11 +79,17 @@ class Api::StatisticsController < ActionController::API
     end
 
     def open_access_publications_percentage
-        open_access_publications_percentage = OpenAccessExtension.joins(:publication)
-                                                                 .where.not(publications: { status: "submitted" })
-                                                                 .count / Publication.where.not(status: "submitted").count.to_f * 100
-        formatted_percentage = format("%.2f", open_access_publications_percentage)
-        render json: formatted_percentage
+        total = Publication.where.not(status: "submitted").count
+        if total == 0
+            render json: "0.00"
+        else
+            open_access_count = OpenAccessExtension.joins(:publication)
+                                .where.not(publications: { status: "submitted" })
+                                .count
+            percentage = open_access_count.to_f / total * 100
+            formatted_percentage = format("%.2f", percentage)
+            render json: formatted_percentage
+        end
     end
 
     def green_open_access_publications_count
@@ -105,7 +113,7 @@ class Api::StatisticsController < ActionController::API
                                       .where.not(publications: { status: "submitted" })
                                       .where.not(subsidy_points: [ nil, 0 ])
                                       .average(:subsidy_points)
-        formatted_average = format("%.2f", average_subsidy_points)
+        formatted_average = average_subsidy_points ? format("%.2f", average_subsidy_points) : 0
         render json: formatted_average
     end
 end

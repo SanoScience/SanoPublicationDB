@@ -17,13 +17,15 @@ class JournalIssueTest < ActiveSupport::TestCase
   end
 
   test "should nullify references in publications if deleted" do
+    journal_issue = journal_issues("jour1")
     publication = publications("pub1")
-    assert_equal @journal_issue.id, publication.journal_issue_id do
-      @journal_issue.destroy
 
-      assert_not_nil publication do
-        assert_nil publication.reload.journal_issue_id
-      end
+    assert_equal journal_issue.id, publication.journal_issue_id
+
+    assert_difference("JournalIssue.count", -1) do
+      journal_issue.destroy
     end
+
+    assert_nil publication.reload.journal_issue_id
   end
 end

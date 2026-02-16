@@ -58,6 +58,22 @@ FROM base
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /rails /rails
 
+# --- Cron for scheduler container ---
+# Install cron in the final image so we can run a dedicated scheduler service
+RUN apt-get update -qq && \
+    apt-get install --no-install-recommends -y cron && \
+    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+
+# Add a small cron launcher (used only by the scheduler service)
+# You'll provide this script in your repo at bin/cron and make it executable.
+# Example content:
+#   #!/usr/bin/env bash
+#   set -euo pipefail
+#   su -s /bin/bash -c 'bundle exec whenever --update-crontab pubdb --user rails' rails
+#   exec cron -f
+COPY bin/cron /rails/bin/cron
+RUN chmod +x /rails/bin/cron
+
 # Run and own only the runtime files as a non-root user for security
 RUN groupadd --system --gid 1000 rails && \
     useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \

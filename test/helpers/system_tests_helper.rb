@@ -13,7 +13,7 @@ module SystemTestsHelper
         select_el.select("No") if select_el.value.blank?
       end
     end
-  end 
+  end
 
   def set_date_select(prefix, year:, month_name:, day:)
     find("select[name*='[#{prefix}(1i)]']").select(year.to_s)

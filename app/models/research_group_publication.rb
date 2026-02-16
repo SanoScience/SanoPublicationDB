@@ -1,20 +1,19 @@
 class ResearchGroupPublication < ApplicationRecord
-    belongs_to :publication, dependent: :destroy
+    include NotifiesPublicationOnChange
 
-    enum :research_group, {
-        clinical_data_science: "Clinical Data Science",
-        computer_vision: "Computer Vision",
-        extreme_scale: "Extreme-Scale Data and Computing",
-        modelling_simulation: "Modelling and Simulation",
-        scientific_programmers: "Scientific Programmers",
-        health_informatics: "Health Informatics Group",
-        personal_health_ds: "Personal Health Data Science",
-        senior_post_doc: "SeniorPostDoc",
-        genomics: "Structural and Functional Genomics Group",
-        other: "other"
-    }
+    belongs_to :publication
+    belongs_to :research_group
+
+    accepts_nested_attributes_for :research_group, allow_destroy: true, reject_if: :all_blank
 
     validates :publication, presence: true
     validates :research_group, presence: true
-    validates :is_primary, presence: true
+
+    def self.ransackable_attributes(auth_object = nil)
+        [ "research_group_id", "is_primary" ]
+    end
+
+    def self.ransackable_associations(auth_object = nil)
+        [ "publication", "research_group" ]
+    end
 end

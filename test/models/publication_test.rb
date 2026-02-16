@@ -49,12 +49,14 @@ class PublicationTest < ActiveSupport::TestCase
   end
 
   test "should be referenced in associated research group publication" do
-    research_group_publication =
-      @publication.research_group_publications.create(
-        research_group: ResearchGroupPublication.research_groups.first.first,
-        is_primary: true
-      )
+    group = research_groups(:group1)
+
+    research_group_publication = @publication.research_group_publications.create!(
+      research_group: group,
+      is_primary: true
+    )
 
     assert_equal @publication.id, research_group_publication.publication_id
+    assert_equal group.id, research_group_publication.research_group_id
   end
 end

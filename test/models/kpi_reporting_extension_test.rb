@@ -13,7 +13,7 @@ class KpiReportingExtensionTest < ActiveSupport::TestCase
   test "should require a publication" do
     @kpi_reporting_extension.publication = nil
     assert_not @kpi_reporting_extension.valid?
-    assert_includes @kpi_reporting_extension.errors[:publication], "can't be blank"
+    assert_includes @kpi_reporting_extension.errors[:publication], "must exist"
   end
 
   test "should be destroyed when associated publication is destroyed" do

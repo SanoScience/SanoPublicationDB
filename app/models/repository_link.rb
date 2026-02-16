@@ -1,5 +1,10 @@
 class RepositoryLink < ApplicationRecord
-    belongs_to :publication, dependent: :destroy
+    include NotifiesPublicationOnChange
+    include UrlValidatable
+
+    validates_url_of :value
+
+    belongs_to :publication
 
     enum :repository, {
         dataverse: "Dataverse",

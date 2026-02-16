@@ -1,0 +1,145 @@
+<div class="card p-4 mb-4">
+  <%= search_form_for query, url: publications_path, method: :get do |f| %>
+    <h5 class="mb-3">General information</h5>
+    <div class="row mb-3">
+      <div class="col-md-12">
+        <%= f.search_field :title_ucont, class: "form-control", placeholder: "Title" %>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <%= f.search_field :author_list_ucont, class: "form-control", placeholder: "Authors" %>
+      </div>
+
+      <div class="col-md-6">
+        <%= f.select :category_in,
+            Publication.categories.keys.map { |key| [key.humanize, key] },
+            {},
+            multiple: true,
+            data: { controller: "select2", placeholder: "Category" } %>
+      </div>
+    </div>
+
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <%= f.select :status_in,
+            Publication.statuses.keys.map { |key| [key.humanize, key] },
+            {},
+            multiple: true,
+            data: { controller: "select2", placeholder: "Status" } %>
+      </div>
+
+      <div class="col-md-6">
+        <%= f.number_field :publication_year_eq,
+            class: "form-control",
+            min: 2000, max: Time.current.year,
+            placeholder: "Publication year" %>
+      </div>
+    </div>
+
+    <h5 class="mb-3">Research groups</h5>
+    <div class="row mb-3">
+      <div class="col-md-12">
+        <%= f.select :research_group_publications_research_group_id_in,
+            ResearchGroup.all.map { |g| [g.name, g.id] },
+            {},
+            multiple: true,
+            data: { controller: "select2", placeholder: "Research groups" } %>
+      </div>
+    </div>
+
+    <h5 class="mb-3">Identifiers</h5>
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <%= f.select :identifiers_category_eq,
+            Identifier.categories.map { |key, value| [value, key] },
+            { include_blank: true },
+            data: { controller: "select2", placeholder: "Identifier category" } %>
+      </div>
+      <div class="col-md-6">
+        <%= f.search_field :identifiers_value_cont, class: "form-control", placeholder: "Identifier value" %>
+      </div>
+    </div>
+
+    <h5 class="mb-3">Conferences and journals</h5>
+    <div class="row mb-3">
+      <div class="col-md-6">
+        <%= f.search_field :journal_issue_title_cont, class: "form-control", placeholder: "Journal title" %>
+      </div>
+      <div class="col-md-6">
+        <%= f.search_field :conference_name_cont, class: "form-control", placeholder: "Conference name" %>
+      </div>
+    </div>
+    <% if user_signed_in? && current_user.moderator? %>
+      <h5 class="mb-3">KPI Reporting</h5>
+      <div class="row mb-3">
+        <div class="col-md-6">
+          <%= f.number_field :kpi_reporting_extension_teaming_reporting_period_eq,
+              class: "form-control",
+              placeholder: "Teaming reporting period" %>
+        </div>
+        <div class="col-md-3">
+          <%= f.select :kpi_reporting_extension_pbn_eq,
+              [["Yes", true], ["No", false]],
+              { include_blank: true },
+              data: { controller: "select2", placeholder: "PBN" } %>
+        </div>
+        <div class="col-md-3">
+          <%= f.select :kpi_reporting_extension_jcr_eq,
+              [["Yes", true], ["No", false]],
+              { include_blank: true },
+              data: { controller: "select2", placeholder: "JCR" } %>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-md-4">
+          <%= f.select :kpi_reporting_extension_is_new_method_technique_eq,
+              [["Yes", true], ["No", false]],
+              { include_blank: true },
+              data: { controller: "select2", placeholder: "New method/technique" } %>
+        </div>
+        <div class="col-md-4">
+          <%= f.select :kpi_reporting_extension_is_methodology_application_eq,
+              [["Yes", true], ["No", false]],
+              { include_blank: true },
+              data: { controller: "select2", placeholder: "Methodology application" } %>
+        </div>
+        <div class="col-md-4">
+          <%= f.select :kpi_reporting_extension_is_peer_reviewed_eq,
+              [["Yes", true], ["No", false]],
+              { include_blank: true },
+              data: { controller: "select2", placeholder: "Peer reviewed" } %>
+        </div>
+      </div>
+    <% end %>
+
+    <h5 class="mb-3">Open Access</h5>
+    <div class="row mb-3">
+      <% if user_signed_in? && current_user.moderator? %>
+        <div class="col-md-6">
+          <%= f.select :open_access_extension_category_eq,
+              OpenAccessExtension.categories,
+              { include_blank: true },
+              data: { controller: "select2", placeholder: "Open access category" } %>
+        </div>
+        <div class="col-md-6">
+          <%= f.search_field :open_access_extension_gold_oa_funding_source_cont,
+              class: "form-control",
+              placeholder: "Gold OA funding source" %>
+        </div>
+      <% else %>
+        <div class="col-md-12">
+          <%= f.select :open_access_extension_category_eq,
+              OpenAccessExtension.categories,
+              { include_blank: true },
+              data: { controller: "select2", placeholder: "Open access category" } %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="text-end mt-4">
+      <%= f.submit "Search", class: "btn btn-primary" %>
+    </div>
+  <% end %>
+</div>

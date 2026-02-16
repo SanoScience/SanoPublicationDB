@@ -5,7 +5,17 @@ pub1:
   category: journal_article
   status: submitted
   author_list: "John Doe, Jane Smith"
-  publication_date: "2014-05-02"
+  publication_year: <%= Time.zone.today.year %>
   link: "https://example.com"
   journal_issue: jour1
   conference: conf1
+  owner: user
+
+pub_no_conf_jour:
+  title: "No Conf and Journal Pub"
+  category: journal_article
+  status: submitted
+  author_list: "John Doe"
+  publication_year: <%= Time.zone.today.year %>
+  link: "https://example.com"
+  owner: user

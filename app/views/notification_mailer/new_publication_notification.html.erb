@@ -1,0 +1,8 @@
+<h2>New publication has been created</h2>
+<h3>Please review the publication and add any missing information.</h3>
+<br>
+<p><strong>Title:</strong> <%= @publication.title %></p>
+<p><strong>Creator:</strong> <%= @publication.owner.email %></p>
+<p><strong>Authors:</strong> <%= @publication.author_list %></p>
+<br>
+<p>Go to the <%= link_to "publication", publication_url(@publication) %></p>

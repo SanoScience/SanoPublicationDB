@@ -1,4 +1,9 @@
 class RepositoryLink < ApplicationRecord
+    include NotifiesPublicationOnChange
+    include UrlValidatable
+
+    validates_url_of :value
+
     belongs_to :publication
 
     enum :repository, {

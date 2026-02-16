@@ -83,6 +83,7 @@ production:
     <<: *default
     database: pubdb_production
     username: pubdb
+    host: <%= ENV["PUBDB_DATABASE_HOST"] %>
     password: <%= ENV["PUBDB_DATABASE_PASSWORD"] %>
   cache:
     <<: *primary_production

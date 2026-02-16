@@ -1,0 +1,24 @@
+<div class="mb-3">
+    <%= link_to publications_path, class: "text-decoration-none text-muted small d-inline-flex align-items-center gap-1 fs-6" do %>
+        <i class="bi bi-arrow-left"></i> Back
+    <% end %>
+</div>
+
+<div class="row">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h1>Research Groups</h1>
+
+    <% if current_user.moderator? %>
+      <%= link_to "Add research group",
+                  new_research_group_path,
+                  data: { turbo_stream: true },
+                  class: "btn btn-primary" %>
+    <% end %>
+  </div>
+
+  <%= turbo_frame_tag "new_research_group" %>
+
+  <div id="research_groups">
+    <%= render @research_groups %>
+  </div>
+</div>

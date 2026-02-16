@@ -10,3 +10,12 @@ pub1:
   journal_issue: jour1
   conference: conf1
   owner: user
+
+pub_no_conf_jour:
+  title: "No Conf and Journal Pub"
+  category: journal_article
+  status: submitted
+  author_list: "John Doe"
+  publication_year: <%= Time.zone.today.year %>
+  link: "https://example.com"
+  owner: user

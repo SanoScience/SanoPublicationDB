@@ -16,17 +16,17 @@ class ConferenceTest < ActiveSupport::TestCase
     assert_includes @conference.errors[:name], "can't be blank"
   end
 
-  # test "should be invalid without start_date" do
-  #   @conference.start_date = nil
-  #   assert_not @conference.valid?
-  #   assert_includes @conference.errors[:start_date], "can't be blank"
-  # end
+  test "should be invalid without start_date" do
+    @conference.start_date = nil
+    assert_not @conference.valid?
+    assert_includes @conference.errors[:start_date], "can't be blank"
+  end
 
-  # test "should be invalid without end_date" do
-  #   @conference.end_date = nil
-  #   assert_not @conference.valid?
-  #   assert_includes @conference.errors[:end_date], "can't be blank"
-  # end
+  test "should be invalid without end_date" do
+    @conference.end_date = nil
+    assert_not @conference.valid?
+    assert_includes @conference.errors[:end_date], "can't be blank"
+  end
 
   test "should be invalid with start_date after end_date" do
     @conference.start_date = Date.new(2025, 6, 15)

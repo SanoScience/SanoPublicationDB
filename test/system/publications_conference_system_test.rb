@@ -1,7 +1,7 @@
 require "application_system_test_case"
 
 class PublicationsConferenceSystemTest < ApplicationSystemTestCase
-  include PublicationsConferenceSystemHelpers
+  include PublicationsConferenceSystemHelper, SystemTestsHelper
 
   def setup
     @user = users(:user)

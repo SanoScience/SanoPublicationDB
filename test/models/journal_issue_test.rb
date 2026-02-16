@@ -25,7 +25,7 @@ class JournalIssueTest < ActiveSupport::TestCase
     assert_difference("JournalIssue.count", -1) do
       journal_issue.destroy
     end
-     
+
     assert_nil publication.reload.journal_issue_id
   end
 end

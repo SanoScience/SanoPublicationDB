@@ -1,22 +1,5 @@
-module PublicationsConferenceSystemHelpers
-  def within_conference(&block)
-    within(".conference", &block)
-  end
-
-  def select_conference(name)
-    within_conference do
-      find(".items-list select").select(name)
-    end
-  end
-
-  def assert_conf_fields(name:, core:)
-    within_conference do
-      assert_field "Conference Name", with: name
-      assert_field "CORE Ranking", with: core.to_s
-    end
-  end
-
-  def ensure_required_kpi_selected!
+module SystemTestsHelper
+   def ensure_required_kpi_selected!
     within ".kpi-reporting-extension" do
       %w[
         is_new_method_technique
@@ -30,7 +13,7 @@ module PublicationsConferenceSystemHelpers
         select_el.select("No") if select_el.value.blank?
       end
     end
-  end
+  end 
 
   def set_date_select(prefix, year:, month_name:, day:)
     find("select[name*='[#{prefix}(1i)]']").select(year.to_s)

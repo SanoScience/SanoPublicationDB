@@ -16,17 +16,17 @@ class ConferenceTest < ActiveSupport::TestCase
     assert_includes @conference.errors[:name], "can't be blank"
   end
 
-  # test "should be invalid without start_date" do
-  #   @conference.start_date = nil
-  #   assert_not @conference.valid?
-  #   assert_includes @conference.errors[:start_date], "can't be blank"
-  # end
+  test "should be invalid without start_date" do
+    @conference.start_date = nil
+    assert_not @conference.valid?
+    assert_includes @conference.errors[:start_date], "can't be blank"
+  end
 
-  # test "should be invalid without end_date" do
-  #   @conference.end_date = nil
-  #   assert_not @conference.valid?
-  #   assert_includes @conference.errors[:end_date], "can't be blank"
-  # end
+  test "should be invalid without end_date" do
+    @conference.end_date = nil
+    assert_not @conference.valid?
+    assert_includes @conference.errors[:end_date], "can't be blank"
+  end
 
   test "should be invalid with start_date after end_date" do
     @conference.start_date = Date.new(2025, 6, 15)
@@ -37,13 +37,15 @@ class ConferenceTest < ActiveSupport::TestCase
   end
 
   test "should nullify references in publications if deleted" do
+    conference = conferences("conf1")
     publication = publications("pub1")
-    assert_equal @conference.id, publication.conference_id do
-      @conference.destroy
 
-      assert_not_nil publication do
-        assert_nil publication.reload.conference_id
-      end
+    assert_equal conference.id, publication.conference_id
+
+    assert_difference("Conference.count", -1) do
+      conference.destroy
     end
+
+    assert_nil publication.reload.conference_id
   end
 end

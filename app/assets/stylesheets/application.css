@@ -1,0 +1,18 @@
+.tooltip-content{
+  position:absolute;
+  z-index:9999;
+  background:#333;
+  color:#fff;
+  padding:.25rem .5rem;
+  border-radius:.5rem;
+  border:1px solid rgba(255,255,255,.12);
+  box-shadow:0 .25rem .75rem rgba(0,0,0,.15);
+  pointer-events:none;
+  font-size:.875rem;
+  line-height:1.2;
+}
+
+.tooltip-content.opacity-0{ opacity:0; }
+.tooltip-content.opacity-100{ opacity:1; }
+.tooltip-content.scale-95{ transform:scale(.95); }
+.tooltip-content.scale-100{ transform:scale(1); }

@@ -1,0 +1,4 @@
+#!/usr/bin/env bash
+set -euo pipefail
+su -s /bin/bash -c 'bundle exec whenever --update-crontab pubdb --user rails' rails
+exec cron -f

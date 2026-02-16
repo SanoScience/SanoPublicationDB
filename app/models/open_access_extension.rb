@@ -1,4 +1,6 @@
 class OpenAccessExtension < ApplicationRecord
+    include NotifiesPublicationOnChange
+
     belongs_to :publication
 
     enum :category, {
@@ -8,6 +10,14 @@ class OpenAccessExtension < ApplicationRecord
 
     validates :publication, presence: true
     validate :validate_gold_fields
+
+    def self.ransackable_attributes(auth_object = nil)
+        [ "category", "gold_oa_funding_source" ]
+    end
+
+    def self.ransackable_associations(auth_object = nil)
+        [ "publication" ]
+    end
 
     private
 

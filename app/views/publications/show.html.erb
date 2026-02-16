@@ -1,68 +1,195 @@
-<h1><%= @publication.title %></h1>
+<div class="mb-3">
+    <%= link_to publications_path, class: "text-decoration-none text-muted small d-inline-flex align-items-center gap-1 fs-6" do %>
+        <i class="bi bi-arrow-left"></i> Back
+    <% end %>
+</div>
 
-<p>
-  <strong>Category:</strong> <%= @publication.category.humanize %> <br>
-  <strong>Status:</strong> <%= @publication.status.humanize %> <br>
-  <strong>Authors:</strong> <%= @publication.author_list %> <br>
-  <% if @publication.publication_date %>
-    <strong>Publication Date:</strong> <%= @publication.publication_date %> <br>
-  <% end %>
-  <strong>Link:</strong> <%= link_to @publication.link, target: "_blank" %>
-</p>
+<div class="row">
+    <% if user_signed_in? && (@publication.owner == current_user || current_user.moderator?) %>
+
+        <div class="col-md-10">
+            <h2><%= @publication.title %></h2>
+        </div>
+
+        <div class="col-md-2">
+            <div class="d-grid gap-2">
+                <%= link_to "Edit publication", edit_publication_path(@publication), class: 'btn btn-primary' %>
+
+                <%= button_to "Delete", publication_path(@publication),
+                    method: :delete,
+                    data: { confirm: "Are you sure?" },
+                    form: { class: "d-grid" },
+                    class: "btn btn-danger" %>
+            </div>
+        </div>
+    <% else %>
+        <div class="col-md-12">
+            <h2><%= @publication.title %></h2>
+        </div>
+    <% end %>
+</div>
+
+<div class="d-flex flex-wrap gap-2 mb-5">
+    <% status_class = case @publication.status
+        when "submitted" then "bg-warning text-dark"
+        when "accepted"  then "bg-info text-dark"
+        when "printed"   then "bg-success text-white"
+        else "bg-secondary text-white"
+    end %>
+    <span class="badge <%= status_class %> px-3 py-2 fs-6">
+        <%= @publication.status.humanize %>
+    </span>
+
+    <span class="badge bg-light text-dark border px-3 py-2 fs-6">
+        <%= @publication.category.humanize %>
+    </span>
+</div>
+
+<div class="d-flex gap-2 mb-3">
+    <strong>Authors:</strong> <%= @publication.author_list %>
+</div>
+
+<% if @publication.publication_year.present? %>
+    <div class="d-flex gap-2 mb-3">
+        <strong>Publication year:</strong> <%= @publication.publication_year %>
+    </div>
+<% end %>
+
+<% if @publication.link.present? %>
+    <div class="d-flex gap-2 mb-3">
+        <strong>Link:</strong> <%= link_to truncate(safe_url(@publication.link), length: 80), safe_url(@publication.link), target: "_blank", rel: "noopener", class: "text-break d-inline-block" %>
+    </div>
+<% end %>
+
+<div class="d-flex gap-2 mb-5">
+    <strong>Last update:</strong> <%= @publication.updated_at %>
+</div>
 
 <hr>
 
-<h2>Research Groups</h2>
+<h4>Research Groups</h4>
 <ul>
   <% @publication.research_group_publications.each do |group| %>
     <li>
-      <% if group.is_primary %>
-        <strong>🌟 <%= group.research_group.humanize %> (Primary)</strong>
-      <% else %>
-        <%= group.research_group.humanize %>
-      <% end %>
+      <p>
+        <% if group.is_primary %>
+            <strong>🌟 <%= group.research_group.name %> (Primary)</strong>
+        <% else %>
+          <%= group.research_group.name %>
+        <% end %>
+      </p>
     </li>
   <% end %>
 </ul>
 
-<% if @publication.identifiers.any? %>
-    <hr>
-    <h2>Identifiers</h2>
+<hr>
+
+<% if @publication.kpi_reporting_extension %>
+    <h4>KPI Reporting Information</h4>
     <ul>
-        <% @publication.identifiers.each do |identifier| %>
-            <li><strong><%= identifier.category.upcase %>:</strong> <%= identifier.value %></li>
+        <% unless @publication.kpi_reporting_extension.is_new_method_technique.nil? %>
+            <p><strong>Does publication describe new methods and techniques:</strong> <%= display_value(@publication.kpi_reporting_extension.is_new_method_technique) %></p>
+        <% end %>
+        <% unless @publication.kpi_reporting_extension.is_methodology_application.nil? %>
+            <p><strong>Does publication describe application of the methodology:</strong> <%= display_value(@publication.kpi_reporting_extension.is_methodology_application) %></p>
+        <% end %>
+        <% unless @publication.kpi_reporting_extension.is_polish_med_researcher_involved.nil? %>
+            <p><strong>Are Polish medical researchers involved:</strong> <%= display_value(@publication.kpi_reporting_extension.is_polish_med_researcher_involved) %></p>
+        <% end %>
+        <% unless @publication.kpi_reporting_extension.is_peer_reviewed.nil? %>
+            <p><strong>Is peer reviewed?:</strong> <%= display_value(@publication.kpi_reporting_extension.is_peer_reviewed) %></p>
+        <% end %>
+        <% unless @publication.kpi_reporting_extension.is_co_publication_with_partners.nil? %>
+            <p><strong>Is this a co-publication with national and foreign partners?:</strong> <%= display_value(@publication.kpi_reporting_extension.is_co_publication_with_partners) %></p>
+        <% end %>
+        <% if @publication.kpi_reporting_extension.subsidy_points %>
+            <p><strong>Subsidy points:</strong> <%= @publication.kpi_reporting_extension.subsidy_points %></p>
+        <% end %>
+        <% if @publication.kpi_reporting_extension.teaming_reporting_period && user_signed_in? && current_user.moderator? %>
+            <p><strong>Teaming reporting period:</strong> <%= @publication.kpi_reporting_extension.teaming_reporting_period %></p>
+        <% end %>
+        <% if @publication.kpi_reporting_extension.invoice_number && user_signed_in? && current_user.moderator? %>
+            <p><strong>Invoice number Reporting:</strong> <%= @publication.kpi_reporting_extension.invoice_number %></p>
+        <% end %>
+        <% if !@publication.kpi_reporting_extension.pbn.nil? && user_signed_in? && current_user.moderator? %>
+            <p><strong>PBN:</strong> <%= display_value(@publication.kpi_reporting_extension.pbn) %></p>
+        <% end %>
+        <% if !@publication.kpi_reporting_extension.jcr.nil? && user_signed_in? && current_user.moderator? %>
+            <p><strong>JCR:</strong> <%= display_value(@publication.kpi_reporting_extension.jcr) %></p>
+        <% end %>
+        <% if !@publication.kpi_reporting_extension.is_added_ft_portal.nil? && user_signed_in? && current_user.moderator? %>
+            <p><strong>Is added on F&T portal:</strong> <%= display_value(@publication.kpi_reporting_extension.is_added_ft_portal) %></p>
+        <% end %>
+        <% if !@publication.kpi_reporting_extension.is_checked.nil? && user_signed_in? && current_user.moderator? %>
+            <p><strong>Is checked:</strong> <%= display_value(@publication.kpi_reporting_extension.is_checked) %></p>
+        <% end %>
+        <% if @publication.kpi_reporting_extension.updated_at %>
+            <p><strong>Last update:</strong> <%= @publication.kpi_reporting_extension.updated_at %></p>
         <% end %>
     </ul>
+
+    <hr>
 <% end %>
 
-<% if @publication.repository_links.any? %>
-    <hr>
-    <h2>Repository Links</h2>
+<% if @publication.open_access_extension %>
+    <h4>Open Access Details</h4>
     <ul>
-        <% @publication.repository_links.each do |repo_link| %>
+        <p><strong>Open Access:</strong> <%= @publication.open_access_extension.category.humanize %></p>
+        <% if @publication.open_access_extension.gold? && user_signed_in? && current_user.moderator? %>
+            <p> <strong>Gold OA Charges:</strong> <%= @publication.open_access_extension.gold_oa_charges %></p>
+            <p> <strong>Funding Source:</strong> <%= @publication.open_access_extension.gold_oa_funding_source %></p>
+        <% end %>
+    </ul>
+
+    <hr>
+<% end %>
+
+<% if @publication.identifiers.any? %>
+    <h4>Identifiers</h4>
+    <ul>
+        <% @publication.identifiers.each do |identifier| %>
             <li>
-                <strong><%= repo_link.repository.humanize %>:</strong> 
-                <%= link_to repo_link.value, repo_link.value, target: "_blank" %>
+                <p><strong><%= identifier.category.upcase %>:</strong> <%= identifier.value %></p>
             </li>
         <% end %>
     </ul>
+
+    <hr>
+<% end %>
+
+<% if @publication.repository_links.any? %>
+    <h4>Repository Links</h4>
+    <ul>
+        <% @publication.repository_links.each do |repo_link| %>
+            <li>
+                <p>
+                    <strong><%= repo_link.repository.humanize %>:</strong> 
+                    <%= link_to(safe_url(repo_link.value), safe_url(repo_link.value), target: "_blank") %>
+                </p>
+            </li>
+        <% end %>
+    </ul>
+
+    <hr>
 <% end %>
 
 <% if @publication.conference %>
-    <hr>
-    <h2>Conference</h2>
+    <h4>Conference</h4>
     <ul>
         <p><strong>Name:</strong> <%= @publication.conference.name %></p>
         <% if @publication.conference.core %>
             <p><strong>CORE:</strong> <%= @publication.conference.core %></p>
         <% end %>
-        <p><strong>Dates:</strong> <%= @publication.conference.start_date %> - <%= @publication.conference.end_date %></p>
+        <% if @publication.conference.start_date && @publication.conference.end_date %>
+            <p><strong>Dates:</strong> <%= @publication.conference.start_date %> - <%= @publication.conference.end_date %></p>
+        <% end %>
     </ul>
+
+    <hr>
 <% end %>
 
 <% if @publication.journal_issue %>
-    <hr>
-    <h2>Journal Issue</h2>
+    <h4>Journal Issue</h4>
     <ul>
         <p><strong>Title:</strong> <%= @publication.journal_issue.title %></p>
         <% if @publication.journal_issue.publisher %>
@@ -78,62 +205,6 @@
             <p><strong>Impact factor:</strong> <%= @publication.journal_issue.impact_factor %></p>
         <% end %>
     </ul>
-<% end %>
 
-<% if @publication.kpi_reporting_extension %>
     <hr>
-    <h2>KPI Reporting Information</h2>
-    <ul>
-        <% if @publication.kpi_reporting_extension.teaming_reporting_period %>
-            <li><strong>Teaming reporting period:</strong> <%= @publication.kpi_reporting_extension.teaming_reporting_period %></li>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.invoice_number %>
-            <li><strong>Invoice number Reporting:</strong> <%= @publication.kpi_reporting_extension.invoice_number %></li>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.pbn %>
-            <li><strong>PBN:</strong> <%= @publication.kpi_reporting_extension.pbn %></li>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.jcr %>
-            <li><strong>JCR:</strong> <%= @publication.kpi_reporting_extension.jcr %></li>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.is_added_ft_portal %>
-            <li><strong>Is added on F&T portal:</strong> <%= @publication.kpi_reporting_extension.is_added_ft_portal %></li>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.is_checked %>
-            <li><strong>Is checked:</strong> <%= @publication.kpi_reporting_extension.is_checked %></li>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.is_new_method_technique %>
-            <li><strong>Does publication describe new methods and techniques:</strong> <%= @publication.kpi_reporting_extension.is_new_method_technique %></li>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.is_methodology_application %>
-            <li><strong>Does publication describe application of the methodology:</strong> <%= @publication.kpi_reporting_extension.is_methodology_application %></li>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.is_polish_med_researcher_involved %>
-            <li><strong>Is Polish medical researchers involved:</strong> <%= @publication.kpi_reporting_extension.is_polish_med_researcher_involved %></li>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.subsidy_points %>
-            <li><strong>Subsidy points:</strong> <%= @publication.kpi_reporting_extension.subsidy_points %></li>
-        <% end %>
-        <% if @publication.kpi_reporting_extension.updated_at %>
-            <li><strong>Last update:</strong> <%= @publication.kpi_reporting_extension.updated_at %></li>
-        <% end %>
-    </ul>
 <% end %>
-
-<% if @publication.open_access_extension %>
-    <hr>
-    <h2>Open Access Details</h2>
-    <ul>
-        <strong>Open Access:</strong> <%= @publication.open_access_extension.category.humanize %>
-        <% if @publication.open_access_extension.gold? %>
-            <br> <strong>Gold OA Charges:</strong> <%= @publication.open_access_extension.gold_oa_charges %>
-            <br> <strong>Funding Source:</strong> <%= @publication.open_access_extension.gold_oa_funding_source %>
-        <% end %>
-    </ul>
-<% end %>
-
-<hr>
-
-<%= button_to "Delete publication", publication_path(@publication), method: :delete, class: 'btn btn-danger' %>
-<%= link_to "Edit publication", edit_publication_path(@publication), class: 'btn btn-primary' %>
-<%= link_to "Back", publications_path, class: 'btn btn-secondary' %>

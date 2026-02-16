@@ -7,7 +7,7 @@ class CreatePublications < ActiveRecord::Migration[8.0]
       t.string :author_list, null: false
       t.integer :journal_issue_id, null: true
       t.integer :conference_id, null: true
-      t.date :publication_date, null: true
+      t.integer :publication_year, null: true
       t.string :link, null: false
       t.timestamps
     end

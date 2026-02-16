@@ -3,6 +3,7 @@
 
 require 'csv'
 require 'pp'
+require 'uri'
 
 def import_publications(file_path)
   unless File.exist?(file_path)
@@ -28,12 +29,14 @@ def import_publications(file_path)
     puts row
 
     title = row['Title of the scientific publication']&.strip
-    next if title.blank?
+    authors = row['Authors']&.strip
+    status = row['Status (submitted, accepted, printed)']&.strip
+    publication_type = row[row.keys.first]&.strip
+    next if title.blank? || authors.blank? || status.blank? || publication_type.blank?
 
     publication = Publication.find_or_initialize_by(title: title)
-    file_publication_type = row[row.keys.first]&.strip
 
-    category = case file_publication_type
+    category = case publication_type
     when "article in journal" then :journal_article
     when "conference manuscript" then :conference_manuscript
     when "book/monograph" then :book
@@ -42,34 +45,53 @@ def import_publications(file_path)
     else nil
     end
 
+    valid_url = ->(s) do
+      return false if s.blank?
+      u = URI.parse(s.strip)
+      u.is_a?(URI::HTTP) && u.host.present?
+    rescue URI::InvalidURIError
+      false
+    end
+
     publication.assign_attributes(
       category: category,
-      status: row['Status (submitted, accepted, printed)']&.strip,
-      author_list: row['Authors']&.strip,
-      publication_date: (Date.parse(row['Year of publication'].to_s) rescue nil),
-      link: (row['Link']&.strip =~ URI.regexp ? row['Link'].strip : nil)
+      status: status,
+      author_list: authors,
+      publication_year: (Integer(row['Year of publication']) rescue nil),
+      link: (valid_url.call(row['Link']&.strip) ? row['Link']&.strip : nil)
     )
     publication.save!
 
 
     # Handle Identifiers
     if row['Digital Object Identifier (DOI)'].present?
-      publication.identifiers.find_or_create_by!(category: 'DOI', value: row['Digital Object Identifier (DOI)'].strip)
+      doi = row['Digital Object Identifier (DOI)']&.strip
+      if doi =~ /\A10\.\S+/
+        doi = "https://doi.org/#{doi}"
+      elsif valid_url.call(doi)
+        doi = doi
+      end
+      publication.identifiers.find_or_create_by!(category: 'DOI', value: doi) if !doi.blank?
     end
-    if row[' ISSN or eSSN'].present?
-      publication.identifiers.find_or_create_by!(category: 'ISSN', value: row[' ISSN or eSSN'].strip)
-    end
+    # if row[' ISSN or eSSN'].present?
+    #   publication.identifiers.find_or_create_by!(category: 'ISSN', value: row[' ISSN or eSSN'].strip)
+    # end
 
     # Handle Research Groups
-    primary_group = row['Sano Research Group']&.strip
-    secondary_groups = row['Secondary Sano Research Group(s)']&.split(',')&.map(&:strip).presence
+    primary_group_name = row['Sano Research Group']&.strip
+    secondary_group_names = row['Secondary Sano Research Group(s)']&.split(',')&.map(&:strip).presence
 
-    publication.research_group_publications.find_or_create_by!(
-      research_group: primary_group,
-      is_primary: true
-    ) if primary_group.present?
+    if primary_group_name.present?
+      group = ResearchGroup.find_or_create_by!(name: primary_group_name)
+      publication.research_group_publications.find_or_create_by!(
+        research_group: group,
+        is_primary: true
+      )
+    end
 
-    secondary_groups&.each do |group|
+    secondary_group_names&.each do |name|
+      next if name == primary_group_name # avoid duplication
+      group = ResearchGroup.find_or_create_by!(name: name)
       publication.research_group_publications.find_or_create_by!(
         research_group: group,
         is_primary: false
@@ -77,45 +99,69 @@ def import_publications(file_path)
     end
 
     # Handle Open Access Extensions
-    if row['OA: Green or Gold?'].present? && row['OA: Green or Gold?'].downcase != "no"
-      if row['OA: Green or Gold?'].downcase == "green"
-        OpenAccessExtension.find_or_create_by!(
-          publication: publication,
-          category: row['OA: Green or Gold?']&.strip
-        )
+    oa_raw  = row['OA: Green or Gold?']
+    oa_kind = oa_raw.to_s.strip.downcase
+
+    parse_money = ->(s) do
+      return nil if s.blank?
+      normalized = s.to_s.strip
+                    .gsub(/[^\d,.\-]/, '')
+                    .gsub(/\s+/, '')
+      if normalized.include?(',') && normalized.include?('.')
+        normalized = normalized.gsub(',', '')     # comma as thousands
       else
-        OpenAccessExtension.find_or_create_by!(
-          publication: publication,
-          gold_oa_charges: row['For Gold OA: insert the amount of processing charges in PLN paid by SANO if any']&.to_f,
-          gold_oa_funding_source: row['Funding source of OA']&.strip,
-          category: row['OA: Green or Gold?']&.strip
-        )
+        normalized = normalized.tr(',', '.')      # comma as decimal
       end
+      Float(normalized)
+    rescue ArgumentError
+      nil
+    end
+
+    case oa_kind
+    when 'green'
+      publication.create_open_access_extension!(
+        category: :green,
+        gold_oa_charges: nil,
+        gold_oa_funding_source: nil
+      )
+    when 'gold'
+      publication.create_open_access_extension!(
+        category: :gold,
+        gold_oa_charges: parse_money.call(row['For Gold OA: insert the amount of processing charges in PLN paid by SANO if any']),
+        gold_oa_funding_source: row['Funding source of OA']&.strip&.presence
+      )
     end
 
     # Handle Repository Links
     if row["Repository link':"].present?
-      publication.repository_links.find_or_create_by!(
-        repository: 'other',
-        value: row["Repository link':"].strip
-      )
+      repository_link = (valid_url.call(row["Repository link':"]&.strip) ? row["Repository link':"]&.strip : nil)
+      if repository_link.present?
+        publication.repository_links.find_or_create_by!(
+          repository: 'other',
+          value: repository_link
+        )
+      end
     end
 
     # Handle KPI Reporting Extensions
-    KpiReportingExtension.find_or_create_by!(
-      publication: publication,
+    to_bool = ->(v) { v.to_s.strip.downcase == 'yes' }
+
+    kpi = KpiReportingExtension.find_or_initialize_by(publication: publication)
+    kpi.assign_attributes(
       teaming_reporting_period: row['Teaming Reporting Period']&.to_i,
-      invoice_number: row['Invoice number']&.to_i,
-      pbn: row['PBN']&.to_s&.downcase == 'yes',
-      jcr: row['JCR']&.to_s&.downcase == 'yes',
-      is_added_ft_portal: row['Added to F&T portal']&.to_s&.downcase == 'yes',
-      is_checked: row['checked?']&.to_s&.downcase == 'yes',
-      is_new_method_technique: row['Publications describing new methods and techniques (YES/NO)']&.to_s&.downcase == 'yes',
-      is_methodology_application: row['Publications describing application of the methodology (YES/NO)']&.to_s&.downcase == 'yes',
-      is_polish_med_researcher_involved: row['Polish medical researchers involved']&.to_s&.downcase == 'yes',
+      invoice_number: row['Invoice number']&.strip,
+      pbn: to_bool.call(row['PBN']),
+      jcr: to_bool.call(row['JCR']),
+      is_added_ft_portal: to_bool.call(row['Added to F&T portal']),
+      is_checked: to_bool.call(row['checked?']),
+      is_new_method_technique: to_bool.call(row['Publications describing new methods and techniques (YES/NO)']),
+      is_methodology_application: to_bool.call(row['Publications describing application of the methodology (YES/NO)']),
+      is_polish_med_researcher_involved: to_bool.call(row['Polish medical researchers involved']),
       subsidy_points: row['Subsidy points'].to_s.match?(/\A\d+\z/) ? row['Subsidy points'].to_i : nil,
-      is_peer_reviewed: row['Peer-review']&.to_s&.downcase == 'yes'
+      is_peer_reviewed: to_bool.call(row['Peer-review']),
+      is_co_publication_with_partners: to_bool.call(row['Co-publications with national and foreign partners [t]'])
     )
+    kpi.save!
 
     # Handle Conference
     if row['Title of the journal or equivalent'].present?

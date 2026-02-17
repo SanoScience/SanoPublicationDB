@@ -1,5 +1,6 @@
 <div class="mb-3">
-    <%= link_to publications_path, class: "text-decoration-none text-muted small d-inline-flex align-items-center gap-1 fs-6" do %>
+    <%= link_to publications_path(back_params), 
+        class: "text-decoration-none text-muted small d-inline-flex align-items-center gap-1 fs-6" do %>
         <i class="bi bi-arrow-left"></i> Back
     <% end %>
 </div>
@@ -13,9 +14,9 @@
 
         <div class="col-md-2">
             <div class="d-grid gap-2">
-                <%= link_to "Edit publication", edit_publication_path(@publication), class: 'btn btn-primary' %>
+                <%= link_to "Edit publication", edit_publication_path(@publication, back_params), class: 'btn btn-primary' %>
 
-                <%= button_to "Delete", publication_path(@publication),
+                <%= button_to "Delete", publication_path(@publication, back_params),
                     method: :delete,
                     data: { confirm: "Are you sure?" },
                     form: { class: "d-grid" },

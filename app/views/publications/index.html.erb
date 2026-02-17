@@ -26,7 +26,7 @@
         data: { controller: "sort", action: "change->sort#submit" } %>
   </div>
   <div class="col-md-9 d-flex justify-content-end gap-3" data-controller="toggle-search">
-    <%= search_form_for @q, url: publications_path, method: :get do |f| %>
+    <%= search_form_for @q, url: publications_path(back_params.except("q", "page")), method: :get do |f| %>
       <%= f.search_field :title_cont, class: "form-control search-field", placeholder: "Search publications by title" %>
     <% end %>
     <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#searchForm" aria-expanded="false" aria-controls="searchForm">
@@ -49,11 +49,11 @@
 
     <div class="d-flex gap-2">
       <% if user_signed_in? && current_user.moderator? %>
-        <%= link_to 'Modify research groups', research_groups_path, class: "btn btn-primary" %>
+        <%= link_to 'Modify research groups', research_groups_path(back_params), class: "btn btn-primary" %>
       <% end %>
 
       <% if user_signed_in? %>
-        <%= link_to 'New Publication', new_publication_path, class: "btn btn-primary" %>
+        <%= link_to 'New Publication', new_publication_path(back_params), class: "btn btn-primary" %>
       <% end %>
     </div>
   </div>
@@ -64,7 +64,7 @@
     <div class="card mb-3 shadow-sm border border-light-subtle">
       <div class="card-body">
         <h5 class="card-title text-primary-emphasis mb-2">
-          <%= link_to publication.title, publication_path(publication), class: "text-decoration-none" %>
+          <%= link_to publication.title, publication_path(publication, back_params), class: "text-decoration-none" %>
         </h5>
 
         <div class="d-flex flex-wrap gap-2 mb-2">

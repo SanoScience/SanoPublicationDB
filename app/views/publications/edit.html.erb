@@ -1,10 +1,13 @@
 <div class="mb-3">
-    <%= link_to publication_path(@publication), class: "text-decoration-none text-muted small d-inline-flex align-items-center gap-1 fs-6" do %>
+    <%= link_to publication_path(@publication, back_params), 
+        class: "text-decoration-none text-muted small d-inline-flex align-items-center gap-1 fs-6" do %>
         <i class="bi bi-arrow-left"></i> Back
     <% end %>
 </div>
 
-<%= simple_form_for @publication, html: { class: 'needs-validation' } do |form| %>
+<%= simple_form_for @publication, 
+    url: publication_path(@publication, back_params),
+    html: { class: 'needs-validation' } do |form| %>
 
   <div class="row align-items-center">
       <div class="col-md-10">

@@ -38,7 +38,7 @@ class PublicationsController < ApplicationController
     @publication = current_user.publications.build(publication_params)
     if @publication.save(context: :ui)
       NotificationMailer.new_publication_notification(@publication).deliver_now
-      redirect_to @publication, notice: "Publication was successfully created."
+      redirect_to publication_path(@publication, back_params), notice: "Publication was successfully created."
     else
       render :new, status: :unprocessable_entity
     end
@@ -56,7 +56,7 @@ class PublicationsController < ApplicationController
         NotificationMailer.publication_update_notification(@publication, current_user, payload).deliver_now
         @publication._notification_changes = nil
       end
-      redirect_to @publication, notice: "Publication was successfully updated."
+      redirect_to publication_path(@publication, back_params), notice: "Publication was successfully updated."
     else
       render :edit, status: :unprocessable_entity
     end
@@ -64,7 +64,7 @@ class PublicationsController < ApplicationController
 
   def destroy
     @publication.destroy
-    redirect_to publications_path, notice: "Publication was successfully deleted."
+    redirect_to publications_path(back_params), notice: "Publication was successfully deleted."
   end
 
   private

@@ -3,4 +3,11 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
 
   include Pagy::Backend
+  
+  private
+
+  def back_params
+    request.query_parameters.slice("q", "sort", "page")
+  end
+  helper_method :back_params
 end

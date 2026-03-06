@@ -3,9 +3,11 @@ class KpiReportingExtension < ApplicationRecord
 
     belongs_to :publication
 
+    attr_accessor :skip_required_ui_validation
+
     before_validation :nilify_blanks
 
-    with_options on: :ui do
+    with_options on: :ui, unless: :skip_required_ui_validation do
         validates :is_new_method_technique,
                 :is_methodology_application,
                 :is_polish_med_researcher_involved,

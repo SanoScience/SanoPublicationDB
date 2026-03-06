@@ -10,4 +10,8 @@ module ApplicationHelper
             value.respond_to?(:blank?) && value.blank? ? "-" : value.to_s
         end
     end
+
+    def ui_validation_required?
+        !current_user&.moderator?
+    end
 end

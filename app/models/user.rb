@@ -31,4 +31,8 @@ class User < ApplicationRecord
 
     user
   end
+
+  def moderator?
+    role == "moderator"
+  end
 end

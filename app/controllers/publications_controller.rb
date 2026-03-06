@@ -36,6 +36,10 @@ class PublicationsController < ApplicationController
 
   def create
     @publication = current_user.publications.build(publication_params)
+    if current_user&.moderator? && @publication.kpi_reporting_extension.present?
+      @publication.kpi_reporting_extension.skip_required_ui_validation = true
+    end
+
     if @publication.save(context: :ui)
       NotificationMailer.new_publication_notification(@publication).deliver_now
       redirect_to publication_path(@publication, back_params), notice: "Publication was successfully created."
@@ -50,6 +54,10 @@ class PublicationsController < ApplicationController
 
   def update
     @publication.assign_attributes(publication_params)
+    if current_user&.moderator? && @publication.kpi_reporting_extension.present?
+      @publication.kpi_reporting_extension.skip_required_ui_validation = true
+    end
+
     if @publication.save(context: :ui)
       payload = @publication.build_notification_payload
       if payload.present?

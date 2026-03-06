@@ -6,7 +6,7 @@
                         as: :select,
                         collection: [['Yes', true], ['No', false]],
                         include_blank: true,
-                        required: true,
+                        required: ui_validation_required?,
                         label: "New Method/Technique",
                         label_html: {
                             data: {
@@ -23,7 +23,7 @@
                         as: :select,
                         collection: [['Yes', true], ['No', false]],
                         include_blank: true,
-                        required: true,
+                        required: ui_validation_required?,
                         label: "Methodology Application",
                         label_html: {
                             data: {
@@ -40,7 +40,7 @@
                         as: :select,
                         collection: [['Yes', true], ['No', false]],
                         include_blank: true,
-                        required: true,
+                        required: ui_validation_required?,
                         label: "Polish Medical Researcher Involved" %>
         </div>
     </div>
@@ -51,7 +51,7 @@
                         as: :select,
                         collection: [['Yes', true], ['No', false]],
                         include_blank: true,
-                        required: true,
+                        required: ui_validation_required?,
                         label: "Peer Reviewed" %>
         </div>
 
@@ -60,7 +60,7 @@
                         as: :select,
                         collection: [['Yes', true], ['No', false]],
                         include_blank: true,
-                        required: true,
+                        required: ui_validation_required?,
                         label: "Co-Publication with Partners",
                         label_html: {
                             data: {

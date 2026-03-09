@@ -247,7 +247,11 @@ GEM
     parser (3.3.7.1)
       ast (~> 2.4.1)
       racc
-    pg (1.5.9)
+    pg (1.6.3)
+    pg (1.6.3-aarch64-linux)
+    pg (1.6.3-aarch64-linux-musl)
+    pg (1.6.3-x86_64-linux)
+    pg (1.6.3-x86_64-linux-musl)
     pp (0.6.2)
       prettyprint
     prettyprint (0.2.0)
@@ -316,10 +320,10 @@ GEM
     regexp_parser (2.10.0)
     reline (0.6.1)
       io-console (~> 0.5)
-    rexml (3.4.1)
     responders (3.1.1)
       actionpack (>= 5.2)
       railties (>= 5.2)
+    rexml (3.4.1)
     rubocop (1.72.2)
       json (~> 2.3)
       language_server-protocol (~> 3.17.0.2)
@@ -450,7 +454,7 @@ DEPENDENCIES
   omniauth-entra-id (~> 3.1)
   omniauth-rails_csrf_protection (~> 1.0)
   pagy (~> 9.3)
-  pg (~> 1.1)
+  pg (~> 1.6)
   propshaft
   puma (>= 5.0)
   rails (~> 8.0.2)

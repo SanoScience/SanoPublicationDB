@@ -10,11 +10,18 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_10_29_124019) do
+ActiveRecord::Schema[8.0].define(version: 2026_03_12_163622) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pg_trgm"
   enable_extension "unaccent"
+
+  create_table "authors", force: :cascade do |t|
+    t.string "first_name"
+    t.string "last_name"
+    t.string "collective_name"
+    t.string "title"
+  end
 
   create_table "conferences", force: :cascade do |t|
     t.string "name", null: false
@@ -65,6 +72,16 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_29_124019) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["publication_id"], name: "index_open_access_extensions_on_publication_id"
+  end
+
+  create_table "publication_authorships", force: :cascade do |t|
+    t.bigint "publication_id", null: false
+    t.bigint "author_id", null: false
+    t.integer "position", null: false
+    t.index ["author_id"], name: "index_publication_authorships_on_author_id"
+    t.index ["publication_id", "author_id"], name: "index_publication_authorships_on_publication_id_and_author_id", unique: true
+    t.index ["publication_id"], name: "index_publication_authorships_on_publication_id"
+    t.unique_constraint ["publication_id", "position"], deferrable: :deferred, name: "publication_authorships_publication_id_position_key"
   end
 
   create_table "publications", force: :cascade do |t|
@@ -122,6 +139,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_10_29_124019) do
   add_foreign_key "identifiers", "publications", on_delete: :cascade
   add_foreign_key "kpi_reporting_extensions", "publications", on_delete: :cascade
   add_foreign_key "open_access_extensions", "publications", on_delete: :cascade
+  add_foreign_key "publication_authorships", "authors", on_delete: :cascade
+  add_foreign_key "publication_authorships", "publications", on_delete: :cascade
   add_foreign_key "publications", "conferences", on_delete: :nullify
   add_foreign_key "publications", "journal_issues", on_delete: :nullify
   add_foreign_key "publications", "users", column: "owner_id", on_delete: :nullify

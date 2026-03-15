@@ -44,12 +44,30 @@
     </div>
   </div>
 
-  <%= form.input :author_list %>
-
   <%= form.input :publication_year, as: :integer, required: true %>
 
   <%= form.input :link %>
 
+  <hr>
+
+  <h3>Authors Section</h3>
+
+  <div class="publication-authorships d-grid gap-3"
+      data-controller="authorship-list">
+    <%= form.simple_fields_for :publication_authorships do |author_form| %>
+      <%= render 'publication_authorship_fields', f: author_form %>
+    <% end %>
+  </div>
+
+  <%= link_to_add_association "Add Author",
+      form,
+      :publication_authorships,
+      data: {
+        association_insertion_node: '.publication-authorships',
+        association_insertion_method: :append
+      },
+      class: "btn btn-secondary mt-3" %>
+  
   <hr>
 
   <h3> Research Groups Section </h3>

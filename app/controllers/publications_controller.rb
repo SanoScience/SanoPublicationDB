@@ -31,6 +31,8 @@ class PublicationsController < ApplicationController
   def new
     @publication = Publication.new
     @publication.research_group_publications.build
+
+    @publication.publication_authorships.build(position: 1)
     @publication.build_kpi_reporting_extension
   end
 
@@ -53,7 +55,7 @@ class PublicationsController < ApplicationController
   def edit; end
 
   def update
-    @publication.assign_attributes(publication_params)
+    @publication.assign_attributes(publication_params)    
     if current_user&.moderator? && @publication.kpi_reporting_extension.present?
       @publication.kpi_reporting_extension.skip_required_ui_validation = true
     end
@@ -100,6 +102,10 @@ class PublicationsController < ApplicationController
       :title, :category, :status, :author_list, :publication_year, :link,
       :conference_id, :journal_issue_id,
       research_group_publications_attributes: [ :id, :research_group_id, :is_primary, :_destroy ],
+      publication_authorships_attributes: [
+        :id, :author_id, :position, :_destroy,
+        { author_attributes: [ :id, :author_type, :title, :first_name, :last_name, :collective_name ] }
+      ],
       identifiers_attributes: [ :id, :category, :value, :_destroy ],
       repository_links_attributes: [ :id, :repository, :value, :_destroy ],
       kpi_reporting_extension_attributes: [ :id, :teaming_reporting_period, :invoice_number, :pbn, :jcr, :is_added_ft_portal, :is_checked, :is_new_method_technique, :is_methodology_application, :is_polish_med_researcher_involved, :is_peer_reviewed, :subsidy_points, :is_co_publication_with_partners, :_destroy ],

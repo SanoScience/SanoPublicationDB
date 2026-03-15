@@ -9,6 +9,8 @@ class Publication < ApplicationRecord
     has_many :repository_links, dependent: :destroy
     has_many :research_group_publications, dependent: :destroy
     has_many :research_groups, through: :research_group_publications, class_name: "ResearchGroup"
+    has_many :publication_authorships, -> { order(:position) }, dependent: :destroy
+    has_many :authors, through: :publication_authorships
     has_one :kpi_reporting_extension, dependent: :destroy
     has_one :open_access_extension, dependent: :destroy
 
@@ -19,6 +21,7 @@ class Publication < ApplicationRecord
     accepts_nested_attributes_for :open_access_extension, allow_destroy: true, reject_if: :all_blank
     accepts_nested_attributes_for :conference, allow_destroy: true, reject_if: :all_blank
     accepts_nested_attributes_for :journal_issue, allow_destroy: true, reject_if: :all_blank
+    accepts_nested_attributes_for :publication_authorships, allow_destroy: true, reject_if: :all_blank
 
     enum :category, {
       journal_article: 0,
@@ -37,7 +40,6 @@ class Publication < ApplicationRecord
     validates :title, presence: true
     validates :category, presence: true, inclusion: { in: categories.keys }
     validates :status, presence: true, inclusion: { in: statuses.keys }
-    validates :author_list, presence: true
     validates :publication_year,
               numericality: { only_integer: true, greater_than: 2000, less_than: Time.zone.today.year + 1 },
               allow_nil: true
@@ -47,6 +49,7 @@ class Publication < ApplicationRecord
                 presence: true,
                 numericality: { only_integer: true, greater_than: 2000, less_than: Time.zone.today.year + 1 }
       validates :kpi_reporting_extension, presence: true
+      validate :must_have_at_least_one_author
     end
 
     validates_associated :research_group_publications,
@@ -101,11 +104,26 @@ class Publication < ApplicationRecord
       parent.table[:category]
     end
 
-  def build_notification_payload
-    pub_changes = previous_changes.except("updated_at", "created_at", "id", "owner_id")
-    children_changes = _notification_changes&.dig(:children) || []
-    return if pub_changes.blank? && children_changes.blank?
+    def build_notification_payload
+      pub_changes = previous_changes.except("updated_at", "created_at", "id", "owner_id")
+      children_changes = _notification_changes&.dig(:children) || []
+      return if pub_changes.blank? && children_changes.blank?
 
-    { publication: pub_changes.presence, children: children_changes.presence }.compact
-  end
+      { publication: pub_changes.presence, children: children_changes.presence }.compact
+    end
+
+    def formatted_authors
+      return author_list if publication_authorships.blank?
+
+      publication_authorships.includes(:author).map do |authorship|
+        authorship.author.display_name
+      end.join(", ")
+    end
+
+    private
+
+    def must_have_at_least_one_author
+      remaining = publication_authorships.reject(&:marked_for_destruction?)
+      errors.add(:base, "At least one author is required") if remaining.blank?
+    end
 end

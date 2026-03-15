@@ -1,0 +1,115 @@
+<div class="nested-fields grid-item border rounded p-3"
+     data-authorship-list-target="item"
+     data-controller="authorship-source author-type">
+  <%= f.hidden_field :position, data: { authorship_list_target: "position" } %>
+
+  <div class="row">
+    <div class="col-md-8">
+      <%= f.label :author_id, "Author", class: "form-label" %>
+    </div>
+
+    <div class="col-md-4 d-flex justify-content-end gap-2">
+      <button type="button"
+              class="btn btn-outline-secondary btn-sm"
+              data-action="click->authorship-list#moveLeft">
+        ←
+      </button>
+
+      <button type="button"
+              class="btn btn-outline-secondary btn-sm"
+              data-action="click->authorship-list#moveRight">
+        →
+      </button>
+    </div>
+  </div>
+
+  <%
+    author_source_mode =
+      if f.object.author_id.present?
+        "existing"
+      elsif f.object.author&.persisted?
+        "new"
+      elsif f.object.author&.first_name.present? || f.object.author&.last_name.present? || f.object.author&.collective_name.present?
+        "new"
+      else
+        "existing"
+      end
+  %>
+
+  <div class="row">
+    <div class="col-md-12">
+      <%= label_tag nil, "Source", class: "form-label" %>
+      <select class="form-select"
+              data-authorship-source-target="mode"
+              data-action="change->authorship-source#toggle">
+        <option value="existing" <%= "selected" if author_source_mode == "existing" %>>
+          Select existing author
+        </option>
+        <option value="new" <%= "selected" if author_source_mode == "new" %>>
+          Add new author
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <div class="existing-author-block mt-3"
+       data-authorship-source-target="existingBlock">
+    <%= f.input :author_id,
+        collection: Author.order(:last_name, :first_name, :collective_name),
+        label_method: :display_name,
+        value_method: :id,
+        include_blank: "Select an author" %>
+  </div>
+
+  <div class="new-author-block mt-3"
+       data-authorship-source-target="newBlock">
+    <%= f.simple_fields_for :author, (f.object.author || f.object.build_author(author_type: "person")) do |author_form| %>
+      <div class="row">
+        <div class="col-md-12">
+          <%= author_form.input :author_type,
+              as: :select,
+              collection: [["Person", "person"], ["Collective author", "collective"]],
+              include_blank: false,
+              input_html: {
+                data: {
+                  action: "change->author-type#toggle",
+                  author_type_target: "select"
+                }
+              } %>
+        </div>
+      </div>
+
+      <div data-author-type-target="personFields">
+        <div class="row">
+          <div class="col-md-2">
+            <%= author_form.input :title, required: false %>
+          </div>
+
+          <div class="col-md-5">
+            <%= author_form.input :first_name,
+                required: true,
+                input_html: { data: { author_type_target: "firstName" } } %>
+          </div>
+
+          <div class="col-md-5">
+            <%= author_form.input :last_name,
+                required: true,
+                input_html: { data: { author_type_target: "lastName" } } %>
+          </div>
+        </div>
+      </div>
+
+      <div data-author-type-target="collectiveFields">
+        <div class="row">
+          <div class="col-md-12">
+            <%= author_form.input :collective_name,
+                required: true,
+                input_html: { data: { author_type_target: "collectiveName" } } %>
+          </div>
+        </div>
+      </div>
+    <% end %>
+  </div>
+
+  <%= link_to_remove_association "Delete", f, class: "btn btn-danger mt-3" %>
+</div>

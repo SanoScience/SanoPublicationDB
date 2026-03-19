@@ -116,4 +116,15 @@ class Api::StatisticsController < ActionController::API
         formatted_average = average_subsidy_points ? format("%.2f", average_subsidy_points) : 0
         render json: formatted_average
     end
+
+    def publications_by_year
+        publications_by_year = Publication
+                                .where.not(status: "submitted")
+                                .where.not(publication_year: nil)
+                                .group(:publication_year)
+                                .order(:publication_year)
+                                .count
+
+        render json: publications_by_year
+    end
 end

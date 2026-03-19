@@ -23,6 +23,7 @@ Rails.application.routes.draw do
     get "statistics/average_subsidy_points", to: "statistics#average_subsidy_points"
     get "statistics/conference_with_most_publications", to: "statistics#conference_with_most_publications"
     get "statistics/journal_with_most_publications", to: "statistics#journal_with_most_publications"
+    get "statistics/publications_by_year", to: "statistics#publications_by_year"
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

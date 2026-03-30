@@ -26,7 +26,8 @@
         data: { controller: "sort", action: "change->sort#submit" } %>
   </div>
   <div class="col-md-9 d-flex justify-content-end gap-3" data-controller="toggle-search">
-    <%= search_form_for @q, url: publications_path(back_params.except("q", "page")), method: :get do |f| %>
+    <%= search_form_for @q, url: publications_path(back_params(except: %w[q page])), method: :get do |f| %>
+      <%= hidden_field_tag :sort, params[:sort].presence || Authors::SortValidator.default_key %>
       <%= f.search_field :title_cont, class: "form-control search-field", placeholder: "Search publications by title" %>
     <% end %>
     <button class="btn btn-secondary" type="button" data-bs-toggle="collapse" data-bs-target="#searchForm" aria-expanded="false" aria-controls="searchForm">

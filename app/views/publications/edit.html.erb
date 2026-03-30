@@ -52,8 +52,8 @@
 
   <h3>Authors Section</h3>
 
-  <div class="publication-authorships d-grid gap-3"
-      data-controller="authorship-list">
+  <div class="publication-authorships authors-grid"
+     data-controller="authorship-list">
     <%= form.simple_fields_for :publication_authorships do |author_form| %>
       <%= render 'publication_authorship_fields', f: author_form %>
     <% end %>

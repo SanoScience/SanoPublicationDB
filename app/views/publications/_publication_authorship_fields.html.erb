@@ -8,7 +8,12 @@
       <%= f.label :author_id, "Author", class: "form-label" %>
     </div>
 
-    <div class="col-md-4 d-flex justify-content-end gap-2">
+    <div class="col-md-4 d-flex justify-content-end align-items-center gap-2">
+      <span class="small text-body-secondary"
+            data-authorship-list-target="positionLabel">
+        <%= f.object.position || "1" %>
+      </span>
+
       <button type="button"
               class="btn btn-outline-secondary btn-sm"
               data-action="click->authorship-list#moveLeft">
@@ -82,7 +87,9 @@
       <div data-author-type-target="personFields">
         <div class="row">
           <div class="col-md-2">
-            <%= author_form.input :title, required: false %>
+            <%= author_form.input :title, 
+                required: false,
+                input_html: { data: { author_type_target: "title" } } %>
           </div>
 
           <div class="col-md-5">

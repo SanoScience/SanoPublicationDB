@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="authorship-list"
 export default class extends Controller {
-  static targets = ["item"]
+  static targets = ["item", "position", "positionLabel"]
 
   connect() {
     this.$container = $(this.element)
@@ -50,8 +50,13 @@ export default class extends Controller {
 
   refreshPositions() {
     this.itemTargets.forEach((item, index) => {
+      const position = index + 1
+
       const input = item.querySelector('input[name*="[position]"]')
-      if (input) input.value = index + 1
+      if (input) input.value = position
+
+      const label = item.querySelector('[data-authorship-list-target="positionLabel"]')
+      if (label) label.textContent = position
     })
   }
 }

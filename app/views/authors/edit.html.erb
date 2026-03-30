@@ -1,0 +1,4 @@
+<!-- app/views/authors/edit.html.erb -->
+<%= turbo_frame_tag dom_id(@author, :details) do %>
+  <%= render "form", author: @author %>
+<% end %>

@@ -1,5 +1,7 @@
 class Publication < ApplicationRecord
     include UrlValidatable
+    include AuthorSearchSql
+
     validates_url_of :link
 
     belongs_to :journal_issue, optional: true
@@ -75,13 +77,26 @@ class Publication < ApplicationRecord
         .distinct
     }
 
+    scope :author_name_search, ->(term) do
+      next all if term.blank?
+
+      matching_ids = joins(:authors)
+        .where(
+          "#{normalized_author_name_sql('authors')} LIKE unaccent(lower(?))",
+          normalized_like_pattern(term)
+        )
+        .select(:id)
+
+        where(id: matching_ids)
+    end
+
     after_initialize do
       build_kpi_reporting_extension if new_record? && kpi_reporting_extension.nil?
     end
 
     def self.ransackable_attributes(auth_object = nil)
       [
-        "title", "category", "status", "author_list", "publication_year",
+        "title", "category", "status", "publication_year",
         "research_group_publications_research_group_id_in",
         "identifiers_type", "identifiers_value",
         "journal_issue_title_cont",
@@ -94,6 +109,10 @@ class Publication < ApplicationRecord
 
     def self.ransackable_associations(auth_object = nil)
         [ "research_group_publications", "identifiers", "conference", "journal_issue", "kpi_reporting_extension", "open_access_extension" ]
+    end
+
+    def self.ransackable_scopes(_auth_object = nil)
+      %i[author_name_search]
     end
 
     ransacker :status, formatter: proc { |v| statuses[v] } do |parent|

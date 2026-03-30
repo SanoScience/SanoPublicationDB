@@ -1,0 +1,88 @@
+<!-- app/views/authors/_form.html.erb -->
+<%= simple_form_for author,
+    url: author_path(author, back_params),
+    html: { class: "needs-validation" } do |form| %>
+
+  <div data-controller="author-type">
+    <div class="row align-items-center">
+      <div class="col-md-8">
+        <h2>Edit Author</h2>
+      </div>
+
+      <div class="col-md-4 d-flex justify-content-end gap-2">
+        <%= link_to "Cancel",
+            author_path(author, back_params),
+            class: "btn btn-outline-secondary",
+            data: { turbo_frame: dom_id(author, :details) } %>
+
+        <%= form.submit "Update Author", class: "btn btn-success" %>
+      </div>
+    </div>
+
+    <% if author.errors.any? %>
+      <div class="alert alert-danger mt-3">
+        <h2><%= pluralize(author.errors.count, "error") %> prohibited this author from being saved:</h2>
+        <ul>
+          <% author.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <hr>
+
+    <%= form.input :author_type,
+        collection: [["Person", "person"], ["Collective author", "collective"]],
+        include_blank: false,
+        selected: (author.collective? ? "collective" : "person"),
+        input_html: {
+          data: {
+            author_type_target: "select",
+            action: "change->author-type#toggle"
+          }
+        } %>
+
+    <div data-author-type-target="personFields"
+         class="<%= 'd-none' if author.collective? %>">
+      <div class="row">
+        <div class="col-md-4">
+          <%= form.input :title,
+              required: false,
+              input_html: {
+                data: { author_type_target: "title" }
+              } %>
+        </div>
+
+        <div class="col-md-4">
+          <%= form.input :first_name,
+              required: true,
+              input_html: {
+                data: { author_type_target: "firstName" }
+              } %>
+        </div>
+
+        <div class="col-md-4">
+          <%= form.input :last_name,
+              required: true,
+              input_html: {
+                data: { author_type_target: "lastName" }
+              } %>
+        </div>
+      </div>
+    </div>
+
+    <div data-author-type-target="collectiveFields"
+         class="<%= 'd-none' unless author.collective? %>">
+      <%= form.input :collective_name,
+          required: true,
+          input_html: {
+            data: { author_type_target: "collectiveName" }
+          } %>
+    </div>
+
+    <div class="text-muted small">
+      Fill either title / first name / last name for a person, or collective name for a collective author.
+    </div>
+  </div>
+<% end %>

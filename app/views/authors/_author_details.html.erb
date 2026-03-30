@@ -1,0 +1,66 @@
+<!-- app/views/authors/_author_details.html.erb -->
+<div class="row">
+  <% if user_signed_in? %>
+    <% if current_user.moderator? %>
+      <div class="col-md-10">
+        <h2><%= author.display_name %></h2>
+      </div>
+
+      <div class="col-md-2">
+        <div class="d-grid gap-2">
+          <%= link_to "Edit author",
+              edit_author_path(author, back_params),
+              class: "btn btn-primary",
+              data: { turbo_frame: dom_id(author, :details) } %>
+
+          <%= button_to "Delete", authors_path(@publication, back_params),
+              method: :delete,
+              data: { confirm: "Are you sure?" },
+              form: { class: "d-grid" },
+              class: "btn btn-danger" %>
+        </div>
+      </div>
+    <% else %>
+      <div class="col-md-12">
+        <h2><%= author.display_name %></h2>
+      </div>
+    <% end %>
+  <% else %>
+    <div class="col-md-12">
+      <h2><%= author.display_name %></h2>
+    </div>
+  <% end %>
+</div>
+
+<div class="d-flex gap-2 mb-3">
+  <strong>Type:</strong>
+  <%= author.collective? ? "Collective author" : "Person" %>
+</div>
+
+<% if author.collective? %>
+  <div class="d-flex gap-2 mb-3">
+    <strong>Collective name:</strong> <%= author.collective_name %>
+  </div>
+<% else %>
+  <% if author.title.present? %>
+    <div class="d-flex gap-2 mb-3">
+      <strong>Title:</strong> <%= author.title %>
+    </div>
+  <% end %>
+
+  <% if author.first_name.present? %>
+    <div class="d-flex gap-2 mb-3">
+      <strong>First name:</strong> <%= author.first_name %>
+    </div>
+  <% end %>
+
+  <% if author.last_name.present? %>
+    <div class="d-flex gap-2 mb-3">
+      <strong>Last name:</strong> <%= author.last_name %>
+    </div>
+  <% end %>
+<% end %>
+
+<div class="d-flex gap-2 mb-3">
+  <strong>Publications count:</strong> <%= author.publications.distinct.count %>
+</div>

@@ -1,0 +1,85 @@
+<!-- app/views/authors/index.html.erb -->
+<div class="row align-items-center mb-4">
+  <div class="col">
+    <h1 class="mb-0">Authors</h1>
+  </div>
+</div>
+
+<%= search_form_for @q, url: authors_path, method: :get do |f| %>
+  <div class="row mb-2">
+    <div class="col-md-3 d-flex justify-content-start gap-3 align-items-center">
+      <label for="sort_select" class="form-label mb-0 text-nowrap">Sort by</label>
+      <%= select_tag :sort,
+          options_for_select(
+            Authors::SortValidator.options.map { |key, label| [label, key] },
+            params[:sort].presence || Authors::SortValidator.default_key
+          ),
+          id: "sort_select",
+          class: "form-control",
+          data: { controller: "sort", action: "change->sort#submit" } %>
+    </div>
+
+    <div class="col-md-9 d-flex justify-content-end">
+      <div class="d-inline-flex gap-2">
+        <%= f.search_field :name_search,
+            class: "form-control search-field w-auto",
+            placeholder: "Search authors by name" %>
+
+        <%= f.select :author_type_filter,
+            [
+              ["All types", ""],
+              ["Person", "person"],
+              ["Collective author", "collective"]
+            ],
+            {},
+            class: "form-select w-auto" %>
+      </div>
+    </div>
+  </div>
+
+  <div class="row mb-0">
+    <div class="col-12 d-flex justify-content-between align-items-center">
+      <div>
+        <%== pagy_info(@pagy) %>
+      </div>
+
+      <div class="d-flex gap-2">
+        <%= link_to "Reset filters",
+            authors_path(back_params(except: %w[q page])),
+            class: "btn btn-secondary" %>
+
+        <%= f.submit "Search", class: "btn btn-primary" %>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<div class="author-list mt-4">
+  <% @authors.each do |author| %>
+    <div class="card mb-3 shadow-sm border border-light-subtle">
+      <div class="card-body">
+        <h5 class="card-title text-primary-emphasis mb-2">
+          <%= link_to author.display_name,
+              author_path(author, back_params),
+              class: "text-decoration-none" %>
+        </h5>
+
+        <p class="mb-1 text-body-secondary">
+          <strong>Type:</strong>
+          <%= author.collective? ? "Collective author" : "Person" %>
+        </p>
+
+        <p class="mb-1 text-body-secondary">
+          <strong>Publications:</strong>
+          <%= author.publications_count %>
+        </p>
+      </div>
+    </div>
+  <% end %>
+</div>
+
+<div class="row">
+  <div class="col-md-12 d-flex justify-content-center">
+    <%== pagy_bootstrap_nav(@pagy) %>
+  </div>
+</div>

@@ -2,7 +2,15 @@ import { Controller } from "@hotwired/stimulus"
 
 // Connects to data-controller="author-type"
 export default class extends Controller {
-  static targets = ["select", "personFields", "collectiveFields", "firstName", "lastName", "collectiveName"]
+  static targets = [
+    "select",
+    "personFields",
+    "collectiveFields",
+    "title",
+    "firstName",
+    "lastName",
+    "collectiveName"
+  ]
 
   connect() {
     this.toggle()
@@ -15,6 +23,10 @@ export default class extends Controller {
 
     this.personFieldsTarget.classList.toggle("d-none", !isPerson)
     this.collectiveFieldsTarget.classList.toggle("d-none", !isCollective)
+
+    if (this.hasTitleTarget) {
+      if (!isPerson) this.titleTarget.value = ""
+    }
 
     if (this.hasFirstNameTarget) {
       this.firstNameTarget.required = isPerson

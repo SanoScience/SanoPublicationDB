@@ -52,6 +52,8 @@ class Publication < ApplicationRecord
                 numericality: { only_integer: true, greater_than: 2000, less_than: Time.zone.today.year + 1 }
       validates :kpi_reporting_extension, presence: true
       validate :must_have_at_least_one_author
+      validate :publication_authorship_positions_must_be_unique
+      validate :publication_authorship_authors_must_be_unique
     end
 
     validates_associated :research_group_publications,
@@ -144,5 +146,87 @@ class Publication < ApplicationRecord
     def must_have_at_least_one_author
       remaining = publication_authorships.reject(&:marked_for_destruction?)
       errors.add(:base, "At least one author is required") if remaining.blank?
+    end
+
+    def publication_authorship_positions_must_be_unique 
+      remaining = publication_authorships.reject(&:marked_for_destruction?) 
+      positions = remaining.map(&:position).compact 
+      
+      return if positions.size == positions.uniq.size 
+      
+      errors.add(:base, "Author positions must be unique") 
+    end 
+    
+    def publication_authorship_authors_must_be_unique 
+      remaining = publication_authorships.reject(&:marked_for_destruction?)
+
+      seen_keys = {}
+
+      remaining.each do |authorship|
+        key = authorship_uniqueness_key(authorship)
+        next if key.blank?
+
+        if seen_keys[key]
+          errors.add(:base, "Authors must be unique within one publication")
+          authorship.errors.add(:author, "is duplicated within this publication")
+          next
+        end
+
+        seen_keys[key] = true
+
+        next if authorship.author_id.present?
+        next unless authorship.author.present?
+
+        if author_exists_in_database?(authorship.author)
+          authorship.errors.add(:author, "already exists")
+          errors.add(:base, "Such author already exists")
+        end
+      end
+    end
+
+    def authorship_uniqueness_key(authorship)
+      if authorship.author.present?
+        author_uniqueness_key(authorship.author)
+      elsif authorship.author_id.present?
+        existing_author = Author.find_by(id: authorship.author_id)
+        author_uniqueness_key(existing_author)
+      end
+    end
+
+    def author_uniqueness_key(author)
+      return if author.blank?
+
+      if author.collective?
+        collective_name = author.collective_name.to_s.strip.downcase
+        return if collective_name.blank?
+
+        "collective:#{collective_name}"
+      else
+        first_name = author.first_name.to_s.strip.downcase
+        last_name = author.last_name.to_s.strip.downcase
+        return if first_name.blank? || last_name.blank?
+
+        "person:#{first_name}|#{last_name}"
+      end
+    end
+
+    def author_exists_in_database?(author)
+      if author.collective?
+        collective_name = author.collective_name.to_s.strip.downcase
+        return false if collective_name.blank?
+
+        Author
+          .where("LOWER(COALESCE(collective_name, '')) = ?", collective_name)
+          .exists?
+      else
+        first_name = author.first_name.to_s.strip.downcase
+        last_name = author.last_name.to_s.strip.downcase
+        return false if first_name.blank? || last_name.blank?
+
+        Author
+          .where("LOWER(COALESCE(first_name, '')) = ?", first_name)
+          .where("LOWER(COALESCE(last_name, '')) = ?", last_name)
+          .exists?
+      end
     end
 end

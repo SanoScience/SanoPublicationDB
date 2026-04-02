@@ -60,7 +60,7 @@ class Author < ApplicationRecord
   end
 
   def self.ransackable_attributes(_auth_object = nil)
-    %w[first_name last_name collective_name title ]
+    %w[first_name last_name collective_name title]
   end
 
   def self.ransackable_associations(_auth_object = nil)
@@ -92,13 +92,5 @@ class Author < ApplicationRecord
     self.first_name = first_name.presence
     self.last_name = last_name.presence
     self.collective_name = collective_name.presence
-
-    if collective?
-      self.title = nil
-      self.first_name = nil
-      self.last_name = nil
-    else
-      self.collective_name = nil
-    end
   end
 end

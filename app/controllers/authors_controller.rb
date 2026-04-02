@@ -52,7 +52,7 @@ class AuthorsController < ApplicationController
     @author = Author.find(params[:id])
   end
 
-  def authorize_author_edit!
+  def authorize_moderator!
     redirect_to author_path(@author), alert: "You are not authorized to perform this action." unless current_user&.moderator?
   end
 

@@ -13,9 +13,9 @@
               class: "btn btn-primary",
               data: { turbo_frame: dom_id(author, :details) } %>
 
-          <%= button_to "Delete", authors_path(@publication, back_params),
+          <%= button_to "Delete", author_path(@author, back_params),
               method: :delete,
-              data: { confirm: "Are you sure?" },
+              data: { turbo: false, confirm: "Are you sure?" },
               form: { class: "d-grid" },
               class: "btn btn-danger" %>
         </div>

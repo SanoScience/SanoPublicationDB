@@ -44,10 +44,11 @@ class Api::StatisticsController < ActionController::API
 
     def publications_by_research_groups_count
         counts = ResearchGroupPublication
-                   .joins(:research_group, :publication)
-                   .merge(Publication.where.not(status: "submitted"))
-                   .group("research_groups.name")
-                   .count
+                    .joins(:research_group, :publication)
+                    .where(is_primary: true)
+                    .where.not(publications: { status: Publication.statuses[:submitted] })
+                    .group("research_groups.name")
+                    .count
 
         render json: counts
     end

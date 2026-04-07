@@ -18,10 +18,10 @@ module AuthorSearchSql
                 "concat_ws",
                 [
                   Arel::Nodes.build_quoted(" "),
-                  Arel::Nodes::NamedFunction.new("coalesce", [table[:title], Arel::Nodes.build_quoted("")]),
-                  Arel::Nodes::NamedFunction.new("coalesce", [table[:first_name], Arel::Nodes.build_quoted("")]),
-                  Arel::Nodes::NamedFunction.new("coalesce", [table[:last_name], Arel::Nodes.build_quoted("")]),
-                  Arel::Nodes::NamedFunction.new("coalesce", [table[:collective_name], Arel::Nodes.build_quoted("")])
+                  Arel::Nodes::NamedFunction.new("coalesce", [ table[:title], Arel::Nodes.build_quoted("") ]),
+                  Arel::Nodes::NamedFunction.new("coalesce", [ table[:first_name], Arel::Nodes.build_quoted("") ]),
+                  Arel::Nodes::NamedFunction.new("coalesce", [ table[:last_name], Arel::Nodes.build_quoted("") ]),
+                  Arel::Nodes::NamedFunction.new("coalesce", [ table[:collective_name], Arel::Nodes.build_quoted("") ])
                 ]
               )
             ]
@@ -36,7 +36,7 @@ module AuthorSearchSql
         [
           Arel::Nodes::NamedFunction.new(
             "lower",
-            [Arel::Nodes.build_quoted(normalized_like_pattern(term))]
+            [ Arel::Nodes.build_quoted(normalized_like_pattern(term)) ]
           )
         ]
       )

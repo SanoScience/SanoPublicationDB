@@ -26,10 +26,8 @@ class Author < ApplicationRecord
   scope :name_search, ->(term) do
     next all if term.blank?
 
-    where(
-      "#{normalized_author_name_sql('authors')} LIKE unaccent(lower(?))",
-      normalized_like_pattern(term)
-    )
+    table = arel_table
+    where(author_name_expression(table).matches(normalized_pattern_node(term)))
   end
 
   scope :author_type_filter, ->(type) do

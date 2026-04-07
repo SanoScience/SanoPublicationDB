@@ -3,19 +3,43 @@ module AuthorSearchSql
   extend ActiveSupport::Concern
 
   class_methods do
-    def normalized_author_name_sql(table_name = "authors")
-      <<~SQL.squish
-        unaccent(lower(concat_ws(' ',
-          #{table_name}.title,
-          #{table_name}.first_name,
-          #{table_name}.last_name,
-          #{table_name}.collective_name
-        )))
-      SQL
+    def normalized_like_pattern(term)
+      "%#{term.to_s.strip.downcase.gsub(/[[:space:]]+/, " ")}%"
     end
 
-    def normalized_like_pattern(term)
-      "%#{ApplicationRecord.sanitize_sql_like(term.to_s.strip)}%"
+    def author_name_expression(table)
+      Arel::Nodes::NamedFunction.new(
+        "unaccent",
+        [
+          Arel::Nodes::NamedFunction.new(
+            "lower",
+            [
+              Arel::Nodes::NamedFunction.new(
+                "concat_ws",
+                [
+                  Arel::Nodes.build_quoted(" "),
+                  Arel::Nodes::NamedFunction.new("coalesce", [table[:title], Arel::Nodes.build_quoted("")]),
+                  Arel::Nodes::NamedFunction.new("coalesce", [table[:first_name], Arel::Nodes.build_quoted("")]),
+                  Arel::Nodes::NamedFunction.new("coalesce", [table[:last_name], Arel::Nodes.build_quoted("")]),
+                  Arel::Nodes::NamedFunction.new("coalesce", [table[:collective_name], Arel::Nodes.build_quoted("")])
+                ]
+              )
+            ]
+          )
+        ]
+      )
+    end
+
+    def normalized_pattern_node(term)
+      Arel::Nodes::NamedFunction.new(
+        "unaccent",
+        [
+          Arel::Nodes::NamedFunction.new(
+            "lower",
+            [Arel::Nodes.build_quoted(normalized_like_pattern(term))]
+          )
+        ]
+      )
     end
   end
 end

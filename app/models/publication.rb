@@ -82,14 +82,13 @@ class Publication < ApplicationRecord
     scope :author_name_search, ->(term) do
       next all if term.blank?
 
+      authors_table = Author.arel_table
+
       matching_ids = joins(:authors)
-        .where(
-          "#{normalized_author_name_sql('authors')} LIKE unaccent(lower(?))",
-          normalized_like_pattern(term)
-        )
+        .where(author_name_expression(authors_table).matches(normalized_pattern_node(term)))
         .select(:id)
 
-        where(id: matching_ids)
+      where(id: matching_ids)
     end
 
     after_initialize do

@@ -55,7 +55,7 @@ class PublicationsController < ApplicationController
   def edit; end
 
   def update
-    @publication.assign_attributes(publication_params)    
+    @publication.assign_attributes(publication_params)
     if current_user&.moderator? && @publication.kpi_reporting_extension.present?
       @publication.kpi_reporting_extension.skip_required_ui_validation = true
     end

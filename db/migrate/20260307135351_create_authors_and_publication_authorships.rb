@@ -13,7 +13,7 @@ class CreateAuthorsAndPublicationAuthorships < ActiveRecord::Migration[8.0]
       t.integer :position, null: false
     end
 
-    add_index :publication_authorships, [:publication_id, :position], unique: true
-    add_index :publication_authorships, [:publication_id, :author_id], unique: true
+    add_index :publication_authorships, [ :publication_id, :position ], unique: true
+    add_index :publication_authorships, [ :publication_id, :author_id ], unique: true
   end
 end

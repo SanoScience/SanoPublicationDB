@@ -35,9 +35,9 @@ class Author < ApplicationRecord
   scope :author_type_filter, ->(type) do
     case type.to_s
     when "person"
-      where(collective_name: [nil, ""])
+      where(collective_name: [ nil, "" ])
     when "collective"
-      where.not(collective_name: [nil, ""])
+      where.not(collective_name: [ nil, "" ])
     else
       all
     end
@@ -52,7 +52,7 @@ class Author < ApplicationRecord
   end
 
   def display_name
-    collective? ? collective_name : [title, first_name, last_name].reject(&:blank?).join(" ")
+    collective? ? collective_name : [ title, first_name, last_name ].reject(&:blank?).join(" ")
   end
 
   def publications_count

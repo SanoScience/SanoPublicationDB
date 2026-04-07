@@ -71,12 +71,12 @@ class AuthorTest < ActiveSupport::TestCase
     assert_equal "Test Team", authors(:collective).display_name
   end
 
-    test "person? and collective? reflect inferred type from stored fields" do 
-    assert authors(:person).person? 
-    assert_not authors(:person).collective? 
-    
-    assert authors(:collective).collective? 
-    assert_not authors(:collective).person? 
+    test "person? and collective? reflect inferred type from stored fields" do
+    assert authors(:person).person?
+    assert_not authors(:person).collective?
+
+    assert authors(:collective).collective?
+    assert_not authors(:collective).person?
   end
 
   test "normalize_author_fields converts blank strings to nil" do
@@ -109,46 +109,46 @@ class AuthorTest < ActiveSupport::TestCase
   end
 
   test "name_search ignores accents" do
-    accent_author = Author.create!( 
+    accent_author = Author.create!(
       author_type: "person",
-      first_name: "José", 
-      last_name: "Alvarez" 
-    ) 
-    
-    result = Author.name_search("jose") 
+      first_name: "José",
+      last_name: "Alvarez"
+    )
+
+    result = Author.name_search("jose")
     assert_includes result, accent_author
   end
 
-  test "author_type_filter returns only person authors" do 
-    result = Author.author_type_filter("person") 
-    assert_includes result, authors(:person) 
-    assert_not_includes result, authors(:collective) 
-  end 
-  
-  test "author_type_filter returns only collective authors" do 
-    result = Author.author_type_filter("collective") 
-    assert_includes result, authors(:collective) 
-    assert_not_includes result, authors(:person) 
-  end 
-  
-  test "author_type_filter returns all for blank type" do 
-    result = Author.author_type_filter("") 
-    assert_includes result, authors(:person) 
-    assert_includes result, authors(:collective) 
-  end 
-  
-  test "publications_count falls back to associated publications count" do 
+  test "author_type_filter returns only person authors" do
+    result = Author.author_type_filter("person")
+    assert_includes result, authors(:person)
+    assert_not_includes result, authors(:collective)
+  end
+
+  test "author_type_filter returns only collective authors" do
+    result = Author.author_type_filter("collective")
+    assert_includes result, authors(:collective)
+    assert_not_includes result, authors(:person)
+  end
+
+  test "author_type_filter returns all for blank type" do
+    result = Author.author_type_filter("")
+    assert_includes result, authors(:person)
+    assert_includes result, authors(:collective)
+  end
+
+  test "publications_count falls back to associated publications count" do
     author = authors(:person)
-    assert_equal author.publications.size, author.publications_count 
-  end 
-  
-  test "publications_count uses selected alias when present" do 
-    author = Author 
-      .left_joins(:publication_authorships) 
-      .select("authors.*, COUNT(DISTINCT publication_authorships.publication_id) AS publications_count") 
-      .group("authors.id") 
-      .find(authors(:person).id) 
-      
-    assert_equal author.publications.size, author.publications_count 
+    assert_equal author.publications.size, author.publications_count
+  end
+
+  test "publications_count uses selected alias when present" do
+    author = Author
+      .left_joins(:publication_authorships)
+      .select("authors.*, COUNT(DISTINCT publication_authorships.publication_id) AS publications_count")
+      .group("authors.id")
+      .find(authors(:person).id)
+
+    assert_equal author.publications.size, author.publications_count
   end
 end

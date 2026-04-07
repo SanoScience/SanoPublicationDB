@@ -148,16 +148,16 @@ class Publication < ApplicationRecord
       errors.add(:base, "At least one author is required") if remaining.blank?
     end
 
-    def publication_authorship_positions_must_be_unique 
-      remaining = publication_authorships.reject(&:marked_for_destruction?) 
-      positions = remaining.map(&:position).compact 
-      
-      return if positions.size == positions.uniq.size 
-      
-      errors.add(:base, "Author positions must be unique") 
-    end 
-    
-    def publication_authorship_authors_must_be_unique 
+    def publication_authorship_positions_must_be_unique
+      remaining = publication_authorships.reject(&:marked_for_destruction?)
+      positions = remaining.map(&:position).compact
+
+      return if positions.size == positions.uniq.size
+
+      errors.add(:base, "Author positions must be unique")
+    end
+
+    def publication_authorship_authors_must_be_unique
       remaining = publication_authorships.reject(&:marked_for_destruction?)
 
       seen_keys = {}

@@ -32,7 +32,7 @@ class AuthorsFlowTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_includes response.body, authors(:person).display_name
-    
+
     author.publications.each do |publication|
       assert_select "a[href='#{publication_path(publication)}']", text: publication.title
     end

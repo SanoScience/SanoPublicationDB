@@ -132,11 +132,11 @@ namespace :data do
           end
 
           collectives << normalize_collective_tail(matched)
-          s = [before, after].reject(&:blank?).join(", ")
+          s = [ before, after ].reject(&:blank?).join(", ")
           s = normalize(s)
         end
 
-        [normalize(s), collectives.reject(&:blank?)]
+        [ normalize(s), collectives.reject(&:blank?) ]
       end
 
       def compact_initial_surname?(token)
@@ -220,7 +220,7 @@ namespace :data do
 
           if one_word_fragment?(current)
             if nxt.blank?
-              return [:review, { reason: "dangling_single_word_fragment", parsed_tokens: tokens + [current] }]
+              return [ :review, { reason: "dangling_single_word_fragment", parsed_tokens: tokens + [ current ] } ]
             end
 
             merged = "#{current}, #{nxt}"
@@ -233,7 +233,7 @@ namespace :data do
           i += 1
         end
 
-        [:ok, tokens]
+        [ :ok, tokens ]
       end
 
       def extract_title_prefix(token)
@@ -244,7 +244,7 @@ namespace :data do
           title_parts << parts.shift
         end
 
-        [normalize_spacing(title_parts.join(" ")), normalize_spacing(parts.join(" "))]
+        [ normalize_spacing(title_parts.join(" ")), normalize_spacing(parts.join(" ")) ]
       end
 
       def last_name_start_index(parts)
@@ -267,47 +267,47 @@ namespace :data do
         t = normalize_spacing(token)
 
         match = t.match(/\A(?<initials>[\p{L}]{1,3})\.(?<surname>[\p{L}\-'.]+)\z/u)
-        return [:review, { reason: "bad_compact_initial_token", raw: token }] unless match
+        return [ :review, { reason: "bad_compact_initial_token", raw: token } ] unless match
 
         initials = "#{match[:initials]}."
         surname = match[:surname]
 
-        [:person, {
+        [ :person, {
           first_name: initials,
           last_name: surname,
           title: nil,
           raw: token
-        }]
+        } ]
       end
 
       def parse_initial_surname(token)
         t = normalize_spacing(token)
         parts = words(t)
 
-        return [:review, { reason: "bad_initial_surname_token", raw: token }] if parts.length < 2
+        return [ :review, { reason: "bad_initial_surname_token", raw: token } ] if parts.length < 2
 
         first_name = parts[0...-1].join(" ")
         last_name  = parts[-1]
 
-        return [:review, { reason: "bad_initial_surname_token", raw: token }] if first_name.blank? || last_name.blank?
+        return [ :review, { reason: "bad_initial_surname_token", raw: token } ] if first_name.blank? || last_name.blank?
 
-        [:person, {
+        [ :person, {
           first_name: first_name,
           last_name: last_name,
           title: nil,
           raw: token
-        }]
+        } ]
       end
 
       def parse_inverted_person(token)
         left, right = token.split(",", 2).map { |x| normalize_spacing(x) }
-        return [:review, { reason: "bad_inverted_token", raw: token }] if left.blank? || right.blank?
+        return [ :review, { reason: "bad_inverted_token", raw: token } ] if left.blank? || right.blank?
 
         title, given_part = extract_title_prefix(right)
         given_words = words(given_part)
         surname_words = words(left)
 
-        return [:review, { reason: "missing_name_part", raw: token }] if given_words.empty? || surname_words.empty?
+        return [ :review, { reason: "missing_name_part", raw: token } ] if given_words.empty? || surname_words.empty?
 
         if given_words.length >= 2 && particle?(given_words.last)
           surname_words.unshift(given_words.pop)
@@ -316,46 +316,46 @@ namespace :data do
         first_name = normalize_spacing(given_words.join(" "))
         last_name  = normalize_spacing(surname_words.join(" "))
 
-        return [:review, { reason: "missing_name_part", raw: token }] if first_name.blank? || last_name.blank?
+        return [ :review, { reason: "missing_name_part", raw: token } ] if first_name.blank? || last_name.blank?
 
-        [:person, {
+        [ :person, {
           first_name: first_name,
           last_name: last_name,
           title: title.presence,
           raw: token
-        }]
+        } ]
       end
 
       def parse_normal_person(token)
         title, body = extract_title_prefix(token)
         parts = words(body)
 
-        return [:review, { reason: "too_few_parts", raw: token }] if parts.length < 2
+        return [ :review, { reason: "too_few_parts", raw: token } ] if parts.length < 2
 
         split_index = last_name_start_index(parts)
-        return [:review, { reason: "cannot_find_last_name", raw: token }] if split_index <= 0
+        return [ :review, { reason: "cannot_find_last_name", raw: token } ] if split_index <= 0
 
         first_name = normalize_spacing(parts[0...split_index].join(" "))
         last_name  = normalize_spacing(parts[split_index..].join(" "))
 
-        return [:review, { reason: "missing_name_part", raw: token }] if first_name.blank? || last_name.blank?
+        return [ :review, { reason: "missing_name_part", raw: token } ] if first_name.blank? || last_name.blank?
 
-        [:person, {
+        [ :person, {
           first_name: first_name,
           last_name: last_name,
           title: title.presence,
           raw: token
-        }]
+        } ]
       end
 
       def parse_token(token)
         token = normalize_spacing(token)
 
-        return [:review, { reason: "blank_token", raw: token }] if token.blank?
-        return [:review, { reason: "suspicious_token", raw: token }] if suspicious_token?(token)
+        return [ :review, { reason: "blank_token", raw: token } ] if token.blank?
+        return [ :review, { reason: "suspicious_token", raw: token } ] if suspicious_token?(token)
 
         if looks_like_collective?(token) || truncation_collective_token?(token)
-          return [:collective, { collective_name: normalize_collective_tail(token), raw: token }]
+          return [ :collective, { collective_name: normalize_collective_tail(token), raw: token } ]
         end
 
         if compact_initial_surname?(token)
@@ -467,7 +467,7 @@ namespace :data do
 
         case status
         when :person, :collective
-          parsed_authors << [status, payload]
+          parsed_authors << [ status, payload ]
         when :review
           row_failed = true
           row_reason = payload[:reason]
@@ -653,7 +653,7 @@ namespace :data do
     FileUtils.mkdir_p(review_csv_path.dirname)
 
     CSV.open(review_csv_path, "w", headers: true) do |csv|
-      csv << ["publication_id", "reason", "author_list", "parsed_tokens"]
+      csv << [ "publication_id", "reason", "author_list", "parsed_tokens" ]
 
       review_rows.each do |row|
         csv << [

@@ -53,28 +53,28 @@ class AuthorsAuthorizationTest < ActionDispatch::IntegrationTest
     assert_response :success
   end
 
-  test "moderator can update author" do 
-    sign_in users(:moderator) 
-    author = authors(:person) 
-    publication = publications(:pub1) 
+  test "moderator can update author" do
+    sign_in users(:moderator)
+    author = authors(:person)
+    publication = publications(:pub1)
 
-    assert_includes publication.reload.formatted_authors, "John" 
-    
-    patch author_path(author), params: { 
-        author: { 
-            author_type: "person", 
-            title: "Dr.", 
-            first_name: "Jack", 
-            last_name: "Doe" 
-        } 
-    } 
-    
-    assert_response :redirect 
-    assert_redirected_to author_path(author) 
-    assert_equal "Jack", author.reload.first_name 
-    assert_equal "Dr. Jack Doe", author.display_name 
-    assert_includes publication.reload.formatted_authors, "Jack" 
-    assert_not_includes publication.reload.formatted_authors, "John Doe" 
+    assert_includes publication.reload.formatted_authors, "John"
+
+    patch author_path(author), params: {
+        author: {
+            author_type: "person",
+            title: "Dr.",
+            first_name: "Jack",
+            last_name: "Doe"
+        }
+    }
+
+    assert_response :redirect
+    assert_redirected_to author_path(author)
+    assert_equal "Jack", author.reload.first_name
+    assert_equal "Dr. Jack Doe", author.display_name
+    assert_includes publication.reload.formatted_authors, "Jack"
+    assert_not_includes publication.reload.formatted_authors, "John Doe"
   end
 
   test "moderator destroys author and removes related authorships" do

@@ -8,7 +8,9 @@ Rails.application.routes.draw do
 
   resources :research_groups, only: [ :index, :new, :create, :edit, :update, :destroy ]
 
-  resources :authors, only: [ :index, :show, :edit, :update, :destroy ]
+  resources :authors, only: [ :index, :show, :edit, :update, :destroy ] do
+    post :merge, on: :member
+  end
 
   namespace :api, defaults: { format: :json } do
     get "statistics/publications_count", to: "statistics#publications_count"

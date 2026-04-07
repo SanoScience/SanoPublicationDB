@@ -1,8 +1,8 @@
 # app/controllers/authors_controller.rb
 class AuthorsController < ApplicationController
-  before_action :set_author, only: %i[show edit update destroy]
-  before_action :authenticate_user!, only: %i[edit update destroy]
-  before_action :authorize_moderator!, only: %i[edit update destroy]
+  before_action :set_author, only: %i[show edit update destroy merge]
+  before_action :authenticate_user!, only: %i[edit update destroy merge]
+  before_action :authorize_moderator!, only: %i[edit update destroy merge]
 
   def index
     @q = Author.ransack(params[:q])
@@ -44,6 +44,36 @@ class AuthorsController < ApplicationController
   def destroy
     @author.destroy
     redirect_to authors_path(back_params), notice: "Author was successfully deleted."
+  end
+
+  def merge
+    target_author = Author.find(params[:target_author_id])
+
+    if target_author.id == @author.id
+      redirect_to author_path(@author, back_params), alert: "You must select a different author."
+      return
+    end
+
+    ActiveRecord::Base.transaction do
+      @author.publication_authorships.order(:position).each do |authorship|
+        existing_target_authorship = PublicationAuthorship.find_by(
+          publication_id: authorship.publication_id,
+          author_id: target_author.id
+        )
+
+        if existing_target_authorship
+          authorship.destroy!
+        else
+          authorship.update!(author: target_author)
+        end
+      end
+
+      @author.destroy!
+    end
+
+    redirect_to author_path(target_author, back_params), notice: "Authorships were successfully moved."
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotDestroyed => e
+    redirect_to author_path(@author, back_params), alert: "Could not move authorships: #{e.message}"
   end
 
   private

@@ -92,6 +92,12 @@ class PublicationsConferencePolicyTest < ActionDispatch::IntegrationTest
                     status: "submitted",
                     author_list: "John Doe",
                     publication_year: Time.zone.today.year,
+                    publication_authorships_attributes: {
+                        "0" => {
+                            position: 1,
+                            author_id: authors(:person).id
+                        }
+                    },
                     conference_id: conference.id,
                     conference_attributes: {
                     id: conference.id,
@@ -143,6 +149,12 @@ class PublicationsConferencePolicyTest < ActionDispatch::IntegrationTest
             status: "submitted",
             author_list: "John Doe",
             publication_year: Time.zone.today.year,
+            publication_authorships_attributes: {
+                "0" => {
+                    position: 1,
+                    author_id: authors(:person).id
+                }
+            },
             kpi_reporting_extension_attributes: {
                 is_new_method_technique: false,
                 is_methodology_application: false,

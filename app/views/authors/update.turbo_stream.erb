@@ -1,0 +1,6 @@
+<!-- app/views/authors/update.turbo_stream.erb -->
+<%= turbo_stream.replace dom_id(@author, :details) do %>
+  <%= turbo_frame_tag dom_id(@author, :details) do %>
+    <%= render "author_details", author: @author %>
+  <% end %>
+<% end %>

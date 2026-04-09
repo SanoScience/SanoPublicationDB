@@ -1,0 +1,9 @@
+person_pub1_authorship:
+  author: person
+  publication: pub1
+  position: 1
+
+person_pub_no_jour_authorship:
+  publication: pub_no_conf_jour
+  author: person
+  position: 1

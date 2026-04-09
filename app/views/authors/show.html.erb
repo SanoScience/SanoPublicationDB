@@ -1,0 +1,56 @@
+<!-- app/views/authors/show.html.erb -->
+<div class="mb-3">
+  <%= link_to authors_path(back_params),
+      class: "text-decoration-none text-muted small d-inline-flex align-items-center gap-1 fs-6" do %>
+    <i class="bi bi-arrow-left"></i> Back
+  <% end %>
+</div>
+
+<%= turbo_frame_tag dom_id(@author, :details) do %>
+  <%= render "author_details", author: @author %>
+<% end %>
+
+<hr>
+
+<h4>Publications</h4>
+
+<% if @publications.any? %>
+    <div class="publication-list mt-4">
+    <% @publications.each do |publication| %>
+        <div class="card mb-3 shadow-sm border border-light-subtle">
+            <div class="card-body">
+                <h5 class="card-title text-primary-emphasis mb-2">
+                    <%= link_to publication.title, publication_path(publication, back_params), class: "text-decoration-none" %>
+                </h5>
+
+                <div class="d-flex flex-wrap gap-2 mb-2">
+                    <% status_class = case publication.status
+                        when "submitted" then "bg-warning text-dark"
+                        when "accepted"  then "bg-info text-dark"
+                        when "printed"   then "bg-success text-white"
+                        else "bg-secondary text-white"
+                    end %>
+                    <span class="badge <%= status_class %> px-2 py-1 fs-6">
+                        <%= publication.status.humanize %>
+                    </span>
+
+                    <span class="badge bg-light text-dark border px-2 py-1 fs-6">
+                        <%= publication.category.humanize %>
+                    </span>
+                </div>
+
+                <p class="mb-1 text-body-secondary">
+                    <strong>Authors:</strong> <%= publication.formatted_authors %>
+                </p>
+
+                <p class="mb-1 text-body-secondary">
+                    <strong>Research groups:</strong> 
+                    <%= publication.research_group_publications.map { |rg| rg.research_group.name }.join(', ') %>
+                </p>
+            </div>
+        </div>
+    <% end %>
+    </div>
+<% else %>
+  <p class="text-muted">This author has no publications yet.</p>
+<% end %>

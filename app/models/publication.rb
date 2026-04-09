@@ -1,5 +1,7 @@
 class Publication < ApplicationRecord
     include UrlValidatable
+    include AuthorSearchSql
+
     validates_url_of :link
 
     belongs_to :journal_issue, optional: true
@@ -9,6 +11,8 @@ class Publication < ApplicationRecord
     has_many :repository_links, dependent: :destroy
     has_many :research_group_publications, dependent: :destroy
     has_many :research_groups, through: :research_group_publications, class_name: "ResearchGroup"
+    has_many :publication_authorships, -> { order(:position) }, dependent: :destroy
+    has_many :authors, through: :publication_authorships
     has_one :kpi_reporting_extension, dependent: :destroy
     has_one :open_access_extension, dependent: :destroy
 
@@ -19,6 +23,7 @@ class Publication < ApplicationRecord
     accepts_nested_attributes_for :open_access_extension, allow_destroy: true, reject_if: :all_blank
     accepts_nested_attributes_for :conference, allow_destroy: true, reject_if: :all_blank
     accepts_nested_attributes_for :journal_issue, allow_destroy: true, reject_if: :all_blank
+    accepts_nested_attributes_for :publication_authorships, allow_destroy: true, reject_if: :all_blank
 
     enum :category, {
       journal_article: 0,
@@ -37,7 +42,6 @@ class Publication < ApplicationRecord
     validates :title, presence: true
     validates :category, presence: true, inclusion: { in: categories.keys }
     validates :status, presence: true, inclusion: { in: statuses.keys }
-    validates :author_list, presence: true
     validates :publication_year,
               numericality: { only_integer: true, greater_than: 2000, less_than: Time.zone.today.year + 1 },
               allow_nil: true
@@ -47,6 +51,9 @@ class Publication < ApplicationRecord
                 presence: true,
                 numericality: { only_integer: true, greater_than: 2000, less_than: Time.zone.today.year + 1 }
       validates :kpi_reporting_extension, presence: true
+      validate :must_have_at_least_one_author
+      validate :publication_authorship_positions_must_be_unique
+      validate :publication_authorship_authors_must_be_unique
     end
 
     validates_associated :research_group_publications,
@@ -72,13 +79,25 @@ class Publication < ApplicationRecord
         .distinct
     }
 
+    scope :author_name_search, ->(term) do
+      next all if term.blank?
+
+      authors_table = Author.arel_table
+
+      matching_ids = joins(:authors)
+        .where(author_name_expression(authors_table).matches(normalized_pattern_node(term)))
+        .select(:id)
+
+      where(id: matching_ids)
+    end
+
     after_initialize do
       build_kpi_reporting_extension if new_record? && kpi_reporting_extension.nil?
     end
 
     def self.ransackable_attributes(auth_object = nil)
       [
-        "title", "category", "status", "author_list", "publication_year",
+        "title", "category", "status", "publication_year",
         "research_group_publications_research_group_id_in",
         "identifiers_type", "identifiers_value",
         "journal_issue_title_cont",
@@ -93,6 +112,10 @@ class Publication < ApplicationRecord
         [ "research_group_publications", "identifiers", "conference", "journal_issue", "kpi_reporting_extension", "open_access_extension" ]
     end
 
+    def self.ransackable_scopes(_auth_object = nil)
+      %i[author_name_search]
+    end
+
     ransacker :status, formatter: proc { |v| statuses[v] } do |parent|
       parent.table[:status]
     end
@@ -101,11 +124,108 @@ class Publication < ApplicationRecord
       parent.table[:category]
     end
 
-  def build_notification_payload
-    pub_changes = previous_changes.except("updated_at", "created_at", "id", "owner_id")
-    children_changes = _notification_changes&.dig(:children) || []
-    return if pub_changes.blank? && children_changes.blank?
+    def build_notification_payload
+      pub_changes = previous_changes.except("updated_at", "created_at", "id", "owner_id")
+      children_changes = _notification_changes&.dig(:children) || []
+      return if pub_changes.blank? && children_changes.blank?
 
-    { publication: pub_changes.presence, children: children_changes.presence }.compact
-  end
+      { publication: pub_changes.presence, children: children_changes.presence }.compact
+    end
+
+    def formatted_authors
+      return author_list if publication_authorships.blank?
+
+      publication_authorships.includes(:author).map do |authorship|
+        authorship.author.display_name
+      end.join(", ")
+    end
+
+    private
+
+    def must_have_at_least_one_author
+      remaining = publication_authorships.reject(&:marked_for_destruction?)
+      errors.add(:base, "At least one author is required") if remaining.blank?
+    end
+
+    def publication_authorship_positions_must_be_unique
+      remaining = publication_authorships.reject(&:marked_for_destruction?)
+      positions = remaining.map(&:position).compact
+
+      return if positions.size == positions.uniq.size
+
+      errors.add(:base, "Author positions must be unique")
+    end
+
+    def publication_authorship_authors_must_be_unique
+      remaining = publication_authorships.reject(&:marked_for_destruction?)
+
+      seen_keys = {}
+
+      remaining.each do |authorship|
+        key = authorship_uniqueness_key(authorship)
+        next if key.blank?
+
+        if seen_keys[key]
+          errors.add(:base, "Authors must be unique within one publication")
+          authorship.errors.add(:author, "is duplicated within this publication")
+          next
+        end
+
+        seen_keys[key] = true
+
+        next if authorship.author_id.present?
+        next unless authorship.author.present?
+
+        if author_exists_in_database?(authorship.author)
+          authorship.errors.add(:author, "already exists")
+          errors.add(:base, "Such author already exists")
+        end
+      end
+    end
+
+    def authorship_uniqueness_key(authorship)
+      if authorship.author.present?
+        author_uniqueness_key(authorship.author)
+      elsif authorship.author_id.present?
+        existing_author = Author.find_by(id: authorship.author_id)
+        author_uniqueness_key(existing_author)
+      end
+    end
+
+    def author_uniqueness_key(author)
+      return if author.blank?
+
+      if author.collective?
+        collective_name = author.collective_name.to_s.strip.downcase
+        return if collective_name.blank?
+
+        "collective:#{collective_name}"
+      else
+        first_name = author.first_name.to_s.strip.downcase
+        last_name = author.last_name.to_s.strip.downcase
+        return if first_name.blank? || last_name.blank?
+
+        "person:#{first_name}|#{last_name}"
+      end
+    end
+
+    def author_exists_in_database?(author)
+      if author.collective?
+        collective_name = author.collective_name.to_s.strip.downcase
+        return false if collective_name.blank?
+
+        Author
+          .where("LOWER(COALESCE(collective_name, '')) = ?", collective_name)
+          .exists?
+      else
+        first_name = author.first_name.to_s.strip.downcase
+        last_name = author.last_name.to_s.strip.downcase
+        return false if first_name.blank? || last_name.blank?
+
+        Author
+          .where("LOWER(COALESCE(first_name, '')) = ?", first_name)
+          .where("LOWER(COALESCE(last_name, '')) = ?", last_name)
+          .exists?
+      end
+    end
 end

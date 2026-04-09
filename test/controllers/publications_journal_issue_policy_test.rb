@@ -10,6 +10,8 @@ class PublicationsJournalIssuePolicyTest < ActionDispatch::IntegrationTest
 
     @jour1 = journal_issues(:jour1)
     @jour2 = journal_issues(:jour2)
+
+    @author = authors(:person)
   end
 
   test "unlinking journal issue from publication does not delete journal issue" do
@@ -105,6 +107,13 @@ class PublicationsJournalIssuePolicyTest < ActionDispatch::IntegrationTest
           author_list: "John Doe",
           publication_year: Time.zone.today.year,
 
+          publication_authorships_attributes: {
+            "0" => {
+              position: 1,
+              author_id: @author.id
+            }
+          },
+
           journal_issue_id: @jour1.id,
           journal_issue_attributes: {
             id: @jour1.id,
@@ -139,6 +148,13 @@ class PublicationsJournalIssuePolicyTest < ActionDispatch::IntegrationTest
             status: "submitted",
             author_list: "John Doe",
             publication_year: Time.zone.today.year,
+
+            publication_authorships_attributes: {
+              "0" => {
+                position: 1,
+                author_id: @author.id
+              }
+            },
 
             journal_issue_id: "",
             journal_issue_attributes: {

@@ -7,6 +7,16 @@
     <span>PubDB</span>
   <% end %>
 
+  <div class="d-flex align-items-center gap-3 ms-4">
+    <%= link_to "Publications",
+        publications_path,
+        class: "nav-link text-muted py-0" %>
+    
+    <%= link_to "Authors",
+        authors_path,
+        class: "nav-link text-muted py-0" %>
+  </div>
+
   <div class="ms-auto">
     <% if user_signed_in? %>
       <div class="d-flex align-items-center gap-3">

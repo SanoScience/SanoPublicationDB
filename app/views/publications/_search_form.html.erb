@@ -1,5 +1,6 @@
 <div class="card p-4 mb-4">
   <%= search_form_for query, url: publications_path, method: :get do |f| %>
+    <%= hidden_field_tag :sort, params[:sort].presence || Authors::SortValidator.default_key %>
     <h5 class="mb-3">General information</h5>
     <div class="row mb-3">
       <div class="col-md-12">
@@ -9,7 +10,9 @@
 
     <div class="row mb-3">
       <div class="col-md-6">
-        <%= f.search_field :author_list_ucont, class: "form-control", placeholder: "Authors" %>
+        <%= f.search_field :author_name_search,
+            class: "form-control",
+            placeholder: "Authors" %>
       </div>
 
       <div class="col-md-6">

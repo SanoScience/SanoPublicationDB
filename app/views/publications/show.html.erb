@@ -46,8 +46,38 @@
     </span>
 </div>
 
-<div class="d-flex gap-2 mb-3">
-    <strong>Authors:</strong> <%= @publication.author_list %>
+<div class="mb-4">
+  <strong class="d-block mb-3">Authors</strong>
+
+  <div class="row g-3">
+    <% @publication.publication_authorships.each do |authorship| %>
+      <% author = authorship.author %>
+      <% author_type_class = author.collective? ? "bg-info-subtle text-info-emphasis" : "bg-light text-dark border" %>
+
+      <div class="col-md-4 col-lg-3">
+        <%= link_to author_path(author),
+            class: "text-decoration-none text-reset d-block h-100" do %>
+          <div class="card h-100 shadow-sm border border-light-subtle">
+            <div class="card-body">
+              <div class="d-flex justify-content-between align-items-start mb-2">
+                <div class="fw-semibold me-2">
+                  <%= author.display_name %>
+                </div>
+
+                <span class="small text-muted">
+                  <%= authorship.position %>
+                </span>
+              </div>
+
+              <span class="badge <%= author_type_class %> px-2 py-1">
+                <%= author.collective? ? "Collective" : "Person" %>
+              </span>
+            </div>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
 </div>
 
 <% if @publication.publication_year.present? %>

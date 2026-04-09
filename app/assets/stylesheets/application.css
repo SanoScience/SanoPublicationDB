@@ -16,3 +16,15 @@
 .tooltip-content.opacity-100{ opacity:1; }
 .tooltip-content.scale-95{ transform:scale(.95); }
 .tooltip-content.scale-100{ transform:scale(1); }
+
+.authors-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: 1fr 1fr;
+}
+
+@media (max-width: 992px) {
+  .authors-grid {
+    grid-template-columns: 1fr;
+  }
+}

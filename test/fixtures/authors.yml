@@ -1,0 +1,7 @@
+person:
+  first_name: John
+  last_name: Doe
+  title: Dr.
+
+collective:
+  collective_name: Test Team

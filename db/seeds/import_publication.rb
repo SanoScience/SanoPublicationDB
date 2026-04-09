@@ -56,7 +56,7 @@ def import_publications(file_path)
     publication.assign_attributes(
       category: category,
       status: status,
-      author_list: authors,
+      author_list: authors, # TODO: change to new author format
       publication_year: (Integer(row['Year of publication']) rescue nil),
       link: (valid_url.call(row['Link']&.strip) ? row['Link']&.strip : nil)
     )

@@ -90,7 +90,6 @@ class PublicationsConferencePolicyTest < ActionDispatch::IntegrationTest
                     title: "Pub with edited conf",
                     category: "journal_article",
                     status: "submitted",
-                    author_list: "John Doe",
                     publication_year: Time.zone.today.year,
                     publication_authorships_attributes: {
                         "0" => {
@@ -147,7 +146,6 @@ class PublicationsConferencePolicyTest < ActionDispatch::IntegrationTest
             title: "Pub",
             category: "journal_article",
             status: "submitted",
-            author_list: "John Doe",
             publication_year: Time.zone.today.year,
             publication_authorships_attributes: {
                 "0" => {

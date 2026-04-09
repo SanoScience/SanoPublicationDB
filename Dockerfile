@@ -74,11 +74,15 @@ RUN apt-get update -qq && \
 COPY bin/cron /rails/bin/cron
 RUN chmod +x /rails/bin/cron
 
+ARG APP_UID=1000
+ARG APP_GID=1000
+
 # Run and own only the runtime files as a non-root user for security
-RUN groupadd --system --gid 1000 rails && \
-    useradd rails --uid 1000 --gid 1000 --create-home --shell /bin/bash && \
-    chown -R rails:rails db log storage tmp
-USER 1000:1000
+RUN groupadd --gid ${APP_GID} rails && \
+    useradd rails --uid ${APP_UID} --gid ${APP_GID} --create-home --shell /bin/bash && \
+    mkdir -p /rails/backups && \
+    chown -R rails:rails db log storage tmp /rails/backups
+USER ${APP_UID}:${APP_GID}
 
 # Entrypoint prepares the database.
 ENTRYPOINT ["/rails/bin/docker-entrypoint"]

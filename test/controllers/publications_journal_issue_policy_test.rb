@@ -104,7 +104,6 @@ class PublicationsJournalIssuePolicyTest < ActionDispatch::IntegrationTest
           title: "Pub with edited journal issue",
           category: "journal_article",
           status: "submitted",
-          author_list: "John Doe",
           publication_year: Time.zone.today.year,
 
           publication_authorships_attributes: {
@@ -146,7 +145,6 @@ class PublicationsJournalIssuePolicyTest < ActionDispatch::IntegrationTest
             title: "Pub with new journal issue",
             category: "journal_article",
             status: "submitted",
-            author_list: "John Doe",
             publication_year: Time.zone.today.year,
 
             publication_authorships_attributes: {

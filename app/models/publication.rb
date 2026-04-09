@@ -133,8 +133,6 @@ class Publication < ApplicationRecord
     end
 
     def formatted_authors
-      return author_list if publication_authorships.blank?
-
       publication_authorships.includes(:author).map do |authorship|
         authorship.author.display_name
       end.join(", ")

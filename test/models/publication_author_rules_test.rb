@@ -8,7 +8,6 @@ class PublicationAuthorRulesTest < ActiveSupport::TestCase
       title: "Test publication",
       category: :journal_article,
       status: :submitted,
-      author_list: "John Doe",
       publication_year: Time.zone.today.year,
       link: "https://example.com"
     )

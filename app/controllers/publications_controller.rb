@@ -99,7 +99,7 @@ class PublicationsController < ApplicationController
     scrub_foreign_destroy_flags(raw)
 
     permitted = raw.permit(
-      :title, :category, :status, :author_list, :publication_year, :link,
+      :title, :category, :status, :publication_year, :link,
       :conference_id, :journal_issue_id,
       research_group_publications_attributes: [ :id, :research_group_id, :is_primary, :_destroy ],
       publication_authorships_attributes: [

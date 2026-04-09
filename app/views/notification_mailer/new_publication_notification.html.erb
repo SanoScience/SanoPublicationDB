@@ -3,6 +3,6 @@
 <br>
 <p><strong>Title:</strong> <%= @publication.title %></p>
 <p><strong>Creator:</strong> <%= @publication.owner.email %></p>
-<p><strong>Authors:</strong> <%= @publication.author_list %></p>
+<p><strong>Authors:</strong> <%= @publication.formatted_authors %></p>
 <br>
 <p>Go to the <%= link_to "publication", publication_url(@publication) %></p>

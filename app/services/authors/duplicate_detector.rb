@@ -24,19 +24,19 @@ module Authors
 
     def initialize(config: nil)
         base_threshold = env_float("DUPLICATE_DETECTOR_BASE_THRESHOLD", 0.93)
-        default_processes = [Etc.nprocessors - 1, 1].max
+        default_processes = [ Etc.nprocessors - 1, 1 ].max
 
         @config = {
             person_person_threshold: base_threshold,
             person_collective_threshold: base_threshold - 0.01,
             collective_collective_threshold: base_threshold,
             token_threshold: base_threshold - 0.02,
-            very_strong_token_match: [base_threshold + 0.04, 1.0].min,
-            probable_token_typo_match: [base_threshold - 0.13, 0.0].max,
+            very_strong_token_match: [ base_threshold + 0.04, 1.0 ].min,
+            probable_token_typo_match: [ base_threshold - 0.13, 0.0 ].max,
             strong_full_name_match: base_threshold - 0.03,
             short_token_exact_only_len: env_int("DUPLICATE_DETECTOR_SHORT_TOKEN_EXACT_ONLY_LEN", 2),
-            parallel_processes: [env_int("PARALLEL_PROCESSES", default_processes), 1].max,
-            slice_size: [env_int("DUPLICATE_DETECTOR_SLICE_SIZE", 50), 1].max
+            parallel_processes: [ env_int("PARALLEL_PROCESSES", default_processes), 1 ].max,
+            slice_size: [ env_int("DUPLICATE_DETECTOR_SLICE_SIZE", 50), 1 ].max
         }
     end
 
@@ -52,7 +52,7 @@ module Authors
 
           ((left_index + 1)...records.size).each do |right_index|
             right = records[right_index]
-            pairs << [left.id, right.id] if match_pair(left, right)
+            pairs << [ left.id, right.id ] if match_pair(left, right)
           end
         end
 
@@ -141,7 +141,7 @@ module Authors
       direct = similarity(left.normalized_collective_name, right.normalized_collective_name)
       compact_score = similarity(left.compact_collective_name, right.compact_collective_name)
 
-      [direct, compact_score].max >= @config[:collective_collective_threshold]
+      [ direct, compact_score ].max >= @config[:collective_collective_threshold]
     end
 
     def person_collective_match?(left, right)
@@ -169,7 +169,7 @@ module Authors
         collective.collective_tokens.any? { |token| token_similarity(token, person.first_name) >= @config[:token_threshold] } &&
         collective.collective_tokens.any? { |token| token_similarity(token, person.last_name) >= @config[:token_threshold] }
 
-      best_full = (full_scores + reversed_scores + [first_score, last_score]).max || 0.0
+      best_full = (full_scores + reversed_scores + [ first_score, last_score ]).max || 0.0
 
       best_full >= @config[:person_collective_threshold] || contains_person_tokens
     end
@@ -199,7 +199,7 @@ module Authors
       adjacency.keys.each do |author_id|
         next if visited.include?(author_id)
 
-        stack = [author_id]
+        stack = [ author_id ]
         ids = []
 
         until stack.empty?
@@ -224,15 +224,15 @@ module Authors
 
     def person_variants_for(author)
       [
-        normalize([author.first_name, author.last_name].compact.join(" ")),
-        normalize([author.title, author.first_name, author.last_name].compact.join(" "))
+        normalize([ author.first_name, author.last_name ].compact.join(" ")),
+        normalize([ author.title, author.first_name, author.last_name ].compact.join(" "))
       ].reject(&:blank?).uniq
     end
 
     def reversed_person_variants_for(author)
       [
-        normalize([author.last_name, author.first_name].compact.join(" ")),
-        normalize([author.last_name, author.first_name, author.title].compact.join(" "))
+        normalize([ author.last_name, author.first_name ].compact.join(" ")),
+        normalize([ author.last_name, author.first_name, author.title ].compact.join(" "))
       ].reject(&:blank?).uniq
     end
 
@@ -254,7 +254,7 @@ module Authors
     def token_similarity(left, right)
       return 0.0 if left.blank? || right.blank?
 
-      if [left.length, right.length].min <= @config[:short_token_exact_only_len]
+      if [ left.length, right.length ].min <= @config[:short_token_exact_only_len]
         return left == right ? 1.0 : 0.0
       end
 

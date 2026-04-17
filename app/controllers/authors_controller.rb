@@ -19,10 +19,13 @@ class AuthorsController < ApplicationController
   end
 
   def show
+    sort_param = params[:sort].presence || Publications::SortValidator.default_key
+    order = Publications::SortValidator.safe_order(sort_param) || Publications::SortValidator.default_order
+
     @publications = @author.publications
                            .includes(:conference, :journal_issue)
                            .distinct
-                           .order(publication_year: :desc, title: :asc)
+                           .reorder(order)
   end
 
   def edit; end

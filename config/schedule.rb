@@ -17,3 +17,7 @@ end
 every 3.days, at: "18:10" do
     command "azcopy sync #{path}/backups/ \"$AZCOPY_LINK\""
 end
+
+every :monday, at: "09:00" do
+  rake "authors:report_duplicates"
+end

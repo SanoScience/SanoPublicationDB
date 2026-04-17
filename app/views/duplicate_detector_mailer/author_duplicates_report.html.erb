@@ -1,0 +1,20 @@
+<h1>Suspected duplicate authors found</h1>
+
+<p>
+  Found <strong><%= @groups.count %></strong> duplicate group(s).
+</p>
+
+<% @groups.each_with_index do |group, index| %>
+  <hr>
+  <h2>Group <%= index + 1 %></h2>
+
+  <ul>
+    <% group.authors.each do |author| %>
+      <li>
+        <strong><%= link_to author.display_name, author_url(author) %></strong>
+        — Type: <%= author.collective? ? "Collective author" : "Person" %>
+        — Publications: <%= author.publications.count %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>

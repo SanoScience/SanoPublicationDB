@@ -87,3 +87,7 @@ gem "arel_extensions"
 gem "caxlsx"
 
 gem "caxlsx_rails"
+
+gem "jaro_winkler", "~> 1.7"
+
+gem "parallel", "~> 1.26"

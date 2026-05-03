@@ -8,6 +8,7 @@ class AuthorsController < ApplicationController
     @q = Author.ransack(params[:q])
 
     base_scope = @q.result
+                    .where("authors.collective_name IS NULL OR TRIM(authors.collective_name) <> ?", "...")
                     .left_joins(:publication_authorships)
                     .select("authors.*, COUNT(DISTINCT publication_authorships.publication_id) AS publications_count")
                     .group("authors.id")

@@ -52,8 +52,8 @@ class Author < ApplicationRecord
   def display_name
     return collective_name if collective?
 
-    name = [last_name, first_name].reject(&:blank?).join(", ")
-    [title, name].reject(&:blank?).join(" ")
+    name = [ last_name, first_name ].reject(&:blank?).join(", ")
+    [ title, name ].reject(&:blank?).join(" ")
   end
 
   def publications_count

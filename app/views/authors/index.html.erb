@@ -17,6 +17,14 @@
           id: "sort_select",
           class: "form-control",
           data: { controller: "sort", action: "change->sort#submit" } %>
+      
+      <button type="button"
+        data-controller="tooltip"
+        data-tooltip-content="Sorting by surname or first name also applies to collective author names."
+        class="btn btn-outline-secondary btn-sm rounded-circle p-0 flex-shrink-0"
+        style="width:20px;height:20px;line-height:18px;text-decoration:none;">
+        ?
+      </button>
     </div>
 
     <div class="col-md-9 d-flex justify-content-end">

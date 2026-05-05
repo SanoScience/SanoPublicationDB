@@ -50,7 +50,27 @@
 
   <hr>
 
-  <h3>Authors Section</h3>
+  <h3 class="d-flex align-items-center gap-2">
+    Authors Section
+
+    <button type="button"
+            class="btn btn-outline-secondary btn-sm rounded-circle p-0"
+            style="width:20px;height:20px;line-height:18px;text-decoration:none;"
+            data-bs-toggle="collapse"
+            data-bs-target="#authors-help"
+            aria-expanded="false"
+            aria-controls="authors-help">
+      ?
+    </button>
+  </h3>
+
+  <div id="authors-help" class="collapse">
+    <div class="text-muted small mt-1 mb-2">
+      Select publication authors from the existing list. You can search by typing a surname while the list is open.
+      If an author is not available, use “Add new author” and choose either a person or a collective author, such as a consortium, initiative, or team.
+      If a publication includes many non-Sano person authors and you do not want to add them one by one, select the placeholder author “...”.
+    </div>
+  </div>
 
   <div class="publication-authorships authors-grid"
      data-controller="authorship-list">

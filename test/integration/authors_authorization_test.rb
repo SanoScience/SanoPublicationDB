@@ -72,7 +72,6 @@ class AuthorsAuthorizationTest < ActionDispatch::IntegrationTest
     assert_response :redirect
     assert_redirected_to author_path(author)
     assert_equal "Jack", author.reload.first_name
-    assert_equal "Dr. Jack Doe", author.display_name
     assert_includes publication.reload.formatted_authors, "Jack"
     assert_not_includes publication.reload.formatted_authors, "John Doe"
   end

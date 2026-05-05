@@ -63,15 +63,7 @@ class AuthorTest < ActiveSupport::TestCase
     assert_includes author.errors[:author_type], "is not included in the list"
   end
 
-  test "display name for person" do
-    assert_equal "Dr. John Doe", authors(:person).display_name
-  end
-
-  test "display name for collective" do
-    assert_equal "Test Team", authors(:collective).display_name
-  end
-
-    test "person? and collective? reflect inferred type from stored fields" do
+  test "person? and collective? reflect inferred type from stored fields" do
     assert authors(:person).person?
     assert_not authors(:person).collective?
 

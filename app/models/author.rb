@@ -49,10 +49,15 @@ class Author < ApplicationRecord
     resolved_author_type == "collective"
   end
 
-  def display_name
+  def display_name(inverted: true)
     return collective_name if collective?
+    
+    if inverted
+      name = [ last_name, first_name ].reject(&:blank?).join(", ")
+    else
+      name = [ first_name, last_name ].reject(&:blank?).join(" ")
+    end
 
-    name = [ last_name, first_name ].reject(&:blank?).join(", ")
     [ title, name ].reject(&:blank?).join(" ")
   end
 

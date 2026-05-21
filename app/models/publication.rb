@@ -132,10 +132,12 @@ class Publication < ApplicationRecord
       { publication: pub_changes.presence, children: children_changes.presence }.compact
     end
 
-    def formatted_authors
+    def formatted_authors(inverted: true)
+      separator = inverted ? "; " : ", "
+
       publication_authorships.includes(:author).map do |authorship|
-        authorship.author.display_name
-      end.join(", ")
+        authorship.author.display_name(inverted:)
+      end.join(separator)
     end
 
     private

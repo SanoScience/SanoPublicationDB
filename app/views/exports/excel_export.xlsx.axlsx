@@ -61,7 +61,7 @@ wb.add_worksheet(name: "Publications") do |sheet|
       pub.title,
       pub.category,
       pub.status,
-      pub.author_list,
+      pub.formatted_authors,
       pub.publication_year,
       pub.link,
       pub.owner&.email || "imported",

@@ -44,10 +44,11 @@ class Api::StatisticsController < ActionController::API
 
     def publications_by_research_groups_count
         counts = ResearchGroupPublication
-                   .joins(:research_group, :publication)
-                   .merge(Publication.where.not(status: "submitted"))
-                   .group("research_groups.name")
-                   .count
+                    .joins(:research_group, :publication)
+                    .where(is_primary: true)
+                    .where.not(publications: { status: Publication.statuses[:submitted] })
+                    .group("research_groups.name")
+                    .count
 
         render json: counts
     end
@@ -115,5 +116,16 @@ class Api::StatisticsController < ActionController::API
                                       .average(:subsidy_points)
         formatted_average = average_subsidy_points ? format("%.2f", average_subsidy_points) : 0
         render json: formatted_average
+    end
+
+    def publications_by_year
+        publications_by_year = Publication
+                                .where.not(status: "submitted")
+                                .where.not(publication_year: nil)
+                                .group(:publication_year)
+                                .order(:publication_year)
+                                .count
+
+        render json: publications_by_year
     end
 end

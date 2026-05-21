@@ -51,7 +51,7 @@ class Author < ApplicationRecord
 
   def display_name(inverted: true)
     return collective_name if collective?
-    
+
     if inverted
       name = [ last_name, first_name ].reject(&:blank?).join(", ")
     else

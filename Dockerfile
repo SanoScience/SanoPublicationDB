@@ -58,10 +58,15 @@ FROM base
 COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /rails /rails
 
-# --- Cron for scheduler container ---
-# Install cron in the final image so we can run a dedicated scheduler service
+# --- Cron + AzCopy for scheduler container ---
+# Install cron and AzCopy in the final image so we can run a dedicated scheduler service
 RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y cron && \
+    apt-get install --no-install-recommends -y cron curl ca-certificates gnupg && \
+    curl -sSL -O https://packages.microsoft.com/config/debian/12/packages-microsoft-prod.deb && \
+    dpkg -i packages-microsoft-prod.deb && \
+    rm packages-microsoft-prod.deb && \
+    apt-get update -qq && \
+    apt-get install --no-install-recommends -y azcopy && \
     rm -rf /var/lib/apt/lists /var/cache/apt/archives
 
 # Add a small cron launcher (used only by the scheduler service)

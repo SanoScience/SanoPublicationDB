@@ -21,7 +21,8 @@ ENV_KEYS = %w[
 ].freeze
 
 ENV_KEYS.each do |key|
-  env key.to_sym, ENV[key] if ENV[key].present?
+  value = ENV[key].to_s
+  env key.to_sym, value unless value.empty?
 end
 
 every 3.days, at: "18:00" do

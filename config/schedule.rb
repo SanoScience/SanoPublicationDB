@@ -2,13 +2,27 @@
 # if you want to change this, you can do it by editing the schedule.rb file
 
 set :output, "#{path}/log/cron.log"
-env :PATH, ENV["PATH"]
-env :BUNDLE_PATH, ENV["BUNDLE_PATH"] if ENV["BUNDLE_PATH"]
-env :BUNDLE_APP_CONFIG, ENV["BUNDLE_APP_CONFIG"] if ENV["BUNDLE_APP_CONFIG"]
-env :BUNDLE_DEPLOYMENT, ENV["BUNDLE_DEPLOYMENT"] if ENV["BUNDLE_DEPLOYMENT"]
-env :BUNDLE_WITHOUT, ENV["BUNDLE_WITHOUT"] if ENV["BUNDLE_WITHOUT"]
-env :PUBDB_DATABASE_PASSWORD, ENV["PUBDB_DATABASE_PASSWORD"]
-env :AZCOPY_LINK, ENV["AZCOPY_LINK"]
+
+ENV_KEYS = %w[
+  PATH
+  RAILS_ENV
+  BUNDLE_PATH
+  BUNDLE_APP_CONFIG
+  BUNDLE_DEPLOYMENT
+  BUNDLE_WITHOUT
+  RAILS_MASTER_KEY
+  SECRET_KEY_BASE
+  PUBDB_DATABASE_HOST
+  PUBDB_DATABASE_USERNAME
+  PUBDB_DATABASE_PASSWORD
+  OUTLOOK_USERNAME
+  OUTLOOK_PASSWORD
+  AZCOPY_LINK
+].freeze
+
+ENV_KEYS.each do |key|
+  env key.to_sym, ENV[key] if ENV[key].present?
+end
 
 every 3.days, at: "18:00" do
     command "cd #{path}/backups && ls -1t *.dump | tail -n +16 | xargs -r rm --"

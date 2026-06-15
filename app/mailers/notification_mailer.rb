@@ -4,13 +4,12 @@ class NotificationMailer < ApplicationMailer
 
     def new_publication_notification(publication)
         @publication = publication
-        moderator_emails = User.where(role: :moderator).pluck(:email)
-
-        return if moderator_emails.empty?
+        recipients = moderator_emails
+        return if recipients.empty?
 
         mail(
-            to: moderator_emails,
-            subject: "New publication has been created: #{@publication.title}"
+            to: recipients,
+            subject: "[PubDB] New publication has been created: #{@publication.title}"
         )
     end
 
@@ -19,12 +18,12 @@ class NotificationMailer < ApplicationMailer
         @user = user
         @changes = sanitize_changes(changes_hash)
 
-        moderator_emails = User.where(role: :moderator).pluck(:email)
-        return if moderator_emails.empty? || @changes.blank?
+        recipients = moderator_emails
+        return if recipients.empty? || @changes.blank?
 
         mail(
-            to: moderator_emails,
-            subject: "Publication has been updated: #{@publication.title}"
+            to: recipients,
+            subject: "[PubDB] Publication has been updated: #{@publication.title}"
         )
     end
 

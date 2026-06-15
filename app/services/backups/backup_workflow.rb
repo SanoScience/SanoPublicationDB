@@ -31,6 +31,9 @@ module Backups
       stage = :cleanup
       deleted_files = cleanup_old_backups!
 
+      finished_at = Time.current
+      write_success_marker!(finished_at)
+
       result = Result.new(
         backup: backup,
         deleted_files: deleted_files,
@@ -40,9 +43,6 @@ module Backups
 
       stage = :success_email
       BackupMailer.backup_success(result)&.deliver_now!
-
-      finished_at = Time.current
-      write_success_marker!(finished_at)
 
       result
     rescue => e

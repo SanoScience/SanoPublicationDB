@@ -57,7 +57,12 @@ module Backups
       raise "AZCOPY_LINK is not set" if link.blank?
 
       backup_dir = Rails.root.join("backups").to_s
-      ok = system("azcopy", "sync", "#{backup_dir}/", link)
+      ok = system(
+        "azcopy", "sync",
+        "#{backup_dir}/",
+        link,
+        "--include-pattern", "*.dump"
+      )
       raise "azcopy sync failed (exit #{$?.exitstatus})" unless ok && $?.success?
     end
 
@@ -74,7 +79,7 @@ module Backups
     end
 
     def write_success_marker!(time)
-      marker = Rails.root.join("tmp", "last_backup_success_at")
+      marker = Rails.root.join("backups", "last_backup_success_at")
       FileUtils.mkdir_p(marker.dirname)
       File.write(marker, time.to_i.to_s)
     end

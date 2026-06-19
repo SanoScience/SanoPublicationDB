@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-START_FILE="/rails/tmp/backup_monitor_started_at"
-SUCCESS_FILE="/rails/tmp/last_backup_success_at"
+START_FILE="/rails/backups/backup_monitor_started_at"
+SUCCESS_FILE="/rails/backups/last_backup_success_at"
 BACKUP_INTERVAL="${BACKUP_INTERVAL:-3}" # 3 days by default
 INTERVAL_SECONDS=$(( BACKUP_INTERVAL * 60 * 60 * 24 ))
 MAX_AGE_SECONDS=$(( INTERVAL_SECONDS + INTERVAL_SECONDS / 3 )) # backup max age is 4/3 of its interval

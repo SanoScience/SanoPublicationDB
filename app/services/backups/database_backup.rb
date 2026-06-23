@@ -39,7 +39,7 @@ module Backups
         "--no-owner", "--no-privileges",
         "--host", host
       ]
-      args += ["--username", user] if user.present?
+      args += [ "--username", user ] if user.present?
       args << db
 
       File.open(outfile, "wb") do |f|

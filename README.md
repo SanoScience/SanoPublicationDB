@@ -6,6 +6,8 @@ for taking track of Sano's researchers publications and providing statistics of 
 
 The application provides a RESTful API for accessing publication statistics. All API endpoints return JSON responses.
 
+Unless stated otherwise, publication-based statistics exclude publications with status `submitted`.
+
 ### Base URL
 
 ```
@@ -21,29 +23,30 @@ The application provides a RESTful API for accessing publication statistics. All
 | `/publications_count` | Total number of publications | Integer |
 | `/publications_by_category_count` | Count of publications by category | Object with category keys and count values |
 | `/publications_by_status_count` | Count of publications by status | Object with status keys and count values |
-| `/publications_by_research_groups_count` | Count of publications by research group | Object with research group keys and count values |
+| `/publications_by_research_groups_count` | Count of primary publications by research group | Object with research group keys and count values |
+| `/publications_by_year` | Count of publications by publication year | Object with year keys and count values |
 
 #### Journal Statistics
 
 | Endpoint | Description | Response Format |
 |----------|-------------|-----------------|
-| `/journals_count` | Total number of journals | Integer |
-| `/journal_with_most_publications` | Journal with the highest number of publications | Journal object with publication_count |
-| `/average_impact_factor` | Average impact factor across all journals | Float |
+| `/journals_count` | Total number of journal issues with at least one publication | Integer |
+| `/journal_with_most_publications` | Journal issue with the highest number of publications | JournalIssue object with `publication_count` |
+| `/average_impact_factor` | Average impact factor across journal issues linked to publications | String (formatted to 2 decimal places) or Integer `0` |
 
 #### Conference Statistics
 
 | Endpoint | Description | Response Format |
 |----------|-------------|-----------------|
-| `/conferences_count` | Total number of conferences | Integer |
-| `/conference_with_most_publications` | Conference with the highest number of publications | Conference object with publication_count |
+| `/conferences_count` | Total number of conferences with at least one publication | Integer |
+| `/conference_with_most_publications` | Conference with the highest number of publications | Conference object with `publication_count` |
 
 #### Open Access Statistics
 
 | Endpoint | Description | Response Format |
 |----------|-------------|-----------------|
 | `/open_access_publications_count` | Total number of open access publications | Integer |
-| `/open_access_publications_percentage` | Percentage of publications that are open access | Float (0-100) |
+| `/open_access_publications_percentage` | Percentage of publications that are open access | String (formatted to 2 decimal places, 0-100) |
 | `/green_open_access_publications_count` | Count of green open access publications | Integer |
 | `/gold_open_access_publications_count` | Count of gold open access publications | Integer |
 
@@ -51,7 +54,7 @@ The application provides a RESTful API for accessing publication statistics. All
 
 | Endpoint | Description | Response Format |
 |----------|-------------|-----------------|
-| `/average_subsidy_points` | Average subsidy points across publications | String (formatted to 5 decimal places) |
+| `/average_subsidy_points` | Average subsidy points across publications | String (formatted to 2 decimal places) or Integer `0` |
 
 ### Example Usage
 

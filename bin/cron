@@ -1,4 +1,17 @@
 #!/usr/bin/env bash
 set -euo pipefail
-su -s /bin/bash -c 'bundle exec whenever --update-crontab pubdb --user rails' rails
+
+mkdir -p /rails/backups
+chown -R rails:rails /rails/backups
+
+su -s /bin/bash -c '
+  set -euo pipefail
+
+  if [[ ! -f /rails/backups/backup_monitor_started_at ]]; then
+    date +%s > /rails/backups/backup_monitor_started_at
+  fi
+
+  bundle exec whenever --update-crontab pubdb --user rails
+' rails
+
 exec cron -f

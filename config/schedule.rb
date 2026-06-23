@@ -1,5 +1,5 @@
-# by default backups database every 3 days at 18:00 and deletes old backups after 15 days
-# if you want to change this, you can do it by editing the schedule.rb file
+# Backup workflow frequency is scheduled using BACKUP_INTERVAL variable and keeps the latest 15 dump files.
+# if you want to change file amount, you can do it by editing the services/backups/backup_workflow.rb file
 
 set :output, "#{path}/log/cron.log"
 
@@ -25,16 +25,10 @@ ENV_KEYS.each do |key|
   env key.to_sym, value unless value.empty?
 end
 
-every 3.days, at: "18:00" do
-    command "cd #{path}/backups && ls -1t *.dump | tail -n +16 | xargs -r rm --"
-end
+backup_interval_days = ENV.fetch("BACKUP_INTERVAL", "3").to_i
 
-every 3.days, at: "18:05" do
-    rake "db:backup"
-end
-
-every 3.days, at: "18:10" do
-    command "azcopy sync #{path}/backups/ \"$AZCOPY_LINK\""
+every backup_interval_days.days, at: "18:05" do
+  rake "backups:backup_and_notify"
 end
 
 every :monday, at: "09:00" do

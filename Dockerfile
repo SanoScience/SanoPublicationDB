@@ -77,7 +77,8 @@ RUN apt-get update -qq && \
 #   su -s /bin/bash -c 'bundle exec whenever --update-crontab pubdb --user rails' rails
 #   exec cron -f
 COPY bin/cron /rails/bin/cron
-RUN chmod +x /rails/bin/cron
+COPY bin/backup_healthcheck /rails/bin/backup_healthcheck
+RUN chmod +x /rails/bin/cron /rails/bin/backup_healthcheck
 
 ARG APP_UID=1000
 ARG APP_GID=1000

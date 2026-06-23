@@ -1,0 +1,55 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+START_FILE="/rails/backups/backup_monitor_started_at"
+SUCCESS_FILE="/rails/backups/last_backup_success_at"
+BACKUP_INTERVAL="${BACKUP_INTERVAL:-3}" # 3 days by default
+INTERVAL_SECONDS=$(( BACKUP_INTERVAL * 60 * 60 * 24 ))
+MAX_AGE_SECONDS=$(( INTERVAL_SECONDS + INTERVAL_SECONDS / 3 )) # backup max age is 4/3 of its interval
+
+now="$(date +%s)"
+
+read_timestamp() {
+  local file="$1"
+
+  if [[ ! -f "$file" ]]; then
+    return 1
+  fi
+
+  local value
+  value="$(tr -d '[:space:]' < "$file")"
+
+  if [[ ! "$value" =~ ^[0-9]+$ ]]; then
+    echo "Invalid timestamp in $file" >&2
+    return 1
+  fi
+
+  printf '%s\n' "$value"
+}
+
+if success_ts="$(read_timestamp "$SUCCESS_FILE")"; then
+  age="$((now - success_ts))"
+
+  if (( age <= MAX_AGE_SECONDS )); then
+    echo "Backup is healthy. Last success was ${age}s ago."
+    exit 0
+  else
+    echo "Backup is too old. Last success was ${age}s ago, max allowed is ${MAX_AGE_SECONDS}s."
+    exit 1
+  fi
+fi
+
+if start_ts="$(read_timestamp "$START_FILE")"; then
+  age_since_start="$((now - start_ts))"
+
+  if (( age_since_start <= MAX_AGE_SECONDS )); then
+    echo "No successful backup yet, but scheduler started ${age_since_start}s ago and is still within the grace window."
+    exit 0
+  else
+    echo "No successful backup marker found and scheduler started ${age_since_start}s ago, which exceeds the grace window of ${MAX_AGE_SECONDS}s."
+    exit 1
+  fi
+fi
+
+echo "Neither $SUCCESS_FILE nor $START_FILE exists."
+exit 1

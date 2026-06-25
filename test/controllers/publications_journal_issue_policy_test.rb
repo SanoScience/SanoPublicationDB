@@ -103,7 +103,7 @@ class PublicationsJournalIssuePolicyTest < ActionDispatch::IntegrationTest
         publication: {
           title: "Pub with edited journal issue",
           category: "journal_article",
-          status: "submitted",
+          status: "accepted",
           publication_year: Time.zone.today.year,
 
           publication_authorships_attributes: {
@@ -144,7 +144,7 @@ class PublicationsJournalIssuePolicyTest < ActionDispatch::IntegrationTest
           publication: {
             title: "Pub with new journal issue",
             category: "journal_article",
-            status: "submitted",
+            status: "accepted",
             publication_year: Time.zone.today.year,
 
             publication_authorships_attributes: {

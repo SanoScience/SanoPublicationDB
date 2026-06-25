@@ -7,7 +7,7 @@ class PublicationAuthorRulesTest < ActiveSupport::TestCase
     publication = Publication.new(
       title: "Test publication",
       category: :journal_article,
-      status: :submitted,
+      status: :accepted,
       publication_year: Time.zone.today.year,
       link: "https://example.com"
     )

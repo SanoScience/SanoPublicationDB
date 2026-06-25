@@ -25,7 +25,7 @@ class PublicationsControllerTest < ActionDispatch::IntegrationTest
         publication: {
           title:  "Test publication",
           category: "journal_article",
-          status: "submitted",
+          status: "accepted",
           publication_year: Time.zone.today.year,
           publication_authorships_attributes: {
             "0" => {
@@ -57,7 +57,7 @@ class PublicationsControllerTest < ActionDispatch::IntegrationTest
         publication: {
           title: "Pub",
           category: "journal_article",
-          status: "submitted",
+          status: "accepted",
           publication_year: Time.zone.today.year,
           publication_authorships_attributes: {
               "0" => {

@@ -89,7 +89,7 @@ class PublicationsConferencePolicyTest < ActionDispatch::IntegrationTest
                 publication: {
                     title: "Pub with edited conf",
                     category: "journal_article",
-                    status: "submitted",
+                    status: "accepted",
                     publication_year: Time.zone.today.year,
                     publication_authorships_attributes: {
                         "0" => {
@@ -145,7 +145,7 @@ class PublicationsConferencePolicyTest < ActionDispatch::IntegrationTest
         base_publication_params = {
             title: "Pub",
             category: "journal_article",
-            status: "submitted",
+            status: "accepted",
             publication_year: Time.zone.today.year,
             publication_authorships_attributes: {
                 "0" => {

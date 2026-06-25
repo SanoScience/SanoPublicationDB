@@ -40,7 +40,7 @@
     </div>
 
     <div class="col-md-6">
-      <%= form.input :status, collection: Publication.statuses.keys.map { |key| [key.humanize, key] }, include_blank: true %>
+      <%= form.input :status, collection: Publication.statuses.except(:submitted).keys.map { |key| [key.humanize, key] }, include_blank: true %>
     </div>
   </div>
 

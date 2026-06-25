@@ -30,7 +30,7 @@ def import_publications(file_path)
 
     title = row['Title of the scientific publication']&.strip
     authors = row['Authors']&.strip
-    status = row['Status (submitted, accepted, printed)']&.strip
+    status = row['Status (accepted, printed)']&.strip
     publication_type = row[row.keys.first]&.strip
     next if title.blank? || authors.blank? || status.blank? || publication_type.blank?
 

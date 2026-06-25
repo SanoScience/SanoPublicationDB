@@ -1,231 +1,251 @@
 class Publication < ApplicationRecord
-    include UrlValidatable
-    include AuthorSearchSql
+  include UrlValidatable
+  include AuthorSearchSql
 
-    validates_url_of :link
+  validates_url_of :link
 
-    belongs_to :journal_issue, optional: true
-    belongs_to :conference, optional: true
-    belongs_to :owner, class_name: "User", optional: true
-    has_many :identifiers, dependent: :destroy
-    has_many :repository_links, dependent: :destroy
-    has_many :research_group_publications, dependent: :destroy
-    has_many :research_groups, through: :research_group_publications, class_name: "ResearchGroup"
-    has_many :publication_authorships, -> { order(:position) }, dependent: :destroy
-    has_many :authors, through: :publication_authorships
-    has_one :kpi_reporting_extension, dependent: :destroy
-    has_one :open_access_extension, dependent: :destroy
+  belongs_to :journal_issue, optional: true
+  belongs_to :conference, optional: true
+  belongs_to :owner, class_name: "User", optional: true
+  has_many :identifiers, dependent: :destroy
+  has_many :repository_links, dependent: :destroy
+  has_many :research_group_publications, dependent: :destroy
+  has_many :research_groups, through: :research_group_publications, class_name: "ResearchGroup"
+  has_many :publication_authorships, -> { order(:position) }, dependent: :destroy
+  has_many :authors, through: :publication_authorships
+  has_one :kpi_reporting_extension, dependent: :destroy
+  has_one :open_access_extension, dependent: :destroy
 
-    accepts_nested_attributes_for :research_group_publications, allow_destroy: true, reject_if: :all_blank
-    accepts_nested_attributes_for :identifiers, allow_destroy: true, reject_if: :all_blank
-    accepts_nested_attributes_for :repository_links, allow_destroy: true, reject_if: :all_blank
-    accepts_nested_attributes_for :kpi_reporting_extension, allow_destroy: true
-    accepts_nested_attributes_for :open_access_extension, allow_destroy: true, reject_if: :all_blank
-    accepts_nested_attributes_for :conference, allow_destroy: true, reject_if: :all_blank
-    accepts_nested_attributes_for :journal_issue, allow_destroy: true, reject_if: :all_blank
-    accepts_nested_attributes_for :publication_authorships, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :research_group_publications, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :identifiers, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :repository_links, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :kpi_reporting_extension, allow_destroy: true
+  accepts_nested_attributes_for :open_access_extension, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :conference, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :journal_issue, allow_destroy: true, reject_if: :all_blank
+  accepts_nested_attributes_for :publication_authorships, allow_destroy: true, reject_if: :all_blank
 
-    enum :category, {
-      journal_article: 0,
-      conference_manuscript: 1,
-      book: 2,
-      book_chapter: 3,
-      conference_abstract: 4
-    }
+  enum :category, {
+    journal_article: 0,
+    conference_manuscript: 1,
+    book: 2,
+    book_chapter: 3,
+    conference_abstract: 4
+  }
 
-    enum :status, {
-        submitted: 0,
-        accepted: 1,
-        printed: 2
-    }
+  enum :status, {
+      submitted: 0,
+      accepted: 1,
+      printed: 2
+  }
 
-    validates :title, presence: true
-    validates :category, presence: true, inclusion: { in: categories.keys }
-    validates :status, presence: true, inclusion: { in: statuses.keys }
+  validates :title, presence: true
+  validates :category, presence: true, inclusion: { in: categories.keys }
+  validates :status, presence: true, inclusion: { in: statuses.keys }
+  validates :publication_year,
+            numericality: { only_integer: true, greater_than: 2000, less_than: Time.zone.today.year + 1 },
+            allow_nil: true
+
+  with_options on: :ui do
     validates :publication_year,
-              numericality: { only_integer: true, greater_than: 2000, less_than: Time.zone.today.year + 1 },
-              allow_nil: true
+              presence: true,
+              numericality: { only_integer: true, greater_than: 2000, less_than: Time.zone.today.year + 1 }
+    validates :kpi_reporting_extension, presence: true
+    validate :must_have_at_least_one_author
+    validate :publication_authorship_positions_must_be_unique
+    validate :publication_authorship_authors_must_be_unique
+    validate :submitted_not_allowed_for_new_publications
+    validate :submitted_not_allowed_on_update_from_non_submitted
+  end
 
-    with_options on: :ui do
-      validates :publication_year,
-                presence: true,
-                numericality: { only_integer: true, greater_than: 2000, less_than: Time.zone.today.year + 1 }
-      validates :kpi_reporting_extension, presence: true
-      validate :must_have_at_least_one_author
-      validate :publication_authorship_positions_must_be_unique
-      validate :publication_authorship_authors_must_be_unique
-    end
+  validates_associated :research_group_publications,
+                        :identifiers,
+                        :repository_links,
+                        :kpi_reporting_extension,
+                        :open_access_extension,
+                        :conference,
+                        :journal_issue
 
-    validates_associated :research_group_publications,
-                         :identifiers,
-                         :repository_links,
-                         :kpi_reporting_extension,
-                         :open_access_extension,
-                         :conference,
-                         :journal_issue
+  attr_accessor :_notification_changes
 
-    attr_accessor :_notification_changes
-
-    def __aggregate_child_change!(klass_name, record_id, action, changes)
-      self._notification_changes ||= { publication: {}, children: [] }
-      self._notification_changes[:children] << {
-        model: klass_name, id: record_id, action: action, changes: changes
-      }
-    end
-
-    scope :with_research_groups, ->(groups) {
-      joins(:research_group_publications)
-        .where(research_group_publications: { research_group: groups })
-        .distinct
+  def __aggregate_child_change!(klass_name, record_id, action, changes)
+    self._notification_changes ||= { publication: {}, children: [] }
+    self._notification_changes[:children] << {
+      model: klass_name, id: record_id, action: action, changes: changes
     }
+  end
 
-    scope :author_name_search, ->(term) do
-      next all if term.blank?
+  scope :with_research_groups, ->(groups) {
+    joins(:research_group_publications)
+      .where(research_group_publications: { research_group: groups })
+      .distinct
+  }
 
-      authors_table = Author.arel_table
+  scope :author_name_search, ->(term) do
+    next all if term.blank?
 
-      matching_ids = joins(:authors)
-        .where(author_name_expression(authors_table).matches(normalized_pattern_node(term)))
-        .select(:id)
+    authors_table = Author.arel_table
 
-      where(id: matching_ids)
-    end
+    matching_ids = joins(:authors)
+      .where(author_name_expression(authors_table).matches(normalized_pattern_node(term)))
+      .select(:id)
 
-    after_initialize do
-      build_kpi_reporting_extension if new_record? && kpi_reporting_extension.nil?
-    end
+    where(id: matching_ids)
+  end
 
-    def self.ransackable_attributes(auth_object = nil)
-      [
-        "title", "category", "status", "publication_year",
-        "research_group_publications_research_group_id_in",
-        "identifiers_type", "identifiers_value",
-        "journal_issue_title_cont",
-        "conference_name_cont",
-        "kpi_reporting_extension_teaming_reporting_period_eq", "kpi_reporting_extension_pbn_eq", "kpi_reporting_extension_jcr_eq",
-        "kpi_reporting_extension_is_new_method_technique_eq", "kpi_reporting_extension_is_methodology_application_eq", "kpi_reporting_extension_is_peer_reviewed_eq",
-        "open_access_extension_category_eq", "open_access_extension_gold_oa_funding_source_cont"
-      ]
-    end
+  after_initialize do
+    build_kpi_reporting_extension if new_record? && kpi_reporting_extension.nil?
+  end
 
-    def self.ransackable_associations(auth_object = nil)
-        [ "research_group_publications", "identifiers", "conference", "journal_issue", "kpi_reporting_extension", "open_access_extension" ]
-    end
+  def self.ransackable_attributes(auth_object = nil)
+    [
+      "title", "category", "status", "publication_year",
+      "research_group_publications_research_group_id_in",
+      "identifiers_type", "identifiers_value",
+      "journal_issue_title_cont",
+      "conference_name_cont",
+      "kpi_reporting_extension_teaming_reporting_period_eq", "kpi_reporting_extension_pbn_eq", "kpi_reporting_extension_jcr_eq",
+      "kpi_reporting_extension_is_new_method_technique_eq", "kpi_reporting_extension_is_methodology_application_eq", "kpi_reporting_extension_is_peer_reviewed_eq",
+      "open_access_extension_category_eq", "open_access_extension_gold_oa_funding_source_cont"
+    ]
+  end
 
-    def self.ransackable_scopes(_auth_object = nil)
-      %i[author_name_search]
-    end
+  def self.ransackable_associations(auth_object = nil)
+      [ "research_group_publications", "identifiers", "conference", "journal_issue", "kpi_reporting_extension", "open_access_extension" ]
+  end
 
-    ransacker :status, formatter: proc { |v| statuses[v] } do |parent|
-      parent.table[:status]
-    end
+  def self.ransackable_scopes(_auth_object = nil)
+    %i[author_name_search]
+  end
 
-    ransacker :category, formatter: proc { |v| categories[v] } do |parent|
-      parent.table[:category]
-    end
+  ransacker :status, formatter: proc { |v| statuses[v] } do |parent|
+    parent.table[:status]
+  end
 
-    def build_notification_payload
-      pub_changes = previous_changes.except("updated_at", "created_at", "id", "owner_id")
-      children_changes = _notification_changes&.dig(:children) || []
-      return if pub_changes.blank? && children_changes.blank?
+  ransacker :category, formatter: proc { |v| categories[v] } do |parent|
+    parent.table[:category]
+  end
 
-      { publication: pub_changes.presence, children: children_changes.presence }.compact
-    end
+  def build_notification_payload
+    pub_changes = previous_changes.except("updated_at", "created_at", "id", "owner_id")
+    children_changes = _notification_changes&.dig(:children) || []
+    return if pub_changes.blank? && children_changes.blank?
 
-    def formatted_authors(inverted: true)
-      separator = inverted ? "; " : ", "
+    { publication: pub_changes.presence, children: children_changes.presence }.compact
+  end
 
-      publication_authorships.includes(:author).map do |authorship|
-        authorship.author.display_name(inverted:)
-      end.join(separator)
-    end
+  def formatted_authors(inverted: true)
+    separator = inverted ? "; " : ", "
 
-    private
+    publication_authorships.includes(:author).map do |authorship|
+      authorship.author.display_name(inverted:)
+    end.join(separator)
+  end
 
-    def must_have_at_least_one_author
-      remaining = publication_authorships.reject(&:marked_for_destruction?)
-      errors.add(:base, "At least one author is required") if remaining.blank?
-    end
+  private
 
-    def publication_authorship_positions_must_be_unique
-      remaining = publication_authorships.reject(&:marked_for_destruction?)
-      positions = remaining.map(&:position).compact
+  def must_have_at_least_one_author
+    remaining = publication_authorships.reject(&:marked_for_destruction?)
+    errors.add(:base, "At least one author is required") if remaining.blank?
+  end
 
-      return if positions.size == positions.uniq.size
+  def publication_authorship_positions_must_be_unique
+    remaining = publication_authorships.reject(&:marked_for_destruction?)
+    positions = remaining.map(&:position).compact
 
-      errors.add(:base, "Author positions must be unique")
-    end
+    return if positions.size == positions.uniq.size
 
-    def publication_authorship_authors_must_be_unique
-      remaining = publication_authorships.reject(&:marked_for_destruction?)
+    errors.add(:base, "Author positions must be unique")
+  end
 
-      seen_keys = {}
+  def publication_authorship_authors_must_be_unique
+    remaining = publication_authorships.reject(&:marked_for_destruction?)
 
-      remaining.each do |authorship|
-        key = authorship_uniqueness_key(authorship)
-        next if key.blank?
+    seen_keys = {}
 
-        if seen_keys[key]
-          errors.add(:base, "Authors must be unique within one publication")
-          authorship.errors.add(:author, "is duplicated within this publication")
-          next
-        end
+    remaining.each do |authorship|
+      key = authorship_uniqueness_key(authorship)
+      next if key.blank?
 
-        seen_keys[key] = true
+      if seen_keys[key]
+        errors.add(:base, "Authors must be unique within one publication")
+        authorship.errors.add(:author, "is duplicated within this publication")
+        next
+      end
 
-        next if authorship.author_id.present?
-        next unless authorship.author.present?
+      seen_keys[key] = true
 
-        if author_exists_in_database?(authorship.author)
-          authorship.errors.add(:author, "already exists")
-          errors.add(:base, "Such author already exists")
-        end
+      next if authorship.author_id.present?
+      next unless authorship.author.present?
+
+      if author_exists_in_database?(authorship.author)
+        authorship.errors.add(:author, "already exists")
+        errors.add(:base, "Such author already exists")
       end
     end
+  end
 
-    def authorship_uniqueness_key(authorship)
-      if authorship.author.present?
-        author_uniqueness_key(authorship.author)
-      elsif authorship.author_id.present?
-        existing_author = Author.find_by(id: authorship.author_id)
-        author_uniqueness_key(existing_author)
-      end
+  def authorship_uniqueness_key(authorship)
+    if authorship.author.present?
+      author_uniqueness_key(authorship.author)
+    elsif authorship.author_id.present?
+      existing_author = Author.find_by(id: authorship.author_id)
+      author_uniqueness_key(existing_author)
     end
+  end
 
-    def author_uniqueness_key(author)
-      return if author.blank?
+  def author_uniqueness_key(author)
+    return if author.blank?
 
-      if author.collective?
-        collective_name = author.collective_name.to_s.strip.downcase
-        return if collective_name.blank?
+    if author.collective?
+      collective_name = author.collective_name.to_s.strip.downcase
+      return if collective_name.blank?
 
-        "collective:#{collective_name}"
-      else
-        first_name = author.first_name.to_s.strip.downcase
-        last_name = author.last_name.to_s.strip.downcase
-        return if first_name.blank? || last_name.blank?
+      "collective:#{collective_name}"
+    else
+      first_name = author.first_name.to_s.strip.downcase
+      last_name = author.last_name.to_s.strip.downcase
+      return if first_name.blank? || last_name.blank?
 
-        "person:#{first_name}|#{last_name}"
-      end
+      "person:#{first_name}|#{last_name}"
     end
+  end
 
-    def author_exists_in_database?(author)
-      if author.collective?
-        collective_name = author.collective_name.to_s.strip.downcase
-        return false if collective_name.blank?
+  def author_exists_in_database?(author)
+    if author.collective?
+      collective_name = author.collective_name.to_s.strip.downcase
+      return false if collective_name.blank?
 
-        Author
-          .where("LOWER(COALESCE(collective_name, '')) = ?", collective_name)
-          .exists?
-      else
-        first_name = author.first_name.to_s.strip.downcase
-        last_name = author.last_name.to_s.strip.downcase
-        return false if first_name.blank? || last_name.blank?
+      Author
+        .where("LOWER(COALESCE(collective_name, '')) = ?", collective_name)
+        .exists?
+    else
+      first_name = author.first_name.to_s.strip.downcase
+      last_name = author.last_name.to_s.strip.downcase
+      return false if first_name.blank? || last_name.blank?
 
-        Author
-          .where("LOWER(COALESCE(first_name, '')) = ?", first_name)
-          .where("LOWER(COALESCE(last_name, '')) = ?", last_name)
-          .exists?
-      end
+      Author
+        .where("LOWER(COALESCE(first_name, '')) = ?", first_name)
+        .where("LOWER(COALESCE(last_name, '')) = ?", last_name)
+        .exists?
     end
+  end
+
+  def submitted_not_allowed_for_new_publications
+    return unless new_record?
+    return unless status == "submitted"
+
+    errors.add(:status, "cannot be submitted for new publications")
+  end
+
+  def submitted_not_allowed_on_update_from_non_submitted
+    return if new_record?
+    return unless will_save_change_to_status?
+
+    old_status, new_status = status_change_to_be_saved
+
+    if new_status == "submitted" && old_status != "submitted"
+      errors.add(:status, "cannot be changed back to submitted")
+    end
+  end
 end

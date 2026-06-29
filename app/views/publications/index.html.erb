@@ -5,14 +5,22 @@
 
   <div class="col-auto d-flex justify-content-end">
     <% if current_user&.role == "moderator" %>
-      <%= link_to publications_path(request.query_parameters.merge(format: :xlsx)),
-                  class: "btn btn-outline-success btn-sm d-inline-flex align-items-center justify-content-center",
-                  title: "Export to Excel" do %>
+      <button type="button"
+              class="btn btn-outline-success btn-sm d-inline-flex align-items-center justify-content-center"
+              title="Export to Excel"
+              data-bs-toggle="modal"
+              data-bs-target="#exportExcelModal">
         <i class="bi bi-file-earmark-spreadsheet"></i>
-      <% end %>
+      </button>
     <% end %>
   </div>
 </div>
+
+<% if current_user&.role == "moderator" %>
+  <%= render "export_excel_modal",
+      export_columns: @export_columns,
+      selected_export_columns: @selected_export_columns %>
+<% end %>
 
 <div class="row mb-2">
   <div class="col-md-3 d-flex justify-content-start gap-3 align-items-center">

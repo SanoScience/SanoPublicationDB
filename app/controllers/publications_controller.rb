@@ -19,6 +19,9 @@ class PublicationsController < ApplicationController
     order = Publications::SortValidator.safe_order(sort_param) || Publications::SortValidator.default_order
     @pagy, @publications = pagy(base_scope.reorder(order))
 
+    @export_columns = Publications::ExportColumns.all
+    @selected_export_columns = Publications::ExportColumns.selected(params[:columns])
+
     respond_to do |format|
       format.html
       format.xlsx do

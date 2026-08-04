@@ -175,6 +175,10 @@
     <hr>
 <% end %>
 
+<% if @publication.citation_counts.any? %>
+    <%= render "citation_counts", publication: @publication %>
+<% end %>
+
 <% if @publication.identifiers.any? %>
     <h4>Identifiers</h4>
     <ul>

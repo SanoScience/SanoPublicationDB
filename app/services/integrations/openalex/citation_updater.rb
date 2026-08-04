@@ -68,8 +68,10 @@ module Integrations
         
         last_count = publication.citation_counts.where(source: SOURCE_NAME).order(recorded_at: :desc).first
         
-        if last_count && last_count.recorded_at.to_date == Date.current
-          last_count.update!(count: count)
+        if last_count && last_count.count == count
+          last_count.update!(recorded_at: Time.current)
+        elsif last_count && last_count.recorded_at.to_date == Date.current
+          last_count.update!(count: count, recorded_at: Time.current)
         else
           publication.citation_counts.create!(
             source: SOURCE_NAME,

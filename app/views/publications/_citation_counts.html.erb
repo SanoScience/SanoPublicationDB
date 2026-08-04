@@ -1,0 +1,42 @@
+<h4>Citations</h4>
+    
+<% latest_citation = @publication.citation_counts.order(recorded_at: :desc).first %>
+<% all_citations = @publication.citation_counts.order(recorded_at: :desc) %>
+
+<div class="mb-3">
+    <div class="d-flex justify-content-between align-items-center">
+        <p class="fs-5 mb-0">
+            <span class="badge bg-secondary fs-6 me-2"><%= latest_citation.count %></span>
+            <strong>citations</strong> 
+            <span class="text-muted fs-6 ms-1">
+                (Source: <%= latest_citation.source %>, as of <%= latest_citation.recorded_at.strftime("%b %d, %Y") %>)
+            </span>
+        </p>
+
+        <% if all_citations.count > 1 %>
+            <button class="btn btn-link text-secondary p-0 citation-toggle collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#citationHistory" aria-expanded="false" aria-controls="citationHistory">
+                <i class="bi bi-caret-left-fill fs-5 toggle-icon"></i>
+            </button>
+        <% end %>
+    </div>
+
+    <% if all_citations.count > 1 %>
+        <div class="collapse mt-3" id="citationHistory">
+            <ul class="list-group list-group-flush border-top">
+                <% all_citations.each do |citation| %>
+                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent">
+                        <div>
+                            <span class="fw-semibold me-2"><%= citation.count %></span>
+                            <span class="text-muted small">
+                                <i class="bi bi-clock me-1"></i><%= citation.recorded_at.strftime("%Y-%m-%d %H:%M") %>
+                            </span>
+                        </div>
+                        <span class="badge bg-light text-dark border"><%= citation.source %></span>
+                    </li>
+                <% end %>
+            </ul>
+        </div>
+    <% end %>
+</div>
+
+<hr>

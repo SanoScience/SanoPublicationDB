@@ -1,7 +1,7 @@
 module Integrations
   module Openalex
     class CitationUpdater
-      SOURCE_NAME = "OpenAlex".freeze
+      SOURCE_NAME = CitationCount.sources[:openalex].freeze
 
       def initialize(client: Integrations::Openalex::Client.new)
         @client = client

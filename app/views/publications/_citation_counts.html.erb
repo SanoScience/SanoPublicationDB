@@ -22,19 +22,31 @@
 
     <% if all_citations.count > 1 %>
         <div class="collapse mt-3" id="citationHistory">
-            <ul class="list-group list-group-flush border-top">
+            <div class="list-group list-group-flush border-top">
                 <% all_citations.each do |citation| %>
-                    <li class="list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent">
+                    <%= turbo_frame_tag dom_id(citation), class: "list-group-item d-flex justify-content-between align-items-center px-0 bg-transparent" do %>
                         <div>
                             <span class="fw-semibold me-2"><%= citation.count %></span>
                             <span class="text-muted small">
                                 <i class="bi bi-clock me-1"></i><%= citation.recorded_at.strftime("%Y-%m-%d %H:%M") %>
                             </span>
                         </div>
-                        <span class="badge bg-light text-dark border"><%= citation.source %></span>
-                    </li>
+                        
+                        <div class="d-flex align-items-center gap-2">
+                            <span class="badge bg-light text-dark border"><%= citation.source %></span>
+                            
+                            <% if user_signed_in? && current_user.moderator? %>
+                                <%= button_to citation_count_path(citation),
+                                            method: :delete,
+                                            form: { data: { turbo_confirm: "Delete this record?" } },
+                                            class: "btn btn-sm btn-outline-danger border-0 py-0 px-1" do %>
+                                    <i class="bi bi-trash"></i>
+                                <% end %>
+                            <% end %>
+                        </div>
+                    <% end %>
                 <% end %>
-            </ul>
+            </div>
         </div>
     <% end %>
 </div>

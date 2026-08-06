@@ -1,0 +1,5 @@
+openalex15:
+  publication: pub1
+  source: :openalex
+  count: 15
+  recorded_at: <%= Time.now %>

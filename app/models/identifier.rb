@@ -8,6 +8,7 @@ class Identifier < ApplicationRecord
         issn: "ISSN",
         essn: "eSSN",
         isbn: "ISBN",
+        openalex: "OpenAlex",
         other: "other"
     }
 

@@ -23,6 +23,15 @@
   grid-template-columns: 1fr 1fr;
 }
 
+.citation-toggle .toggle-icon {
+  display: inline-block;
+  transition: transform 0.2s ease-in-out;
+}
+
+.citation-toggle[aria-expanded="true"] .toggle-icon {
+  transform: rotate(-90deg);
+}
+
 @media (max-width: 992px) {
   .authors-grid {
     grid-template-columns: 1fr;

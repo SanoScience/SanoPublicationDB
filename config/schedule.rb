@@ -34,3 +34,7 @@ end
 every :monday, at: "09:00" do
   rake "authors:report_duplicates"
 end
+
+every 1.month, at: "start of the month at 3:00 am" do
+  rake "openalex_citations:refresh"
+end

@@ -15,6 +15,7 @@ class Publication < ApplicationRecord
   has_many :authors, through: :publication_authorships
   has_one :kpi_reporting_extension, dependent: :destroy
   has_one :open_access_extension, dependent: :destroy
+  has_many :citation_counts, dependent: :destroy
 
   accepts_nested_attributes_for :research_group_publications, allow_destroy: true, reject_if: :all_blank
   accepts_nested_attributes_for :identifiers, allow_destroy: true, reject_if: :all_blank

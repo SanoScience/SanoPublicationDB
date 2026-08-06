@@ -12,6 +12,8 @@ Rails.application.routes.draw do
     post :merge, on: :member
   end
 
+  resources :citation_counts, only: [ :destroy ]
+
   namespace :api, defaults: { format: :json } do
     get "statistics/publications_count", to: "statistics#publications_count"
     get "statistics/conferences_count", to: "statistics#conferences_count"

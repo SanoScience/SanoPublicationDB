@@ -23,21 +23,21 @@ module Integrations
       def call
         started_at = Time.current
         stage = :initialization
-        
+
         processed_count = 0
         fallbacks_used = 0
         budget_exceeded = false
 
         stage = :processing
         stats = process_publications!
-        
+
         processed_count = stats[:processed_count]
         fallbacks_used = stats[:fallbacks_used]
         budget_exceeded = stats[:budget_exceeded]
         failed_publications = stats[:failed_publications]
 
         finished_at = Time.current
-        
+
         stage = :success_marker
         write_success_marker!(finished_at)
 
@@ -79,7 +79,7 @@ module Integrations
 
           begin
             success, error_msg, used_fallback = updater.call(publication, allow_fallback: can_fallback)
-            
+
             fallbacks += 1 if used_fallback
 
             if success
@@ -87,7 +87,7 @@ module Integrations
             else
               failed_pubs << { id: publication.id, title: publication.title, reason: error_msg }
             end
-                        
+
             sleep(REQUEST_DELAY)
           rescue Integrations::Openalex::Client::BudgetExceededError => e
             Rails.logger.warn("[RefreshCitationsWorkflow] Budget Exceeded: #{e.message}")
@@ -96,9 +96,9 @@ module Integrations
           end
         end
 
-        { 
-          processed_count: processed, 
-          fallbacks_used: fallbacks, 
+        {
+          processed_count: processed,
+          fallbacks_used: fallbacks,
           budget_exceeded: budget_exceeded,
           failed_publications: failed_pubs
         }

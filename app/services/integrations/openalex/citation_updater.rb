@@ -9,17 +9,17 @@ module Integrations
 
       def call(publication, allow_fallback: false)
         work_data, used_fallback = fetch_work_data(publication, allow_fallback: allow_fallback)
-        return [false, "Publication not found in OpenAlex", used_fallback] unless work_data
+        return [ false, "Publication not found in OpenAlex", used_fallback ] unless work_data
 
         save_citation_count!(publication, work_data)
         save_openalex_id!(publication, work_data)
 
-        [true, nil, used_fallback]
+        [ true, nil, used_fallback ]
       rescue Integrations::Openalex::Client::BudgetExceededError => e
         raise e
       rescue Integrations::Openalex::Client::Error, StandardError => e
         Rails.logger.error("OpenAlex CitationUpdater Error [Publication ID: #{publication.id}]: #{e.message}")
-        [false, e.message, used_fallback || false]
+        [ false, e.message, used_fallback || false ]
       end
 
       private
@@ -56,7 +56,7 @@ module Integrations
           end
         end
 
-        [work_data, used_fallback]
+        [ work_data, used_fallback ]
       end
 
       def identifier_value(publication, category_name)
@@ -65,9 +65,9 @@ module Integrations
 
       def save_citation_count!(publication, work_data)
         count = work_data["cited_by_count"].to_i
-        
+
         last_count = publication.citation_counts.where(source: SOURCE_NAME).order(recorded_at: :desc).first
-        
+
         if last_count && last_count.count == count
           last_count.update!(recorded_at: Time.current)
         elsif last_count && last_count.recorded_at.to_date == Date.current
@@ -83,7 +83,7 @@ module Integrations
 
       def save_openalex_id!(publication, work_data)
         return if identifier_value(publication, "openalex")
-        
+
         new_id = work_data["id"]
         return unless new_id
 

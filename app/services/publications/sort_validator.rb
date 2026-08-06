@@ -17,7 +17,7 @@ module Publications
       "subsidy_points_asc" => "kpi_reporting_extensions.subsidy_points ASC NULLS LAST",
       "subsidy_points_desc" => "kpi_reporting_extensions.subsidy_points DESC NULLS LAST",
       "citation_counts_asc" => "(SELECT count FROM citation_counts WHERE citation_counts.publication_id = publications.id ORDER BY recorded_at DESC LIMIT 1) ASC NULLS LAST",
-      "citation_counts_desc" => "(SELECT count FROM citation_counts WHERE citation_counts.publication_id = publications.id ORDER BY recorded_at DESC LIMIT 1) DESC NULLS LAST",
+      "citation_counts_desc" => "(SELECT count FROM citation_counts WHERE citation_counts.publication_id = publications.id ORDER BY recorded_at DESC LIMIT 1) DESC NULLS LAST"
     }.freeze
 
     LABELS = {
@@ -35,7 +35,7 @@ module Publications
       "subsidy_points_asc" => "Subsidy points ↑",
       "subsidy_points_desc" => "Subsidy points ↓",
       "citation_counts_asc" => "Citations ↑",
-      "citation_counts_desc" => "Citations ↓",
+      "citation_counts_desc" => "Citations ↓"
   }.freeze
 
     def self.safe_order(param)

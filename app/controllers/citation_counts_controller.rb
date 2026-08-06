@@ -1,6 +1,6 @@
 class CitationCountsController < ApplicationController
   before_action :authenticate_user!
-  
+
   def destroy
     unless current_user.moderator?
       redirect_to root_path, alert: "Not authorized"

@@ -52,7 +52,7 @@ module Integrations
           ("publication_year:#{year}" if year.present?),
           ("type:#{type}" if type.present?)
         ].compact.join(",")
-        
+
         safe_title = normalize_title(title)
         return { "results" => [] } if safe_title.blank?
 
@@ -99,7 +99,7 @@ module Integrations
 
       def get(path, params = {})
         uri = build_uri(path, params)
-        
+
         response = Net::HTTP.start(
           uri.host,
           uri.port,
@@ -121,7 +121,7 @@ module Integrations
         uri = URI("#{BASE_URL}#{path}")
 
         query_params = params.compact
-        
+
         query_params[:api_key] = @api_key if @api_key.present?
         query_params[:mailto] = @mailto if @mailto.present?
 
@@ -130,10 +130,10 @@ module Integrations
       end
 
       def parse_response(response)
-        content_type = response['Content-Type'].to_s.downcase
+        content_type = response["Content-Type"].to_s.downcase
         body_text = response.body.to_s.strip
 
-        if content_type.include?('text/html') || body_text.start_with?('<')
+        if content_type.include?("text/html") || body_text.start_with?("<")
           raise NotFoundError, "OpenAlex returned HTML instead of JSON (HTTP #{response.code})"
         end
 
@@ -161,7 +161,7 @@ module Integrations
 
         clean_doi = match[1]
 
-        clean_doi = clean_doi.sub(/[.,;:\])]+$/, '')
+        clean_doi = clean_doi.sub(/[.,;:\])]+$/, "")
 
         "https://doi.org/#{clean_doi.downcase}"
       end
@@ -171,8 +171,8 @@ module Integrations
 
         target_words = target_norm.split.uniq
         cand_words = cand_norm.split.uniq
-        
-        min_length = [target_words.size, cand_words.size].min
+
+        min_length = [ target_words.size, cand_words.size ].min
 
         return false if min_length < 5
 

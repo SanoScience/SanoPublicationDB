@@ -7,7 +7,7 @@ module Integrations
       return if recipients.empty?
 
       subject_status = result.budget_exceeded ? "Success (Budget Exceeded Warning)" : "Success"
-      
+
       mail(
         to: recipients,
         subject: "[PubDB] OpenAlex Refresh: #{subject_status}",
@@ -32,7 +32,7 @@ module Integrations
 
     def success_body(result)
       duration = (result.finished_at - result.started_at).round(2)
-      
+
       budget_warning = if result.budget_exceeded
         "\nWARNING: Daily budget limit was reached. Some publications missing exact IDs were skipped.\n"
       else
@@ -46,7 +46,7 @@ module Integrations
         #{budget_warning}
         Processed publications: #{result.processed_count}
         Paid fallbacks used: #{result.fallbacks_used} / #{Integrations::Openalex::RefreshCitationsWorkflow::MAX_FALLBACKS_PER_RUN}
-        
+
         Started at: #{result.started_at}
         Finished at: #{result.finished_at}
         Duration: #{duration} s
@@ -78,7 +78,7 @@ module Integrations
         Started at: #{started_at}
         Error class: #{error.class}
         Error message: #{error.message}
-        
+
         Backtrace:
         #{backtrace}
       TEXT

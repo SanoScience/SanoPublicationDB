@@ -9,6 +9,6 @@ class CreateCitationCounts < ActiveRecord::Migration[8.0]
       t.timestamps
     end
 
-    add_index :citation_counts, [:publication_id, :source, :recorded_at]
+    add_index :citation_counts, [ :publication_id, :source, :recorded_at ]
   end
 end

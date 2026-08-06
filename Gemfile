@@ -91,3 +91,5 @@ gem "caxlsx_rails"
 gem "jaro_winkler", "~> 1.7"
 
 gem "parallel", "~> 1.26"
+
+gem "chartkick", "~> 5.2"

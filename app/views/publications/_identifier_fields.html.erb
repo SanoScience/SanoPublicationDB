@@ -1,11 +1,14 @@
 <div class="nested-fields mb-3">
   <div class="row">
     <div class="col-md-2">
-      <%= f.input :category, collection: Identifier.categories.map { |key, value| [value, key] }, include_blank: true %>
+      <%= f.input :category, 
+                  collection: Identifier.categories.map { |key, value| [value, key] }, 
+                  include_blank: true,
+                  input_html: { data: { openalex_autofill_target: "identifierCategory" } } %>
     </div>
 
     <div class="col-md-10">
-      <%= f.input :value %>
+      <%= f.input :value, input_html: { data: { openalex_autofill_target: "identifierValue" } } %>
     </div>
   </div>
 

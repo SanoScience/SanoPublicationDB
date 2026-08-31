@@ -1,5 +1,8 @@
 <div class="nested-fields" data-controller="open-access">
-    <%= f.input :category, collection: OpenAccessExtension.categories.keys.map { |key| [key.humanize, key] }, include_blank: false %>
+    <%= f.input :category, 
+                collection: OpenAccessExtension.categories.keys.map { |key| [key.humanize, key] }, 
+                include_blank: false,
+                input_html: { data: { openalex_autofill_target: "oaCategory" } } %>
 
     <% if current_user.role == "moderator" %>
         <div id="gold-oa-fields" style="<%= @publication.open_access_extension&.gold? ? '' : 'display: none;' %>">

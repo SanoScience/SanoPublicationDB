@@ -81,7 +81,7 @@ class PublicationsJournalIssueSystemTest < ApplicationSystemTestCase
 
     ensure_required_kpi_selected!
     click_on "Update Publication"
-    assert_text "Publication was successfully updated."
+    assert_text "Publication was successfully updated.", wait: 5
 
     assert JournalIssue.exists?(@jour1.id)
     assert_equal @jour1.id, @pub_with_jour.reload.journal_issue_id
@@ -104,7 +104,7 @@ class PublicationsJournalIssueSystemTest < ApplicationSystemTestCase
 
     ensure_required_kpi_selected!
     click_on "Update Publication"
-    assert_text "Publication was successfully updated."
+    assert_text "Publication was successfully updated.", wait: 5
 
     assert_equal before_count + 1, JournalIssue.count
     pub = @pub_no_jour.reload

@@ -99,11 +99,11 @@ export default class extends Controller {
   }
 
   async populateFields(data) {
-    if (data.title && this.hasTitleTarget) { this.titleTarget.value = data.title; this.triggerChange(this.titleTarget); }
-    if (data.publication_year && this.hasYearTarget) { this.yearTarget.value = data.publication_year; this.triggerChange(this.yearTarget); }
-    if (data.link && this.hasLinkTarget) { this.linkTarget.value = data.link; this.triggerChange(this.linkTarget); }
-    if (data.category && this.hasCategoryTarget) { this.categoryTarget.value = data.category; this.triggerChange(this.categoryTarget); }
-    if (data.status && this.hasStatusTarget) { this.statusTarget.value = data.status; this.triggerChange(this.statusTarget); }
+    if (data.title && this.hasTitleTarget) { this.titleTarget.value = data.title; this.triggerChange(this.titleTarget, true); }
+    if (data.publication_year && this.hasYearTarget) { this.yearTarget.value = data.publication_year; this.triggerChange(this.yearTarget, true); }
+    if (data.link && this.hasLinkTarget) { this.linkTarget.value = data.link; this.triggerChange(this.linkTarget, true); }
+    if (data.category && this.hasCategoryTarget) { this.categoryTarget.value = data.category; this.triggerChange(this.categoryTarget, true); }
+    if (data.status && this.hasStatusTarget) { this.statusTarget.value = data.status; this.triggerChange(this.statusTarget, true); }
 
     if (data.open_access) await this.populateOpenAccess(data.open_access)
     if (data.authors && data.authors.length > 0) await this.populateAuthors(data.authors)
@@ -136,7 +136,7 @@ export default class extends Controller {
       lastValue.value = valueStr;
       
       this.triggerChange(lastCategory);
-      this.triggerChange(lastValue);
+      this.triggerChange(lastValue, true);
     }
   }
 
@@ -150,7 +150,7 @@ export default class extends Controller {
     if (categories.length > 0) {
       const targetCategory = categories[categories.length - 1];
       targetCategory.value = oaData.status.toLowerCase();
-      this.triggerChange(targetCategory);
+      this.triggerChange(targetCategory, true);
     }
   }
 
@@ -175,7 +175,7 @@ export default class extends Controller {
       if (author.match_type === 'existing') {
         if (sourceSelect) { sourceSelect.value = 'existing'; this.triggerChange(sourceSelect); }
         const authorIdSelect = targetField.querySelector('select[name$="[author_id]"]');
-        if (authorIdSelect) { authorIdSelect.value = author.id; this.triggerChange(authorIdSelect); }
+        if (authorIdSelect) { authorIdSelect.value = author.id; this.triggerChange(authorIdSelect, true); }
       } 
       else if (author.match_type === 'new') {
         if (sourceSelect) { sourceSelect.value = 'new'; this.triggerChange(sourceSelect); }
@@ -184,7 +184,7 @@ export default class extends Controller {
         if (author.author_type === 'collective') {
           if (typeSelect) { typeSelect.value = 'collective'; this.triggerChange(typeSelect); }
           const collectiveInput = targetField.querySelector('input[name*="[collective_name]"]');
-          if (collectiveInput) { collectiveInput.value = author.collective_name || ""; this.triggerChange(collectiveInput); }
+          if (collectiveInput) { collectiveInput.value = author.collective_name || ""; this.triggerChange(collectiveInput, true); }
         } else {
           if (typeSelect) { typeSelect.value = 'person'; this.triggerChange(typeSelect); }
           
@@ -192,9 +192,9 @@ export default class extends Controller {
           const firstNameInput = targetField.querySelector('input[name*="[first_name]"]');
           const lastNameInput = targetField.querySelector('input[name*="[last_name]"]');
 
-          if (titleInput && author.title) { titleInput.value = author.title; this.triggerChange(titleInput); }
-          if (firstNameInput) { firstNameInput.value = author.first_name || ""; this.triggerChange(firstNameInput); }
-          if (lastNameInput) { lastNameInput.value = author.last_name || ""; this.triggerChange(lastNameInput); }
+          if (titleInput && author.title) { titleInput.value = author.title; this.triggerChange(titleInput, true); }
+          if (firstNameInput) { firstNameInput.value = author.first_name || ""; this.triggerChange(firstNameInput, true); }
+          if (lastNameInput) { lastNameInput.value = author.last_name || ""; this.triggerChange(lastNameInput, true); }
         }
       }
     }
@@ -208,14 +208,9 @@ export default class extends Controller {
     if (journalData.match_type === 'existing' && journalData.id) {
       if (select) {
         select.value = journalData.id;
-        this.triggerChange(select);
+        this.triggerChange(select, true);
       }
       return;
-    }
-
-    if (select) {
-      select.value = "";
-      this.triggerChange(select);
     }
 
     if (this.hasAddJournalBtnTarget) {
@@ -235,10 +230,10 @@ export default class extends Controller {
     const publisherInput = targetField.querySelector('input[name*="[publisher]"]');
     const volumeInput = targetField.querySelector('input[name*="[volume]"]');
 
-    if (titleInput) { titleInput.value = journalData.title; this.triggerChange(titleInput); }
-    if (numInput && journalData.journal_num) { numInput.value = journalData.journal_num; this.triggerChange(numInput); }
-    if (publisherInput && journalData.publisher) { publisherInput.value = journalData.publisher; this.triggerChange(publisherInput); }
-    if (volumeInput && journalData.volume) { volumeInput.value = journalData.volume; this.triggerChange(volumeInput); }
+    if (titleInput) { titleInput.value = journalData.title; this.triggerChange(titleInput, true); }
+    if (numInput && journalData.journal_num) { numInput.value = journalData.journal_num; this.triggerChange(numInput, true); }
+    if (publisherInput && journalData.publisher) { publisherInput.value = journalData.publisher; this.triggerChange(publisherInput, true); }
+    if (volumeInput && journalData.volume) { volumeInput.value = journalData.volume; this.triggerChange(volumeInput, true); }
   }
 
   async populateConference(confData) {
@@ -249,14 +244,9 @@ export default class extends Controller {
     if (confData.match_type === 'existing' && confData.id) {
       if (select) {
         select.value = confData.id;
-        this.triggerChange(select);
+        this.triggerChange(select, true);
       }
       return;
-    }
-
-    if (select) {
-      select.value = "";
-      this.triggerChange(select);
     }
     
     if (this.hasAddConferenceBtnTarget) {
@@ -272,15 +262,20 @@ export default class extends Controller {
     if (!targetField) return;
 
     const nameInput = targetField.querySelector('input[name*="[name]"]');
-    if (nameInput) { nameInput.value = confData.name; this.triggerChange(nameInput); }
+    if (nameInput) { nameInput.value = confData.name; this.triggerChange(nameInput, true); }
   }
 
   sleep(ms) {
     return new Promise(resolve => setTimeout(resolve, ms))
   }
 
-  triggerChange(element) {
+  triggerChange(element, markForVerification = false) {
     element.dispatchEvent(new Event('change', { bubbles: true }))
+
+    if (markForVerification && element.type !== 'hidden' && element.tagName !== 'BUTTON' && element.offsetParent !== null) {
+      element.classList.add('needs-verification')
+      element.dataset.verify = "pending"
+    }
   }
 
   setLoading(isLoading) {

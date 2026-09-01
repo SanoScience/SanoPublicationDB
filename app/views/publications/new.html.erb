@@ -7,7 +7,13 @@
 
 <%= simple_form_for @publication, 
     url: publications_path(back_params),
-    html: { class: 'needs-validation', data: { controller: 'openalex-autofill' } } do |form| %>
+    html: { 
+      class: 'needs-validation', 
+      data: { 
+        controller: 'openalex-autofill form-verification',
+        action: 'submit->form-verification#validateSubmit'
+      } 
+    } do |form| %>
 
   <div class="row align-items-center">
       <div class="col-md-10">

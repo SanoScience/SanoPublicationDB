@@ -20,7 +20,7 @@ module Authors
     def match(openalex_authors)
       openalex_authors.filter_map do |author_data|
         display_name = author_data["display_name"]
-        
+
         parsed_name = simple_parse(display_name)
         next if parsed_name.nil?
 
@@ -28,34 +28,34 @@ module Authors
           best_match = find_best_collective_match(parsed_name[:collective_name])
 
           if best_match
-            { 
-              match_type: "existing", 
-              id: best_match.id, 
-              display_name: best_match.collective_name 
+            {
+              match_type: "existing",
+              id: best_match.id,
+              display_name: best_match.collective_name
             }
           else
-            { 
-              match_type: "new", 
-              author_type: "collective", 
-              collective_name: parsed_name[:collective_name] 
+            {
+              match_type: "new",
+              author_type: "collective",
+              collective_name: parsed_name[:collective_name]
             }
           end
         else
           best_match = find_best_person_match(parsed_name[:first_name], parsed_name[:last_name])
 
           if best_match
-            { 
-              match_type: "existing", 
-              id: best_match.id, 
-              display_name: "#{best_match.first_name} #{best_match.last_name}" 
+            {
+              match_type: "existing",
+              id: best_match.id,
+              display_name: "#{best_match.first_name} #{best_match.last_name}"
             }
           else
-            { 
-              match_type: "new", 
-              author_type: "person", 
+            {
+              match_type: "new",
+              author_type: "person",
               title: parsed_name[:title],
-              first_name: parsed_name[:first_name], 
-              last_name: parsed_name[:last_name] 
+              first_name: parsed_name[:first_name],
+              last_name: parsed_name[:last_name]
             }
           end
         end
@@ -73,14 +73,14 @@ module Authors
       end
 
       title, body = Authors::NameUtils.extract_title_prefix(name)
-      
+
       first_name, last_name = Authors::NameUtils.extract_first_and_last_name(body)
 
-      { 
-        author_type: "person", 
-        title: title.presence, 
-        first_name: first_name, 
-        last_name: last_name 
+      {
+        author_type: "person",
+        title: title.presence,
+        first_name: first_name,
+        last_name: last_name
       }
     end
 

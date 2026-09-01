@@ -76,7 +76,7 @@ module Authors
 
     def extract_first_and_last_name(body)
       parts = words(body)
-      
+
       if parts.length >= 2
         split_index = last_name_start_index(parts)
         first_name = normalize_spacing(parts[0...split_index].join(" "))
@@ -86,7 +86,7 @@ module Authors
         last_name = normalize_spacing(body)
       end
 
-      [first_name, last_name]
+      [ first_name, last_name ]
     end
 
     def collective_keyword?(token)

@@ -17,7 +17,7 @@ class PublicationsAutofillSystemTest < ApplicationSystemTestCase
 
     assert_text "Data successfully loaded from OpenAlex!", wait: 5
     assert_selector ".needs-verification", minimum: 1
-    
+
     click_on "Create Publication"
     assert_text "Please review all highlighted auto-filled fields. Click on them to confirm they are correct before saving."
   end
@@ -37,13 +37,13 @@ class PublicationsAutofillSystemTest < ApplicationSystemTestCase
     end
 
     assert_no_selector ".needs-verification"
-    
-    if all('.research-group .nested-fields').empty?
+
+    if all(".research-group .nested-fields").empty?
       click_on "Add Research Group"
     end
-    find(".research-group select").all('option')[1].select_option
+    find(".research-group select").all("option")[1].select_option
 
-    if all('.kpi-reporting-extension .nested-fields').empty?
+    if all(".kpi-reporting-extension .nested-fields").empty?
       click_on "Add KPI Reporting Extension"
     end
 
@@ -55,9 +55,9 @@ class PublicationsAutofillSystemTest < ApplicationSystemTestCase
 
     assert_difference "Publication.count", 1 do
       click_on "Create Publication"
-      
+
       assert_no_text "Please review all highlighted auto-filled fields. Click on them to confirm they are correct before saving."
-      assert_text "Publication was successfully created" 
+      assert_text "Publication was successfully created"
     end
   end
 
@@ -67,7 +67,7 @@ class PublicationsAutofillSystemTest < ApplicationSystemTestCase
 
     fill_in "Title", with: "Manual Title"
     fill_in "openalex-doi-input", with: @valid_doi
-    
+
     click_on "Search & Autofill"
 
     assert_text "Data successfully loaded from OpenAlex!", wait: 5
@@ -80,7 +80,7 @@ class PublicationsAutofillSystemTest < ApplicationSystemTestCase
 
     fill_in "Title", with: "Manual Title"
     fill_in "openalex-doi-input", with: "10.1234/invalid.doi"
-    
+
     click_on "Search & Autofill"
 
     assert_text "Publication not found. Please check the DOI and try again."

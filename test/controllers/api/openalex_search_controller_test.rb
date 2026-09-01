@@ -2,13 +2,13 @@ require "test_helper"
 
 class Api::OpenalexSearchControllerTest < ActionDispatch::IntegrationTest
   setup do
-    @user = users(:user) 
+    @user = users(:user)
     sign_in @user
   end
 
   test "returns bad request if DOI is missing" do
     get "/api/openalex/search", params: { doi: "" }
-    
+
     assert_response :bad_request
     json = JSON.parse(response.body)
     assert_equal "DOI parameter is required", json["error"]
@@ -50,7 +50,7 @@ class Api::OpenalexSearchControllerTest < ActionDispatch::IntegrationTest
     assert_equal "journal_article", json["category"]
     assert_equal "printed", json["status"]
     assert_equal "gold", json["open_access"]["status"]
-    
+
     assert_equal "new", json["journal"]["match_type"]
     assert_equal "Test Journal", json["journal"]["title"]
     assert_equal "5", json["journal"]["volume"]
@@ -77,7 +77,7 @@ class Api::OpenalexSearchControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     json = JSON.parse(response.body)
-    
+
     journal = json["journal"]
     assert_not_nil journal
     assert_equal "existing", journal["match_type"]
@@ -91,8 +91,8 @@ class Api::OpenalexSearchControllerTest < ActionDispatch::IntegrationTest
       "id" => "https://openalex.org/W222",
       "type" => "article",
       "primary_location" => {
-        "source" => { 
-          "type" => "journal", 
+        "source" => {
+          "type" => "journal",
           "display_name" => "Brand New Science",
           "publisher" => "Global Press"
         }
@@ -109,7 +109,7 @@ class Api::OpenalexSearchControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     json = JSON.parse(response.body)
-    
+
     journal = json["journal"]
     assert_not_nil journal
     assert_equal "new", journal["match_type"]
@@ -127,7 +127,7 @@ class Api::OpenalexSearchControllerTest < ActionDispatch::IntegrationTest
       "id" => "https://openalex.org/W333",
       "type" => "conference-paper",
       "primary_location" => {
-        "raw_source_name" => "Example Conference" 
+        "raw_source_name" => "Example Conference"
       }
     }
 
@@ -140,7 +140,7 @@ class Api::OpenalexSearchControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     json = JSON.parse(response.body)
-    
+
     conf = json["conference"]
     assert_not_nil conf
     assert_equal "existing", conf["match_type"]
@@ -167,7 +167,7 @@ class Api::OpenalexSearchControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     json = JSON.parse(response.body)
-    
+
     conf = json["conference"]
     assert_not_nil conf
     assert_equal "new", conf["match_type"]
@@ -182,13 +182,13 @@ class Api::OpenalexSearchControllerTest < ActionDispatch::IntegrationTest
       "type" => "article",
       "primary_location" => {
         "source" => {
-          "issn" => ["1234-5678", "8765-4321"]
+          "issn" => [ "1234-5678", "8765-4321" ]
         }
       },
       "ids" => {
         "openalex" => "https://openalex.org/W123456",
         "doi" => "https://doi.org/10.1038/test.doi",
-        "pmid" => "https://pubmed.ncbi.nlm.nih.gov/999999", 
+        "pmid" => "https://pubmed.ncbi.nlm.nih.gov/999999",
         "isbn" => "https://openalex.org/isbn/978-3",
         "mag" => "12345"
       }
@@ -261,7 +261,7 @@ class Api::OpenalexSearchControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     json = JSON.parse(response.body)
-    
+
     authors = json["authors"]
     assert_not_nil authors
     assert_equal 2, authors.length
@@ -307,7 +307,7 @@ class Api::OpenalexSearchControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     json = JSON.parse(response.body)
-    
+
     authors = json["authors"]
     assert_not_nil authors
     assert_equal 2, authors.length
@@ -321,7 +321,7 @@ class Api::OpenalexSearchControllerTest < ActionDispatch::IntegrationTest
     new_result = authors.last
     assert_equal "new", new_result["match_type"]
     assert_nil new_result["id"]
-    
+
     assert_equal "collective", new_result["author_type"]
     assert_equal "Global Science Consortium", new_result["collective_name"]
     assert_nil new_result["first_name"]
@@ -363,7 +363,7 @@ class Api::OpenalexSearchControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     json = JSON.parse(response.body)
-    
+
     assert_equal "Incomplete Article", json["title"]
     assert_equal "book", json["category"]
     assert_nil json["status"]

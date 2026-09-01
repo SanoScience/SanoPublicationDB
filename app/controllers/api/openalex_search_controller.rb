@@ -4,7 +4,7 @@ module Api
 
     def show
       doi = params[:doi].to_s.strip
-      
+
       if doi.blank?
         return render json: { error: "DOI parameter is required" }, status: :bad_request
       end
@@ -45,11 +45,11 @@ module Api
 
     def map_category(openalex_type)
       case openalex_type
-        when "article" then "journal_article" 
-        when "proceedings-article" then "conference_manuscript"
-        when "book-chapter" then "book_chapter"
-        when "book" then "book"
-        else nil
+      when "article" then "journal_article"
+      when "proceedings-article" then "conference_manuscript"
+      when "book-chapter" then "book_chapter"
+      when "book" then "book"
+      else nil
       end
     end
 
@@ -65,7 +65,7 @@ module Api
 
     def extract_identifiers(work)
       identifiers = []
-      
+
       allowed_categories = Identifier.categories.keys
 
       if work["ids"].is_a?(Hash)
@@ -74,38 +74,38 @@ module Api
           next if %w[doi openalex].include?(category_key)
 
           final_category = allowed_categories.include?(category_key) ? category_key : "other"
-          
-          id_value = url.split("/").last 
+
+          id_value = url.split("/").last
 
           final_value = final_category == "other" ? "#{category_key}:#{id_value}" : id_value
 
-          identifiers << { 
-            category: final_category, 
-            value: final_value 
+          identifiers << {
+            category: final_category,
+            value: final_value
           }
         end
       end
 
       if work["doi"].present?
-        identifiers << { 
-          category: "doi", 
-          value: extract_clean_doi(work["doi"]) 
+        identifiers << {
+          category: "doi",
+          value: extract_clean_doi(work["doi"])
         }
       end
 
       if work["id"].present?
-        identifiers << { 
-          category: "openalex", 
-          value: extract_openalex_id(work["id"]) 
+        identifiers << {
+          category: "openalex",
+          value: extract_openalex_id(work["id"])
         }
       end
 
       source = work.dig("primary_location", "source")
       if source && source["issn"].is_a?(Array)
         source["issn"].each do |issn_val|
-          identifiers << { 
-            category: "issn", 
-            value: issn_val 
+          identifiers << {
+            category: "issn",
+            value: issn_val
           }
         end
       end
@@ -118,7 +118,7 @@ module Api
       return nil unless oa_data && oa_data["is_oa"]
 
       raw_status = oa_data["oa_status"]&.downcase
-      
+
       allowed_statuses = OpenAccessExtension.categories.keys
 
       return nil unless allowed_statuses.include?(raw_status)
@@ -153,9 +153,9 @@ module Api
       source = work.dig("primary_location", "source") || {}
       biblio = work["biblio"] || {}
       raw_type = work.dig("primary_location", "raw_type")
-      
-      is_journal = work["type"] == "article" || 
-                   source["type"] == "journal" || 
+
+      is_journal = work["type"] == "article" ||
+                   source["type"] == "journal" ||
                    raw_type == "journal-article"
       return nil unless is_journal
 
@@ -163,7 +163,7 @@ module Api
       return nil if title.blank?
 
       volume = biblio["volume"]
-      
+
       existing_journal = JournalIssue.where("lower(TRIM(title)) = ?", title.to_s.strip.downcase)
                                      .where(volume: volume)
                                      .first
@@ -190,8 +190,8 @@ module Api
       source = work.dig("primary_location", "source") || {}
       raw_type = work.dig("primary_location", "raw_type")
 
-      is_conf = work["type"] == "conference-paper" || 
-                raw_type == "proceedings-article" || 
+      is_conf = work["type"] == "conference-paper" ||
+                raw_type == "proceedings-article" ||
                 source["type"] == "conference"
 
       return nil unless is_conf

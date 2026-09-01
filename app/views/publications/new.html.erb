@@ -42,6 +42,15 @@
     <div class="card-body">
       <label for="openalex-doi-input" class="form-label fw-bold d-flex align-items-center gap-2">
         <i class="bi bi-magic text-primary"></i> Autofill from OpenAlex
+          <button type="button"
+                class="btn btn-outline-secondary btn-sm rounded-circle p-0"
+                style="width:20px;height:20px;line-height:18px;text-decoration:none;"
+                data-bs-toggle="collapse"
+                data-bs-target="#autofill-help"
+                aria-expanded="false"
+                aria-controls="autofill-help">
+            ?
+          </button>
       </label>
       <div class="input-group">
         <input type="text" id="openalex-doi-input" class="form-control" placeholder="Enter DOI (e.g. 10.1038/s41586-020-2649-2)" data-openalex-autofill-target="doiInput">
@@ -55,6 +64,14 @@
     </div>
   </div>
 
+  <div id="autofill-help" class="collapse">
+    <div class="text-muted small mt-1 mb-2">
+        Enter a DOI and click "Search & Autofill" to fetch metadata from the <a href="https://openalex.org/">OpenAlex</a> database. 
+        This feature automatically populates the title, category, status, publication year, link, authors, open access category, identifiers, conference, and journal issue. 
+        Please note that this action will completely overwrite any existing data in these fields. Because automated fetching may contain inaccuracies, saving is blocked until you review the imported data. 
+        You must click each highlighted field to confirm its value and remove the highlight before the publication can be saved.
+    </div>
+  </div>
   <hr>
 
   <%= form.input :title, input_html: { data: { openalex_autofill_target: "title" } } %>

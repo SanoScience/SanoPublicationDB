@@ -27,10 +27,16 @@ export default class extends Controller {
 
     try {
       const response = await fetch(`/api/openalex/search?doi=${encodeURIComponent(doi)}`)
-      const data = await response.json()
+      
+      const contentType = response.headers.get("content-type")
+      let data = {}
+      
+      if (contentType && contentType.includes("application/json")) {
+        data = await response.json()
+      }
 
       if (!response.ok) {
-        throw new Error(data.error || `HTTP error ${response.status}`)
+        throw new Error(data.error || `HTTP error ${response.status}: Failed to fetch data.`)
       }
 
       await this.clearForm()

@@ -18,8 +18,12 @@ module Api
       render json: { error: e.message }, status: :not_found
     rescue Integrations::Openalex::Client::BudgetExceededError => e
       render json: { error: e.message }, status: :too_many_requests
+    rescue Timeout::Error, Net::ReadTimeout, Net::OpenTimeout => e
+      render json: { error: "Connection to OpenAlex timed out." }, status: :gateway_timeout # 504
+    rescue SocketError => e
+      render json: { error: "Network error connecting to OpenAlex." }, status: :service_unavailable # 503
     rescue StandardError => e
-      render json: { error: "An unexpected error occurred: #{e.message}" }, status: :internal_server_error
+      render json: { error: "An unexpected error occurred: #{e.message}" }, status: :internal_server_error # 500
     end
 
     private

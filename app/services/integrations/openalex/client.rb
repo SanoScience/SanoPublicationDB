@@ -130,22 +130,24 @@ module Integrations
       end
 
       def parse_response(response)
+        case response
+        when Net::HTTPNotFound
+          raise NotFoundError, "Publication not found. Please check the DOI and try again."
+        when Net::HTTPTooManyRequests
+          raise BudgetExceededError, "OpenAlex API rate limit exceeded (429)"
+        end
+
         content_type = response["Content-Type"].to_s.downcase
         body_text = response.body.to_s.strip
 
         if content_type.include?("text/html") || body_text.start_with?("<")
-          raise NotFoundError, "OpenAlex returned HTML instead of JSON (HTTP #{response.code})"
+          raise Error, "OpenAlex returned an unexpected HTML response (HTTP #{response.code})"
         end
 
         body = JSON.parse(body_text)
 
-        case response
-        when Net::HTTPSuccess
+        if response.is_a?(Net::HTTPSuccess)
           body
-        when Net::HTTPNotFound
-          raise NotFoundError, body["message"] || "OpenAlex record not found"
-        when Net::HTTPTooManyRequests
-          raise BudgetExceededError, "OpenAlex API rate limit exceeded (429)"
         else
           raise Error, body["message"] || "OpenAlex error #{response.code}"
         end

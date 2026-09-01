@@ -1,6 +1,8 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
+  static targets = ["errorBox", "errorList", "clientErrorItem"]
+
   connect() {
     this.element.addEventListener('focusin', this.verifyField.bind(this))
     this.element.addEventListener('input', this.verifyField.bind(this))
@@ -53,37 +55,23 @@ export default class extends Controller {
   }
 
   showErrorBanner(message) {
-    if (document.getElementById("autofill-verification-error")) return;
-
-    let railsErrorBox = document.querySelector('.alert.alert-danger') || document.getElementById('error_explanation');
-
-    if (railsErrorBox) {
-      let ul = railsErrorBox.querySelector('ul');
-      if (!ul) {
-        ul = document.createElement('ul');
-        railsErrorBox.appendChild(ul);
-      }
-      const li = document.createElement('li');
-      li.id = "autofill-verification-error";
-      li.textContent = message;
-      ul.appendChild(li);
-    } else {
-      const errorHtml = `
-        <div id="autofill-verification-error-box" class="alert alert-danger mt-3 mb-4">
-          <ul class="mb-0">
-            <li id="autofill-verification-error">${message}</li>
-          </ul>
-        </div>
-      `;
-      this.element.insertAdjacentHTML('afterbegin', errorHtml);
+    if (this.hasClientErrorItemTarget && this.hasErrorBoxTarget) {
+      this.clientErrorItemTarget.textContent = message
+      this.clientErrorItemTarget.classList.remove('d-none')
+      this.errorBoxTarget.classList.remove('d-none')
     }
   }
 
   clearErrorBanner() {
-    const li = document.getElementById("autofill-verification-error");
-    if (li) li.remove();
-    
-    const box = document.getElementById("autofill-verification-error-box");
-    if (box) box.remove();
+    if (this.hasClientErrorItemTarget && this.hasErrorBoxTarget) {
+      this.clientErrorItemTarget.classList.add('d-none')
+      this.clientErrorItemTarget.textContent = ''
+
+      const activeErrors = this.errorListTarget.querySelectorAll('li:not(.d-none)')
+      
+      if (activeErrors.length === 0) {
+        this.errorBoxTarget.classList.add('d-none')
+      }
+    }
   }
 }

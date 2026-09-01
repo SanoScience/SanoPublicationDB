@@ -25,16 +25,20 @@
       </div>
   </div>
 
-  <% if @publication.errors.any? %>
-    <div class="alert alert-danger">
+  <div class="alert alert-danger <%= 'd-none' unless @publication.errors.any? %>" data-form-verification-target="errorBox">
+    
+    <% if @publication.errors.any? %>
       <h2><%= pluralize(@publication.errors.count, "error") %> prohibited this publication from being saved:</h2>
-      <ul>
-        <% @publication.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+    <% end %>
+
+    <ul class="mb-0" data-form-verification-target="errorList">
+      <% @publication.errors.full_messages.each do |message| %>
+        <li class="rails-error"><%= message %></li>
+      <% end %>
+      
+      <li class="d-none" data-form-verification-target="clientErrorItem"></li>
+    </ul>
+  </div>
 
   <hr>
 

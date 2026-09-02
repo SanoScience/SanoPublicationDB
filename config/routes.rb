@@ -30,6 +30,8 @@ Rails.application.routes.draw do
     get "statistics/conference_with_most_publications", to: "statistics#conference_with_most_publications"
     get "statistics/journal_with_most_publications", to: "statistics#journal_with_most_publications"
     get "statistics/publications_by_year", to: "statistics#publications_by_year"
+
+    get "openalex/search", to: "openalex_search#show"
   end
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 

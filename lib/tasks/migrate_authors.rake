@@ -6,30 +6,8 @@ namespace :data do
   desc "Migrate Publication.author_list into authors and publication_authorships"
   task migrate_authors: :environment do
     module AuthorMigration
+      include Authors::NameUtils
       module_function
-
-      NAME_PARTICLES = %w[
-        al ap ben bin da dal de del della der di dos du el la le van von ten ter den
-      ].freeze
-
-      TITLE_TOKENS = %w[
-        prof professor dr md phd msc bsc mph dabr dabnm mr mrs ms
-      ].freeze
-
-      COLLECTIVE_KEYWORDS = %w[
-        group team consortium initiative network collaboration committee society
-        biobank investigators investigator study trial board association program programme
-        institute center centre unit foundation panel registry working mission laboratory
-      ].freeze
-
-      TRUNCATION_PATTERNS = [
-        /et\s+al\.?(?:\s*\([^)]*\))?/i,
-        /\(\s*many others\s*\)/i,
-        /\(\s*\.\.\.\s*\)/i,
-        /\.{3,}/i,
-        /additional authors not shown/i,
-        /many others/i
-      ].freeze
 
       def normalize(raw)
         s = raw.to_s.unicode_normalize(:nfkc)
@@ -48,20 +26,6 @@ namespace :data do
         s.gsub(/[[:space:]]+/, " ").strip
       end
 
-      def normalize_spacing(value)
-        value.to_s.gsub(/[[:space:]]+/, " ").strip
-      end
-
-      def canonical(value)
-        s = value.to_s.unicode_normalize(:nfkc)
-        s = s.gsub(/[\u200B\u200C\u200D\uFEFF]/, "")
-        s = s.tr("’`´", "'")
-        s = s.tr("‐-‒–—−", "-")
-        s = normalize_spacing(s)
-        s = I18n.transliterate(s)
-        s.downcase
-      end
-
       def clean_word(word)
         word.to_s.strip.gsub(/\A[[:punct:]]+|[[:punct:]]+\z/, "")
       end
@@ -72,15 +36,6 @@ namespace :data do
 
       def title_word?(word)
         TITLE_TOKENS.include?(clean_word(word).downcase)
-      end
-
-      def particle?(word)
-        NAME_PARTICLES.include?(clean_word(word).downcase)
-      end
-
-      def collective_keyword?(token)
-        downcased = canonical(token)
-        COLLECTIVE_KEYWORDS.any? { |kw| downcased.match?(/\b#{Regexp.escape(kw)}\b/) }
       end
 
       def normalize_collective_tail(token)
@@ -170,21 +125,6 @@ namespace :data do
         words(token).length == 1
       end
 
-      def looks_like_collective?(token)
-        t = normalize_spacing(token)
-        truncation_collective_token?(t) || collective_keyword?(t)
-      end
-
-      def truncation_collective_token?(token)
-        t = normalize_spacing(token)
-
-        t.match?(/\Aet\s+al/i) ||
-          t.match?(/\Amany others\z/i) ||
-          t.match?(/\Aadditional authors not shown\z/i) ||
-          t.match?(/\A\.\.\.\z/) ||
-          t.match?(/\Aet\s+al\.\s+\(\s*\d+\s+additional authors not shown\s*\)\z/i)
-      end
-
       def suspicious_token?(token)
         return true if token.blank?
         return false if truncation_collective_token?(token)
@@ -245,14 +185,6 @@ namespace :data do
         end
 
         [ normalize_spacing(title_parts.join(" ")), normalize_spacing(parts.join(" ")) ]
-      end
-
-      def last_name_start_index(parts)
-        idx = parts.length - 1
-        while idx > 0 && particle?(parts[idx - 1])
-          idx -= 1
-        end
-        idx
       end
 
       def initials_only?(name)

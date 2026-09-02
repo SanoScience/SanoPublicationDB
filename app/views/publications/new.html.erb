@@ -7,7 +7,13 @@
 
 <%= simple_form_for @publication, 
     url: publications_path(back_params),
-    html: { class: 'needs-validation' } do |form| %>
+    html: { 
+      class: 'needs-validation', 
+      data: { 
+        controller: 'openalex-autofill form-verification',
+        action: 'submit->form-verification#validateSubmit'
+      } 
+    } do |form| %>
 
   <div class="row align-items-center">
       <div class="col-md-10">
@@ -19,34 +25,80 @@
       </div>
   </div>
 
-  <% if @publication.errors.any? %>
-    <div class="alert alert-danger">
+  <div class="alert alert-danger <%= 'd-none' unless @publication.errors.any? %>" data-form-verification-target="errorBox">
+    
+    <% if @publication.errors.any? %>
       <h2><%= pluralize(@publication.errors.count, "error") %> prohibited this publication from being saved:</h2>
-      <ul>
-        <% @publication.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+    <% end %>
+
+    <ul class="mb-0" data-form-verification-target="errorList">
+      <% @publication.errors.full_messages.each do |message| %>
+        <li class="rails-error"><%= message %></li>
+      <% end %>
+      
+      <li class="d-none" data-form-verification-target="clientErrorItem"></li>
+    </ul>
+  </div>
 
   <hr>
 
-  <%= form.input :title %>
-
-  <div class="row">
-    <div class="col-md-6">
-      <%= form.input :category, collection: Publication.categories.keys.map { |key| [key.humanize, key] }, include_blank: true %>
-    </div>
-
-    <div class="col-md-6">
-      <%= form.input :status, collection: Publication.statuses.except(:submitted).keys.map { |key| [key.humanize, key] }, include_blank: true %>
+  <div class="card mb-4 bg-light border-0 shadow-sm">
+    <div class="card-body">
+      <label for="openalex-doi-input" class="form-label fw-bold d-flex align-items-center gap-2">
+        <i class="bi bi-magic text-primary"></i> Autofill from OpenAlex
+          <button type="button"
+                class="btn btn-outline-secondary btn-sm rounded-circle p-0"
+                style="width:20px;height:20px;line-height:18px;text-decoration:none;"
+                data-bs-toggle="collapse"
+                data-bs-target="#autofill-help"
+                aria-expanded="false"
+                aria-controls="autofill-help">
+            ?
+          </button>
+      </label>
+      <div class="input-group">
+        <input type="text" id="openalex-doi-input" class="form-control" placeholder="Enter DOI (e.g. 10.1038/s41586-020-2649-2)" data-openalex-autofill-target="doiInput">
+        <button type="button" class="btn btn-primary" data-action="click->openalex-autofill#fetchMetadata" data-openalex-autofill-target="button">
+          <span class="spinner-border spinner-border-sm d-none" role="status" aria-hidden="true" data-openalex-autofill-target="spinner"></span>
+          <span data-openalex-autofill-target="buttonText">Search & Autofill</span>
+        </button>
+      </div>
+      <div class="form-text mt-2 text-danger d-none fw-medium" data-openalex-autofill-target="error"></div>
+      <div class="form-text mt-2 text-success d-none fw-medium" data-openalex-autofill-target="success"></div>
     </div>
   </div>
 
-  <%= form.input :publication_year, as: :integer, required: true %>
+  <div id="autofill-help" class="collapse">
+    <div class="text-muted small mt-1 mb-2">
+        Enter a DOI and click "Search & Autofill" to fetch metadata from the <a href="https://openalex.org/">OpenAlex</a> database. 
+        This feature automatically populates the title, category, status, publication year, link, authors, open access category, identifiers, conference, and journal issue. 
+        Please note that this action will completely overwrite any existing data in these fields. Because automated fetching may contain inaccuracies, saving is blocked until you review the imported data. 
+        You must click each highlighted field to confirm its value and remove the highlight before the publication can be saved.
+    </div>
+  </div>
+  <hr>
 
-  <%= form.input :link %>
+  <%= form.input :title, input_html: { data: { openalex_autofill_target: "title" } } %>
+
+  <div class="row">
+    <div class="col-md-6">
+      <%= form.input :category, 
+          collection: Publication.categories.keys.map { |key| [key.humanize, key] }, 
+          include_blank: true, 
+          input_html: { data: { openalex_autofill_target: "category" } } %>
+    </div>
+
+    <div class="col-md-6">
+      <%= form.input :status, 
+          collection: Publication.statuses.except(:submitted).keys.map { |key| [key.humanize, key] }, 
+          include_blank: true,
+          input_html: { data: { openalex_autofill_target: "status" } } %>
+    </div>
+  </div>
+
+  <%= form.input :publication_year, as: :integer, required: true, input_html: { data: { openalex_autofill_target: "year" } } %>
+
+  <%= form.input :link, input_html: { data: { openalex_autofill_target: "link" } } %>
 
   <hr>
 
@@ -73,7 +125,8 @@
   </div>
 
   <div class="publication-authorships authors-grid"
-     data-controller="authorship-list">
+        data-controller="authorship-list"
+        data-openalex-autofill-target="authorsContainer">
     <%= form.simple_fields_for :publication_authorships do |author_form| %>
       <%= render 'publication_authorship_fields', f: author_form %>
     <% end %>
@@ -84,7 +137,8 @@
       :publication_authorships,
       data: {
         association_insertion_node: '.publication-authorships',
-        association_insertion_method: :append
+        association_insertion_method: :append,
+        openalex_autofill_target: "addAuthorBtn"
       },
       class: "btn btn-secondary mt-3" %>
 
@@ -116,14 +170,18 @@
   <hr>
 
   <h3>Open Access Extension</h3>
-  <div class="open-access-extension" data-controller="nested-toggle">
+  <div class="open-access-extension" data-controller="nested-toggle" data-openalex-autofill-target="oaContainer">
     <%= form.simple_fields_for :open_access_extension do |oa_form| %>
       <%= render 'open_access_extension_fields', f: oa_form %>
     <% end %>
 
     <div class="links max-one-association">
       <%= link_to_add_association "Add Open Access Extension", form, :open_access_extension, 
-          data: {association_insertion_node: '.open-access-extension', association_insertion_method: :append}, 
+          data: {
+            association_insertion_node: '.open-access-extension', 
+            association_insertion_method: :append, 
+            openalex_autofill_target: "addOABtn"
+          }, 
           force_non_association_create: true, class: "btn btn-secondary" %>
     </div>
   </div>
@@ -150,12 +208,17 @@
     </div>
   </div>
 
-  <div class="identifier">
+  <div class="identifier" data-openalex-autofill-target="identifiersContainer">
     <%= form.simple_fields_for :identifiers do |id_form| %>
       <%= render 'identifier_fields', f: id_form %>
     <% end %>
   </div>
-  <%= link_to_add_association "Add Identifier", form, :identifiers, data: {association_insertion_node: '.identifier', association_insertion_method: :append}, class: "btn btn-secondary" %>
+  <%= link_to_add_association "Add Identifier", form, :identifiers, 
+      data: {
+        association_insertion_node: '.identifier', 
+        association_insertion_method: :append,
+        openalex_autofill_target: "addIdentifierBtn"
+      }, class: "btn btn-secondary" %>
 
   <hr>
 
@@ -215,7 +278,8 @@
         data-controller="nested-list association-editor"
         data-association-editor-items-value='<%= conferences.to_json(only: [:id, :name, :core, :start_date, :end_date]) %>'
         data-association-editor-simple-fields-value='["name","core"]'
-        data-association-editor-date-fields-value='["start_date","end_date"]'>
+        data-association-editor-date-fields-value='["start_date","end_date"]'
+        data-openalex-autofill-target="conferenceContainer">
     
     <div class="items-list">
       <%= form.association :conference, 
@@ -235,7 +299,8 @@
       <%= link_to_add_association "Add New Conference", form, :conference, 
           data: {
             association_insertion_node: '.conference', 
-            association_insertion_method: :append
+            association_insertion_method: :append,
+            openalex_autofill_target: "addConferenceBtn"
           }, 
           class: "btn btn-secondary" %>
     </div>
@@ -269,7 +334,8 @@
         data-controller="nested-list association-editor"
         data-association-editor-items-value='<%= journal_issues.to_json(only: [:id, :title, :journal_num, :publisher, :volume, :impact_factor]) %>'
         data-association-editor-simple-fields-value='["title","journal_num","publisher","volume","impact_factor"]'
-        data-association-editor-date-fields-value='[]'>
+        data-association-editor-date-fields-value='[]'
+        data-openalex-autofill-target="journalContainer">
     
     <div class="items-list">
       <%= form.association :journal_issue, 
@@ -289,7 +355,8 @@
       <%= link_to_add_association "Add New Journal Issue", form, :journal_issue, 
           data: {
             association_insertion_node: '.journal-issue', 
-            association_insertion_method: :append
+            association_insertion_method: :append,
+            openalex_autofill_target: "addJournalBtn"
           }, 
           class: "btn btn-secondary" %>
     </div>

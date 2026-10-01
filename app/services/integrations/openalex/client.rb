@@ -23,12 +23,10 @@ module Integrations
 
       def initialize(
         api_key: ENV["OPENALEX_API_KEY"],
-        mailto: ENV["OPENALEX_MAILTO"],
         timeout: 10,
         min_daily_budget_usd: 0.1
       )
         @api_key = api_key
-        @mailto = mailto
         @timeout = timeout
         @min_daily_budget_usd = min_daily_budget_usd
       end
@@ -123,7 +121,6 @@ module Integrations
         query_params = params.compact
 
         query_params[:api_key] = @api_key if @api_key.present?
-        query_params[:mailto] = @mailto if @mailto.present?
 
         uri.query = URI.encode_www_form(query_params) if query_params.any?
         uri

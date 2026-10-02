@@ -7,6 +7,7 @@ export default class extends Controller {
 
     $select.select2({
       theme: "bootstrap-5",
+      width: "100%",
       placeholder: $select.data("placeholder") || ""
     })
   }

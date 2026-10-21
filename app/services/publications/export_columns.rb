@@ -18,6 +18,10 @@ module Publications
       def research_group_publications(pub)
         pub.research_group_publications.includes(:research_group).to_a
       end
+
+      def latest_citation_count(pub)
+        pub.citation_counts.max_by(&:recorded_at)
+      end
     end
 
     COLUMNS = {
@@ -171,9 +175,17 @@ module Publications
       "kpi_ft_portal" => {
         label: "FT portal",
         value: ->(pub) { yes_no(pub.kpi_reporting_extension&.is_added_ft_portal) }
+      },
+      "citation_count" => {
+        label: "Citation count",
+        value: ->(pub) { latest_citation_count(pub)&.count }
+      },
+      "citation_count_recorded_at" => {
+        label: "Citation count's record date",
+        value: ->(pub) { latest_citation_count(pub)&.recorded_at&.strftime("%Y-%m-%d") }
       }
     }.freeze
 
-    private_class_method :yes_no, :research_group_publications
+    private_class_method :yes_no, :research_group_publications, :latest_citation_count
   end
 end

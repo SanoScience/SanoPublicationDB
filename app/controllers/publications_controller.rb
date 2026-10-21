@@ -8,6 +8,7 @@ class PublicationsController < ApplicationController
     @q = Publication.ransack(params[:q])
     base_scope = @q.result.includes(
       :identifiers,
+      :citation_counts,
       :kpi_reporting_extension,
       :open_access_extension,
       :conference,

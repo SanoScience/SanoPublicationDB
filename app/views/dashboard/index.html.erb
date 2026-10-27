@@ -10,7 +10,7 @@
       <div class="card border shadow-sm h-100">
         <div class="card-body">
           <div class="text-secondary small mb-1">Total publications</div>
-          <div class="fs-3 fw-bold"><%= @total_count %></div>
+          <div class="fs-3 fw-bold"><%= @dashboard.total_count %></div>
         </div>
       </div>
     </div>
@@ -18,7 +18,7 @@
       <div class="card border shadow-sm h-100">
         <div class="card-body">
           <div class="text-secondary small mb-1">Journal articles</div>
-          <div class="fs-3 fw-bold"><%= @journal_count %></div>
+          <div class="fs-3 fw-bold"><%= @dashboard.journal_count %></div>
         </div>
       </div>
     </div>
@@ -26,7 +26,7 @@
       <div class="card border shadow-sm h-100">
         <div class="card-body">
           <div class="text-secondary small mb-1">Conference-related</div>
-          <div class="fs-3 fw-bold"><%= @conf_count %></div>
+          <div class="fs-3 fw-bold"><%= @dashboard.conf_count %></div>
         </div>
       </div>
     </div>
@@ -35,8 +35,8 @@
         <div class="card-body">
           <div class="text-secondary small mb-1">With ≥140 ministerial points</div>
           <div class="fs-3 fw-bold">
-            <%= @count_140 %>
-            <span class="fs-6 fw-normal text-secondary">/ <%= @count_with_points %> with points</span>
+            <%= @dashboard.count_140 %>
+            <span class="fs-6 fw-normal text-secondary">/ <%= @dashboard.count_with_points %> with points</span>
           </div>
         </div>
       </div>
@@ -53,7 +53,7 @@
           <div class="card border shadow-sm h-100">
             <div class="card-body">
               <h6 class="card-title fw-bold mb-3">Publications per year</h6>
-              <%= column_chart @year_chart_data, stacked: true, height: "300px" %>
+              <%= column_chart @dashboard.year_chart_data, stacked: true, height: "300px" %>
             </div>
           </div>
         </div>
@@ -61,7 +61,7 @@
           <div class="card border shadow-sm h-100">
             <div class="card-body">
               <h6 class="card-title fw-bold mb-3">Publications per research team</h6>
-              <%= bar_chart @team_chart_data,
+              <%= bar_chart @dashboard.team_chart_data,
                             colors: ["#2a78d6"],
                             height: "300px" %>
             </div>
@@ -75,7 +75,7 @@
         <p class="text-muted small mb-0">One chart per team — respecting current filters.</p>
       </div>
       <div class="row row-cols-1 row-cols-sm-2 row-cols-xl-3 g-3 mb-4">
-        <% @team_multiples.each do |team| %>
+        <% @dashboard.team_multiples.each do |team| %>
           <div class="col">
             <div class="card border shadow-sm h-100">
               <div class="card-body">
@@ -101,7 +101,7 @@
           <div class="card border shadow-sm h-100">
             <div class="card-body">
               <h6 class="card-title fw-bold mb-3">≥140 points — per year</h6>
-              <%= column_chart @year_140_chart_data,
+              <%= column_chart @dashboard.year_140_chart_data,
                                stacked: true,
                                height: "280px" %>
             </div>
@@ -111,7 +111,7 @@
           <div class="card border shadow-sm h-100">
             <div class="card-body">
               <h6 class="card-title fw-bold mb-3">≥140 points — per research team</h6>
-              <%= bar_chart @team_140_chart_data,
+              <%= bar_chart @dashboard.team_140_chart_data,
                             colors: ["#eb6834"],
                             height: "280px" %>
             </div>
@@ -136,29 +136,29 @@
               </tr>
             </thead>
             <tbody>
-              <% @filtered_publications.sort_by { |p| -(p.publication_year || 0) }.each do |pub| %>
-              <tr>
-                <td class="fw-semibold"><%= pub.publication_year || "—" %></td>
-                <td>
-                  <%= link_to pub.title,
-                              publication_path(pub),
-                              class: "text-decoration-none text-dark fw-medium",
-                              data: { turbo_frame: "_top" } %>
-                </td>
-                <td class="text-secondary">
-                  <% groups = pub.research_groups.map(&:name) %>
-                  <%= groups.presence&.map { |g| dashboard_team_short(g) }&.join(", ") || "Unassigned" %>
-                </td>
-                <td><%= pub.category.humanize %></td>
-                <td><%= points_badge(pub.kpi_reporting_extension&.subsidy_points) %></td>
-              </tr>
-            <% end %>
+              <% @dashboard.filtered_publications.sort_by { |p| -(p.publication_year || 0) }.each do |pub| %>
+                <tr>
+                  <td class="fw-semibold"><%= pub.publication_year || "—" %></td>
+                  <td>
+                    <%= link_to pub.title,
+                                publication_path(pub),
+                                class: "text-decoration-none text-dark fw-medium",
+                                data: { turbo_frame: "_top" } %>
+                  </td>
+                  <td class="text-secondary">
+                    <% groups = pub.research_groups.map(&:name) %>
+                    <%= groups.presence&.map { |g| dashboard_team_short(g) }&.join(", ") || "Unassigned" %>
+                  </td>
+                  <td><%= pub.category.humanize %></td>
+                  <td><%= points_badge(pub.kpi_reporting_extension&.subsidy_points) %></td>
+                </tr>
+              <% end %>
             </tbody>
           </table>
         </div>
       </div>
       <div class="text-muted small">
-        Showing <%= @filtered_publications.size %> of <%= @total_count %> publications
+        Showing <%= @dashboard.filtered_publications.size %> of <%= @dashboard.total_count %> publications
       </div>
     <% end %>
 
@@ -188,7 +188,7 @@
                       <%= key.humanize %>
                     </label>
                   </div>
-                  <span class="badge bg-light text-muted border font-monospace small"><%= @global_type_counts[key] %></span>
+                  <span class="badge bg-light text-muted border font-monospace small"><%= @dashboard.global_type_counts[key] %></span>
                 </div>
               <% end %>
             </div>

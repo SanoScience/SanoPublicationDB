@@ -6,6 +6,8 @@ Rails.application.routes.draw do
 
   resources :publications
 
+  get "dashboard", to: "dashboard#index"
+
   resources :research_groups, only: [ :index, :new, :create, :edit, :update, :destroy ]
 
   resources :authors, only: [ :index, :show, :edit, :update, :destroy ] do

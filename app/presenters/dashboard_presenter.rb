@@ -67,7 +67,11 @@ class DashboardPresenter
 
   def group_by_team(pubs)
     pubs.each_with_object(Hash.new { |h, k| h[k] = [] }) do |pub, hash|
-      groups = pub.research_groups.map(&:name).presence || ["Unassigned"]
+      primary_groups = pub.research_group_publications
+                          .select(&:is_primary?)
+                          .map { |rgp| rgp.research_group.name }
+
+      groups = primary_groups.presence || ["Unassigned"]
       groups.each { |g| hash[g] << pub }
     end
   end

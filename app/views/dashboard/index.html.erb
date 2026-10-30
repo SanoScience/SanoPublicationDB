@@ -146,8 +146,8 @@
                                 data: { turbo_frame: "_top" } %>
                   </td>
                   <td class="text-secondary">
-                    <% groups = pub.research_groups.map(&:name) %>
-                    <%= groups.presence&.map { |g| dashboard_team_short(g) }&.join(", ") || "Unassigned" %>
+                    <% primary_groups = pub.research_group_publications.select(&:is_primary?).map { |rgp| rgp.research_group.name } %>
+                    <%= primary_groups.presence&.map { |g| dashboard_team_short(g) }&.join(", ") || "Unassigned" %>
                   </td>
                   <td><%= pub.category.humanize %></td>
                   <td><%= points_badge(pub.kpi_reporting_extension&.subsidy_points) %></td>

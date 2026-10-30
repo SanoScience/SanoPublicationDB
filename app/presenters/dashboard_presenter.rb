@@ -59,6 +59,47 @@ class DashboardPresenter
     team_chart_data(pubs_140)
   end
 
+  def pub_citations(pub)
+    pub.citation_counts.max_by(&:recorded_at)&.count.to_i
+  end
+  
+  def citations_year_chart_data(pubs = @filtered_publications)
+    all_years = pubs.map { |p| p.publication_year || "Unknown" }
+                    .uniq
+                    .sort_by { |y| [y == "Unknown" ? 1 : 0, y.to_i] }
+
+    Publication.categories.keys.map do |type_key|
+      type_pubs = pubs.select { |p| p.category == type_key }
+
+      counts = type_pubs.group_by { |p| p.publication_year || "Unknown" }
+                        .transform_values { |year_pubs| year_pubs.sum { |p| pub_citations(p) } }
+
+      { name: type_key.humanize, data: all_years.index_with { |y| counts[y] || 0 } }
+    end
+  end
+
+  def citations_team_chart_data(pubs = @filtered_publications)
+    team_pubs_hash = Hash.new { |h, k| h[k] = [] }
+    group_by_team(pubs).each do |team_name, team_pubs|
+      short_name = @helpers.dashboard_team_short(team_name)
+      team_pubs_hash[short_name].concat(team_pubs)
+    end
+
+    sorted_team_names = team_pubs_hash.sort_by do |_, team_pubs|
+      -team_pubs.sum { |p| pub_citations(p) }
+    end.map(&:first)
+
+    Publication.categories.keys.map do |type_key|
+      data = sorted_team_names.index_with do |team_name|
+        team_pubs = team_pubs_hash[team_name]
+        type_pubs = team_pubs.select { |p| p.category == type_key }
+        type_pubs.sum { |p| pub_citations(p) }
+      end
+
+      { name: type_key.humanize, data: data }
+    end
+  end
+
   private
 
   def pubs_140

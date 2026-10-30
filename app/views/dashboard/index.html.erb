@@ -119,6 +119,34 @@
         </div>
       </div>
 
+      <!-- Section: Citations -->
+      <div class="d-flex align-items-center gap-2 mt-4 mb-3">
+        <span class="d-inline-block bg-info rounded-1" style="width: 12px; height: 12px;"></span>
+        <h5 class="fw-bold mb-0">Citations Overview (OpenAlex)</h5>
+      </div>
+      <div class="row row-cols-1 row-cols-lg-2 g-3 mb-4">
+        <div class="col">
+          <div class="card border shadow-sm h-100">
+            <div class="card-body">
+              <h6 class="card-title fw-bold mb-3">Citations — per publication year</h6>
+              <%= column_chart @dashboard.citations_year_chart_data,
+                              stacked: true,
+                              height: "280px" %>
+            </div>
+          </div>
+        </div>
+        <div class="col">
+          <div class="card border shadow-sm h-100">
+            <div class="card-body">
+              <h6 class="card-title fw-bold mb-3">Citations — per research team</h6>
+              <%= bar_chart @dashboard.citations_team_chart_data,
+                            stacked: true,
+                            height: "280px" %>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <!-- Section: Table -->
       <div class="mt-4 mb-3">
         <h5 class="fw-bold mb-0">Publication list (table view)</h5>
@@ -128,11 +156,12 @@
           <table class="table table-hover table-striped align-middle mb-0 small">
             <thead class="table-light sticky-top">
               <tr>
-                <th scope="col" style="width: 80px;">Year</th>
+                <th scope="col" style="width: 70px;">Year</th>
                 <th scope="col">Title</th>
                 <th scope="col">Teams</th>
-                <th scope="col">Type</th>
-                <th scope="col" style="width: 140px;">Ministerial points</th>
+                <th scope="col" style="width: 130px;">Type</th>
+                <th scope="col" style="width: 120px;">Points</th>
+                <th scope="col" style="width: 90px;">Citations</th>
               </tr>
             </thead>
             <tbody>
@@ -151,6 +180,7 @@
                   </td>
                   <td><%= pub.category.humanize %></td>
                   <td><%= points_badge(pub.kpi_reporting_extension&.subsidy_points) %></td>
+                  <td><%= citations_badge(@dashboard.pub_citations(pub)) %></td>
                 </tr>
               <% end %>
             </tbody>

@@ -12,4 +12,10 @@ module DashboardHelper
 
     tag.span(points, class: "badge bg-light text-dark border fw-normal")
   end
+
+  def citations_badge(count)
+    return tag.span("0", class: "badge bg-light text-muted border fw-normal") if count.nil? || count.zero?
+
+    tag.span(count, class: "badge bg-info text-dark border border-info fw-semibold")
+  end
 end

@@ -18,8 +18,7 @@
 
                 <%= button_to "Delete", publication_path(@publication, back_params),
                     method: :delete,
-                    data: { confirm: "Are you sure?" },
-                    form: { class: "d-grid" },
+                    form: { class: "d-grid", data: { turbo_confirm: "Are you sure?" } },
                     class: "btn btn-danger" %>
             </div>
         </div>

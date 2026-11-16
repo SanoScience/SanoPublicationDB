@@ -47,8 +47,13 @@
 
         <%= button_to "Delete", author_path(author, back_params),
             method: :delete,
-            data: { turbo: false, confirm: "Are you sure?" },
-            form: { class: "d-grid" },
+            form: { 
+              class: "d-grid", 
+              data: { 
+                turbo_confirm: "Are you sure you want to delete #{author.display_name}?", 
+                turbo_frame: "_top" 
+              } 
+            },
             class: "btn btn-danger" %>
 
         <button type="button"

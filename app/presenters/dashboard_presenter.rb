@@ -21,7 +21,7 @@ class DashboardPresenter
   def year_chart_data(pubs = @filtered_publications)
     all_years = pubs.map { |p| p.publication_year || "Unknown" }
                     .uniq
-                    .sort_by { |y| [y == "Unknown" ? 1 : 0, y.to_i] }
+                    .sort_by { |y| [ y == "Unknown" ? 1 : 0, y.to_i ] }
 
     Publication.categories.keys.map do |type_key|
       type_pubs = pubs.select { |p| p.category == type_key }
@@ -62,11 +62,11 @@ class DashboardPresenter
   def pub_citations(pub)
     pub.citation_counts.max_by(&:recorded_at)&.count.to_i
   end
-  
+
   def citations_year_chart_data(pubs = @filtered_publications)
     all_years = pubs.map { |p| p.publication_year || "Unknown" }
                     .uniq
-                    .sort_by { |y| [y == "Unknown" ? 1 : 0, y.to_i] }
+                    .sort_by { |y| [ y == "Unknown" ? 1 : 0, y.to_i ] }
 
     Publication.categories.keys.map do |type_key|
       type_pubs = pubs.select { |p| p.category == type_key }
@@ -112,7 +112,7 @@ class DashboardPresenter
                           .select(&:is_primary?)
                           .map { |rgp| rgp.research_group.name }
 
-      groups = primary_groups.presence || ["Unassigned"]
+      groups = primary_groups.presence || [ "Unassigned" ]
       groups.each { |g| hash[g] << pub }
     end
   end

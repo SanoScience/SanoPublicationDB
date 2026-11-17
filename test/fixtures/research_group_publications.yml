@@ -4,3 +4,8 @@ sp_pub1:
   publication: pub1
   research_group: group1
   is_primary: true
+
+sp_pub1_secondary:
+  publication: pub1
+  research_group: group2
+  is_primary: false

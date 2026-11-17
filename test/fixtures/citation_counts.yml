@@ -3,3 +3,9 @@ openalex15:
   source: :openalex
   count: 15
   recorded_at: <%= Time.now %>
+
+openalex_old:
+  publication: pub1
+  source: openalex
+  count: 5
+  recorded_at: <%= 1.month.ago %>

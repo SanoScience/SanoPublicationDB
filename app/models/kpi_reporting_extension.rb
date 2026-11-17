@@ -17,7 +17,7 @@ class KpiReportingExtension < ApplicationRecord
     end
 
     def self.ransackable_attributes(auth_object = nil)
-        [ "teaming_reporting_period", "pbn", "jcr", "is_new_method_technique", "is_methodology_application", "is_peer_reviewed" ]
+        [ "teaming_reporting_period", "pbn", "jcr", "is_new_method_technique", "is_methodology_application", "is_peer_reviewed", "subsidy_points" ]
     end
 
     def self.ransackable_associations(auth_object = nil)

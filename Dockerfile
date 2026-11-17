@@ -59,15 +59,18 @@ COPY --from=build "${BUNDLE_PATH}" "${BUNDLE_PATH}"
 COPY --from=build /rails /rails
 
 # --- Cron + AzCopy for scheduler container ---
+ARG AZCOPY_DOWNLOAD_URL
+ARG AZCOPY_SHA256
+
 # Install cron and AzCopy in the final image so we can run a dedicated scheduler service
-RUN apt-get update -qq && \
-    apt-get install --no-install-recommends -y cron curl ca-certificates gnupg && \
-    curl -sSL -O https://packages.microsoft.com/config/debian/13/packages-microsoft-prod.deb && \
-    dpkg -i packages-microsoft-prod.deb && \
-    rm packages-microsoft-prod.deb && \
+RUN test -n "${AZCOPY_DOWNLOAD_URL}" && test -n "${AZCOPY_SHA256}" && \
     apt-get update -qq && \
-    apt-get install --no-install-recommends -y azcopy && \
-    rm -rf /var/lib/apt/lists /var/cache/apt/archives
+    apt-get install --no-install-recommends -y cron curl ca-certificates && \
+    curl --proto '=https' --tlsv1.2 -fsSL "${AZCOPY_DOWNLOAD_URL}" -o /tmp/azcopy.tar.gz && \
+    echo "${AZCOPY_SHA256}  /tmp/azcopy.tar.gz" | sha256sum -c - && \
+    tar -xzf /tmp/azcopy.tar.gz -C /tmp --strip-components=1 --no-same-owner --no-same-permissions --wildcards '*/azcopy' && \
+    install -o root -g root -m 0755 /tmp/azcopy /usr/local/bin/azcopy && \
+    rm -rf /tmp/azcopy /tmp/azcopy.tar.gz /var/lib/apt/lists/* /var/cache/apt/archives/*
 
 # Add a small cron launcher (used only by the scheduler service)
 # You'll provide this script in your repo at bin/cron and make it executable.
